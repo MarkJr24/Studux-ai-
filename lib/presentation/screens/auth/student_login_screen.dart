@@ -110,7 +110,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           // Semi-transparent White Overlay for Readability
           Positioned.fill(
             child: Container(
-              color: Colors.white.withOpacity(0.88),
+              color: Colors.white.withOpacity(0.25),
             ),
           ),
           
