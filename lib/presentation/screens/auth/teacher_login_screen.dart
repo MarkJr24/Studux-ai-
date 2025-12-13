@@ -83,31 +83,24 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Library Background Image
+          // Login Screen Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/library_background.jpg',
+              'assets/images/login_screen.png',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                // Fallback to PNG if JPG not found
-                return Image.asset(
-                  'assets/images/library_background.png',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    // If no image found, show a subtle gradient background
-                    return Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white,
-                            Colors.blue.shade50,
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                // If no image found, show a subtle gradient background
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white,
+                        Colors.blue.shade50,
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -209,37 +202,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Login Screen Image
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'assets/images/login_screen.png',
-                        height: 120,
-                        width: 120,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback icon if image not found
-                          return Container(
-                            height: 120,
-                            width: 120,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
                   // Title
                   Text(
                     'Welcome Back, Teacher',
