@@ -332,13 +332,15 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
   void _loadEnrolledDepartments() {
     if (selectedExamDate != null && selectedTimeSlot != null && selectedSubject != null) {
       // Simulate loading departments from exam enrollment data
-      setState(() {
-        enrolledDepartments = [
-          {'name': 'CSE', 'year': 'II Year', 'students': 60},
-          {'name': 'AI & DS', 'year': 'II Year', 'students': 52},
-          {'name': 'IT', 'year': 'II Year', 'students': 48},
-        ];
-      });
+      // Don't call setState here - the outer setState in onChanged will handle the rebuild
+      enrolledDepartments = [
+        {'name': 'CSE', 'year': 'II Year', 'students': 60},
+        {'name': 'AI & DS', 'year': 'II Year', 'students': 52},
+        {'name': 'IT', 'year': 'II Year', 'students': 48},
+      ];
+    } else {
+      // Clear departments if exam session is incomplete
+      enrolledDepartments = [];
     }
   }
 
