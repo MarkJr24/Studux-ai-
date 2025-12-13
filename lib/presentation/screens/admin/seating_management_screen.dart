@@ -11,15 +11,18 @@ class SeatingManagementScreen extends StatefulWidget {
 class _SeatingManagementScreenState extends State<SeatingManagementScreen>
     with TickerProviderStateMixin {
   // State variables
-  String? selectedExamType;
-  String? selectedDepartment;
-  String? selectedExam;
+  String? selectedExamDate;
+  String? selectedTimeSlot;
+  String? selectedSubject;
   String seatingStrategy = 'CIA'; // CIA or Semester
   bool isGenerating = false;
   bool hasGenerated = false;
   List<Map<String, dynamic>> seatingPreview = [];
   List<Map<String, dynamic>> versionHistory = [];
   bool hasConflicts = false;
+  
+  // Auto-loaded departments based on selected exam
+  List<Map<String, dynamic>> enrolledDepartments = [];
   
   // Animation controllers
   late AnimationController _fadeController;
@@ -88,9 +91,9 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
                       const SizedBox(height: 20),
                       
                       // SECTION 3: Exam Session Summary Card
-                      if (selectedExamType != null && selectedDepartment != null && selectedExam != null)
+                      if (selectedExamDate != null && selectedTimeSlot != null && selectedSubject != null)
                         _buildAnimatedSection(1, _buildExamSummaryCard()),
-                      if (selectedExamType != null && selectedDepartment != null && selectedExam != null)
+                      if (selectedExamDate != null && selectedTimeSlot != null && selectedSubject != null)
                         const SizedBox(height: 20),
                       
                       // SECTION 4: Seating Strategy Selection
@@ -277,37 +280,66 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('EXAM SESSION SELECTION', icon: Icons.event),
+          _buildSectionTitle('EXAM SESSION SELECTION', icon: Icons.calendar_today),
           const SizedBox(height: 16),
           
-          // Exam Type Dropdown
+          // Exam Date Dropdown
           _buildGlassDropdown(
-            label: 'Exam Type',
-            value: selectedExamType,
-            items: ['CIA-1', 'CIA-2', 'Semester'],
-            onChanged: (value) => setState(() => selectedExamType = value),
+            label: 'Exam Date',
+            value: selectedExamDate,
+            items: ['12 Sep 2025', '15 Sep 2025', '18 Sep 2025', '22 Sep 2025'],
+            onChanged: (value) {
+              setState(() {
+                selectedExamDate = value;
+                _loadEnrolledDepartments();
+              });
+            },
           ),
           const SizedBox(height: 12),
           
-          // Department Dropdown
+          // Time Slot Dropdown
           _buildGlassDropdown(
-            label: 'Department',
-            value: selectedDepartment,
-            items: ['CSE', 'ECE', 'ME', 'CE'],
-            onChanged: (value) => setState(() => selectedDepartment = value),
+            label: 'Time Slot',
+            value: selectedTimeSlot,
+            items: ['10:00 AM - 12:00 PM', '02:00 PM - 04:00 PM', '09:00 AM - 11:00 AM'],
+            onChanged: (value) {
+              setState(() {
+                selectedTimeSlot = value;
+                _loadEnrolledDepartments();
+              });
+            },
           ),
           const SizedBox(height: 12),
           
-          // Exam Dropdown
+          // Subject / Exam Dropdown
           _buildGlassDropdown(
-            label: 'Exam',
-            value: selectedExam,
-            items: ['Data Structures', 'DBMS', 'Operating Systems', 'Computer Networks'],
-            onChanged: (value) => setState(() => selectedExam = value),
+            label: 'Subject / Exam',
+            value: selectedSubject,
+            items: ['Data Structures', 'Database Management Systems', 'Operating Systems', 'Computer Networks'],
+            onChanged: (value) {
+              setState(() {
+                selectedSubject = value;
+                _loadEnrolledDepartments();
+              });
+            },
           ),
         ],
       ),
     );
+  }
+  
+  // Auto-load departments enrolled in the selected exam
+  void _loadEnrolledDepartments() {
+    if (selectedExamDate != null && selectedTimeSlot != null && selectedSubject != null) {
+      // Simulate loading departments from exam enrollment data
+      setState(() {
+        enrolledDepartments = [
+          {'name': 'CSE', 'year': 'II Year', 'students': 60},
+          {'name': 'AI & DS', 'year': 'II Year', 'students': 52},
+          {'name': 'IT', 'year': 'II Year', 'students': 48},
+        ];
+      });
+    }
   }
 
   // White dropdown
@@ -362,20 +394,63 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
 
   // SECTION 3: Exam Session Summary Card
   Widget _buildExamSummaryCard() {
+    final totalStudents = enrolledDepartments.fold<int>(
+      0, 
+      (sum, dept) => sum + (dept['students'] as int),
+    );
+    
     return _buildGlassContainer(
       glowColor: const Color(0xFF7B2FFF),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('EXAM SESSION SUMMARY', icon: Icons.summarize),
+          _buildSectionTitle('EXAM SESSION SUMMARY', icon: Icons.assignment),
           const SizedBox(height: 16),
-          _buildSummaryRow('Exam Type', selectedExamType ?? '-'),
+          
+          _buildSummaryRow('Subject', selectedSubject ?? '-'),
           const SizedBox(height: 8),
-          _buildSummaryRow('Department', selectedDepartment ?? '-'),
+          _buildSummaryRow('Date & Time', '${selectedExamDate ?? '-'} | ${selectedTimeSlot?.split(' - ')[0] ?? '-'}'),
+          
+          const SizedBox(height: 16),
+          
+          // Departments Section
+          Text(
+            'Departments',
+            style: AppTextStyles.bodyTextBold.copyWith(color: AppColors.secondaryText),
+          ),
           const SizedBox(height: 8),
-          _buildSummaryRow('Exam', selectedExam ?? '-'),
-          const SizedBox(height: 8),
-          _buildSummaryRow('Total Students', '120'),
+          
+          ...enrolledDepartments.map((dept) => Padding(
+            padding: const EdgeInsets.only(left: 12, bottom: 6),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 4,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.generateSeatingAccent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    '${dept['name']} – ${dept['year']} (${dept['students']} students)',
+                    style: AppTextStyles.bodyText,
+                  ),
+                ),
+              ],
+            ),
+          )),
+          
+          const SizedBox(height: 12),
+          Container(
+            height: 1,
+            color: AppColors.dividerLight,
+          ),
+          const SizedBox(height: 12),
+          
+          _buildSummaryRow('Total Students', totalStudents.toString()),
         ],
       ),
     );
@@ -451,23 +526,24 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
 
   // SECTION 5: Seating Rules
   Widget _buildSeatingRules() {
+    final ruleTitle = seatingStrategy == 'CIA' ? 'CIA EXAM RULES' : 'SEMESTER EXAM RULES';
     final rules = seatingStrategy == 'CIA'
         ? [
-            'Students with different exams sit together',
-            'Alternating pattern across rows',
-            'Maximum 2 students per bench',
+            '50 students per hall',
+            '2 students per bench',
+            'Same bench → different exams',
           ]
         : [
-            'Students from different departments alternate',
-            'Same exam students separated by department',
-            'Maximum 2 students per bench',
+            '25 students per hall',
+            '1 student per bench',
+            'Alternate departments across rows',
           ];
     
     return _buildGlassContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('SEATING RULES', icon: Icons.rule),
+          _buildSectionTitle(ruleTitle, icon: Icons.rule),
           const SizedBox(height: 12),
           ...rules.map((rule) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -479,7 +555,7 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
                   height: 6,
                   margin: const EdgeInsets.only(top: 6, right: 10),
                   decoration: BoxDecoration(
-                    color: AppColors.generateAuditAccent,
+                    color: AppColors.generateSeatingAccent,
                     shape: BoxShape.circle,
                   ),
                 ),
