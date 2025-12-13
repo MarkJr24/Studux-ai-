@@ -173,15 +173,15 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.8),
-                  const Color(0xFFFFC0CB).withOpacity(0.6), // Pink tint
-                  const Color(0xFFFFD700).withOpacity(0.7), // Yellow tint
+                  Colors.white.withOpacity(0.95),
+                  const Color(0xFFFFC0CB).withOpacity(0.92), // Pink tint
+                  const Color(0xFFFFD700).withOpacity(0.95), // Yellow tint
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1.5,
+                color: Colors.white.withOpacity(0.8),
+                width: 2,
               ),
               boxShadow: [
                 BoxShadow(
@@ -209,7 +209,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: const Color(0xFF1F2937),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -220,7 +220,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     'Sign in to view your courses and grades',
                     style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: const Color(0xFF6B7280),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -375,7 +375,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           'Remember Me',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.white,
+            color: const Color(0xFF374151),
           ),
         ),
       ],
@@ -404,7 +404,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           'Forgot Password?',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.9),
+            color: const Color(0xFF6B7280),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -420,7 +420,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           'Back to Login Selection',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.7),
+            color: const Color(0xFF9CA3AF),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -598,12 +598,12 @@ class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+          Text(
           widget.text,
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: const Color(0xFF1F2937),
           ),
         ),
         const SizedBox(height: 4),
