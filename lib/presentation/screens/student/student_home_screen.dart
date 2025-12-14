@@ -5,6 +5,7 @@ import 'student_academics_screen.dart';
 import 'student_exams_screen.dart';
 import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
+import 'study_chatbot_screen.dart';
 
 class StudentHomeScreen extends StatefulWidget {
   const StudentHomeScreen({super.key});
@@ -639,7 +640,12 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         Row(
           children: [
             Expanded(
-              child: _buildQuickActionCard('Study Chatbot', Icons.chat, Colors.blue, () {}),
+              child: _buildQuickActionCard('Study Chatbot', Icons.chat, Colors.blue, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StudyChatbotScreen()),
+                );
+              }),
             ),
             const SizedBox(width: 12),
             Expanded(
