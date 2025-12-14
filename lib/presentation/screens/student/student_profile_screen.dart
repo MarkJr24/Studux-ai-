@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
-import 'student_home_screen.dart';
-import 'student_academics_screen.dart';
-import 'student_exams_screen.dart';
-import 'student_alerts_screen.dart';
+import '../auth/student_login_screen.dart';
 import 'student_settings_screen.dart';
 import '../auth/student_login_screen.dart';
 
@@ -77,10 +74,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           _buildSettingsButton(),
           const SizedBox(height: 12),
           _buildLogoutButton(),
-          const SizedBox(height: 80), // Bottom nav spacing
+          const SizedBox(height: 80), // Bottom spacing
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -818,81 +814,6 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home, 'Home', false),
-          _buildNavItem(Icons.school, 'Academics', false),
-          _buildNavItem(Icons.description, 'Exams', false),
-          _buildNavItem(Icons.notifications, 'Alerts', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return GestureDetector(
-      onTap: () {
-        if (isActive) return; // Already on this screen
-        
-        if (label == 'Home') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentHomeScreen()),
-          );
-        } else if (label == 'Academics') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentAcademicsScreen()),
-          );
-        } else if (label == 'Exams') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        } else if (label == 'Alerts') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
-          );
-        }
-        // Academics will be added later
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.blue : Colors.grey,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              color: isActive ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }
