@@ -6,6 +6,12 @@ import 'student_home_screen.dart';
 import 'student_academics_screen.dart';
 import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
+import 'exam_schedule_screen.dart';
+import 'hall_ticket_screen.dart';
+import 'seating_information_screen.dart';
+import 'marks_results_screen.dart';
+import 'exam_guidelines_screen.dart';
+import 'exam_history_screen.dart';
 
 class StudentExamsScreen extends StatefulWidget {
   const StudentExamsScreen({super.key});
@@ -324,9 +330,9 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
           subtitle: 'View upcoming & past exams',
           enabled: true,
           onTap: () {
-            // Navigate to Exam Schedule
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Opening Exam Schedule...')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ExamScheduleScreen()),
             );
           },
         ),
@@ -342,9 +348,9 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
           statusBadge: _hallTicketReleased ? '✅' : '🔒',
           onTap: _hallTicketReleased
               ? () {
-                  // Navigate to Hall Ticket
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening Hall Ticket...')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HallTicketScreen()),
                   );
                 }
               : null,
@@ -361,9 +367,9 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
           statusBadge: _seatingPublished ? '✅' : '🔒',
           onTap: _seatingPublished
               ? () {
-                  // Navigate to Seating Info
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening Seating Information...')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SeatingInformationScreen()),
                   );
                 }
               : null,
@@ -377,9 +383,37 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
           enabled: true,
           badge: _resultsAvailable ? 'New' : null,
           onTap: () {
-            // Navigate to Marks/Results
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Opening Marks/Results...')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MarksResultsScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        _buildActionCard(
+          icon: Icons.info_outline,
+          iconColor: Colors.teal,
+          title: 'Exam Guidelines',
+          subtitle: 'Important exam instructions',
+          enabled: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ExamGuidelinesScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        _buildActionCard(
+          icon: Icons.history,
+          iconColor: Colors.indigo,
+          title: 'Exam History',
+          subtitle: 'View past exam records',
+          enabled: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ExamHistoryScreen()),
             );
           },
         ),
@@ -615,63 +649,167 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'QUICK STATUS (READ-ONLY)',
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
-              letterSpacing: 1.2,
-            ),
+          Row(
+            children: [
+              Text(
+                'QUICK STATUS',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.touch_app,
+                size: 16,
+                color: Colors.grey[600],
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           _buildStatusItem(
-            'Hall Ticket',
-            _hallTicketReleased ? 'Released' : 'Not Released',
-            _hallTicketReleased,
+            icon: Icons.confirmation_number,
+            label: 'Hall Ticket',
+            status: _hallTicketReleased ? 'Released' : 'Not Released',
+            isAvailable: _hallTicketReleased,
+            onTap: () {
+              if (_hallTicketReleased) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HallTicketScreen(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Hall ticket will be available soon',
+                      style: GoogleFonts.inter(),
+                    ),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
+            },
           ),
           const SizedBox(height: 8),
           _buildStatusItem(
-            'Seating',
-            _seatingPublished ? 'Published' : 'Not Available',
-            _seatingPublished,
+            icon: Icons.event_seat,
+            label: 'Seating',
+            status: _seatingPublished ? 'Published' : 'Not Available',
+            isAvailable: _seatingPublished,
+            onTap: () {
+              if (_seatingPublished) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SeatingInformationScreen(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Seating information will be available soon',
+                      style: GoogleFonts.inter(),
+                    ),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
+            },
           ),
           const SizedBox(height: 8),
           _buildStatusItem(
-            'Results',
-            _resultsAvailable ? 'Announced' : 'Not Announced',
-            _resultsAvailable,
+            icon: Icons.assessment,
+            label: 'Results',
+            status: _resultsAvailable ? 'Announced' : 'Not Announced',
+            isAvailable: _resultsAvailable,
+            onTap: () {
+              if (_resultsAvailable) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MarksResultsScreen(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Results will be announced soon',
+                      style: GoogleFonts.inter(),
+                    ),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusItem(String label, String status, bool isAvailable) {
-    return Row(
-      children: [
-        Icon(
-          isAvailable ? Icons.check_circle : Icons.cancel,
-          color: isAvailable ? Colors.green : Colors.red,
-          size: 20,
+  Widget _buildStatusItem({
+    required IconData icon,
+    required String label,
+    required String status,
+    required bool isAvailable,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isAvailable ? Colors.green : Colors.grey,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              isAvailable ? Icons.check_circle : Icons.cancel,
+              color: isAvailable ? Colors.green : Colors.red,
+              size: 16,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Row(
+                children: [
+                  Text(
+                    '$label: ',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    status,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: isAvailable ? Colors.grey[700] : Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isAvailable)
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey[600],
+                size: 20,
+              ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Text(
-          '$label: ',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        Text(
-          status,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
+      ),
     );
   }
 
