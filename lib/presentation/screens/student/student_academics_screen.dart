@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
-import 'student_home_screen.dart';
-import 'student_exams_screen.dart';
-import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
+import 'timetable_screen.dart';
+import 'academic_calendar_screen.dart';
+import 'attendance_screen.dart';
+import 'fees_screen.dart';
+import 'study_materials_screen.dart';
+import 'study_chatbot_screen.dart';
+import 'events_screen.dart';
+import 'request_event_screen.dart';
 
 class StudentAcademicsScreen extends StatefulWidget {
   const StudentAcademicsScreen({super.key});
@@ -220,32 +225,37 @@ class _StudentAcademicsScreenState extends State<StudentAcademicsScreen> {
         ),
         const SizedBox(height: 12),
         _buildAcademicCard('Timetable', Icons.calendar_today, const Color(0xFF42A5F5), () { // Brighter blue
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Timetable...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TimetableScreen()),
           );
         }),
         const SizedBox(height: 12),
         _buildAcademicCard('Academic Calendar', Icons.calendar_month, const Color(0xFFAB47BC), () { // Brighter purple
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Academic Calendar...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AcademicCalendarScreen()),
           );
         }),
         const SizedBox(height: 12),
         _buildAcademicCard('Attendance', Icons.check_circle, const Color(0xFF66BB6A), () { // Brighter green
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Attendance...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AttendanceScreen()),
           );
         }),
         const SizedBox(height: 12),
         _buildAcademicCard('Fees', Icons.account_balance_wallet, const Color(0xFFFFA726), () { // Brighter orange
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Fees...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FeesScreen()),
           );
         }),
         const SizedBox(height: 12),
         _buildAcademicCard('Study Materials', Icons.book, const Color(0xFF26A69A), () { // Brighter teal
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Study Materials...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StudyMaterialsScreen()),
           );
         }),
       ],
@@ -267,8 +277,9 @@ class _StudentAcademicsScreenState extends State<StudentAcademicsScreen> {
         ),
         const SizedBox(height: 12),
         _buildAcademicCard('Study Chatbot (AI)', Icons.chat, Colors.indigo, () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Study Chatbot...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StudyChatbotScreen()),
           );
         }),
       ],
@@ -290,14 +301,16 @@ class _StudentAcademicsScreenState extends State<StudentAcademicsScreen> {
         ),
         const SizedBox(height: 12),
         _buildAcademicCard('View Events', Icons.celebration, Colors.pink, () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Events...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const EventsScreen()),
           );
         }),
         const SizedBox(height: 12),
         _buildAcademicCard('Request Event', Icons.add_circle, Colors.deepPurple, () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Opening Request Event...')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RequestEventScreen()),
           );
         }),
       ],
