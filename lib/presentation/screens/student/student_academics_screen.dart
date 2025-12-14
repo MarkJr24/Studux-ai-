@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
+import 'student_home_screen.dart';
+import 'student_exams_screen.dart';
+import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
 import 'timetable_screen.dart';
 import 'academic_calendar_screen.dart';
@@ -400,17 +403,17 @@ class _StudentAcademicsScreenState extends State<StudentAcademicsScreen> {
         if (label == 'Home') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const StudentHomeScreen()),
+            MaterialPageRoute(builder: (context) => StudentHomeScreen()),
           );
         } else if (label == 'Exams') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
+            MaterialPageRoute(builder: (context) => StudentExamsScreen()),
           );
         } else if (label == 'Alerts') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
+            MaterialPageRoute(builder: (context) => StudentAlertsScreen()),
           );
         }
       },
