@@ -6,6 +6,7 @@ import 'student_exams_screen.dart';
 import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
 import 'study_chatbot_screen.dart';
+import 'academic_calendar_screen.dart';
 
 class StudentHomeScreen extends StatefulWidget {
   const StudentHomeScreen({super.key});
@@ -649,7 +650,12 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildQuickActionCard('Academic Calendar', Icons.calendar_month, Colors.green, () {}),
+              child: _buildQuickActionCard('Academic Calendar', Icons.calendar_month, Colors.green, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AcademicCalendarScreen()),
+                );
+              }),
             ),
           ],
         ),
