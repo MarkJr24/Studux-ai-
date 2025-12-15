@@ -78,8 +78,6 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
           const SizedBox(height: 24),
           _buildExamActions(),
           const SizedBox(height: 24),
-          _buildSupportInformation(),
-          const SizedBox(height: 24),
           _buildQuickStatus(),
           const SizedBox(height: 80), // Bottom nav spacing
         ],
@@ -513,121 +511,6 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
                     Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSupportInformation() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'SUPPORT INFORMATION',
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[600],
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildSupportCard(
-          icon: Icons.info_outline,
-          iconColor: Colors.blue,
-          title: 'Exam Guidelines',
-          subtitle: 'Rules & instructions',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Opening Exam Guidelines...')),
-            );
-          },
-        ),
-        const SizedBox(height: 12),
-        _buildSupportCard(
-          icon: Icons.history,
-          iconColor: Colors.grey,
-          title: 'Exam History',
-          subtitle: 'View past exams',
-          badge: 'Optional',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Opening Exam History...')),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSupportCard({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    String? badge,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(icon, color: iconColor, size: 20),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.inter(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (badge != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      badge,
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ),
-                const SizedBox(width: 8),
-                Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[400]),
-              ],
             ),
           ),
         ),
