@@ -444,7 +444,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             const Spacer(),
             TextButton(
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
                 );
@@ -475,7 +475,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
           );
