@@ -34,28 +34,16 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF9C27B0).withOpacity(0.15),
-              const Color(0xFFE91E63).withOpacity(0.05),
-              Colors.white,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildAppBar(),
-              _buildTabBar(),
-              Expanded(
-                child: _buildAttendanceInsightsTab(),
-              ),
-            ],
-          ),
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildAppBar(),
+            _buildTabBar(),
+            Expanded(
+              child: _buildAttendanceInsightsTab(),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),

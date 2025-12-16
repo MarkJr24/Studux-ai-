@@ -37,28 +37,16 @@ class _ClassAttendanceScreenState extends State<ClassAttendanceScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF9C27B0).withOpacity(0.1),
-              const Color(0xFF673AB7).withOpacity(0.05),
-              Colors.white,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildAppBar(),
-              _buildTabBar(),
-              Expanded(
-                child: _buildAttendanceTab(),
-              ),
-            ],
-          ),
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildAppBar(),
+            _buildTabBar(),
+            Expanded(
+              child: _buildAttendanceTab(),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),
