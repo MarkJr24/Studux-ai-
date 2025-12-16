@@ -851,7 +851,7 @@ class _RecentActivityTile extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: activity.accentColor.withValues(alpha: 0.1),
+                    color: activity.accentColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

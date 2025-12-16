@@ -15,7 +15,8 @@ class TeacherLoginScreen extends StatefulWidget {
   State<TeacherLoginScreen> createState() => _TeacherLoginScreenState();
 }
 
-class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
+class _TeacherLoginScreenState extends State<TeacherLoginScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -23,13 +24,98 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
   bool _rememberMe = false;
   bool _isLoading = false;
   bool _showSuccess = false;
+  
+  // Animation controllers
+  late AnimationController _entranceController;
+  late AnimationController _successController;
+  late Animation<double> _cardFadeAnimation;
+  late Animation<Offset> _cardSlideAnimation;
+  late Animation<double> _headerFadeAnimation;
+  late Animation<double> _fieldsFadeAnimation;
+  late Animation<double> _buttonFadeAnimation;
+  late Animation<double> _checkmarkAnimation;
 
   // Hardcoded credentials
   static const String _validEmail = 'teacher@studentms.com';
   static const String _validPassword = 'Teacher@123';
 
   @override
+  void initState() {
+    super.initState();
+    
+    // Initialize entrance animation (elegant glide + staggered reveal)
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    
+    // Card glide up and fade in
+    _cardFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+    
+    _cardSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+    
+    // Staggered reveal: Header appears after card
+    _headerFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.2, 0.7, curve: Curves.easeOut),
+      ),
+    );
+    
+    // Input fields appear after header
+    _fieldsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
+      ),
+    );
+    
+    // Button appears last
+    _buttonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
+      ),
+    );
+    
+    // Initialize success animation controller (grading checkmark)
+    _successController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    
+    _checkmarkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _successController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    
+    // Start entrance animation after brief delay
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) {
+        _entranceController.forward();
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    _entranceController.dispose();
+    _successController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -84,33 +170,17 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Login Screen Background Image
+          // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/login_screen.png',
+              'assets/images/teacher_login_bg.png',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                // If no image found, show a subtle gradient background
+                // Fallback to solid color if image not found
                 return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white,
-                        Colors.blue.shade50,
-                      ],
-                    ),
-                  ),
+                  color: const Color(0xFFF7F8FA),
                 );
               },
-            ),
-          ),
-          
-          // Semi-transparent White Overlay for Readability
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withOpacity(0.25),
             ),
           ),
           
@@ -152,8 +222,13 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
             ),
           ),
           const SizedBox(width: 16),
-          _AnimatedHeaderText(
-            text: 'Teacher Login',
+          Text(
+            'Teacher Login',
+            style: GoogleFonts.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF1F2937),
+            ),
           ),
         ],
       ),
@@ -161,49 +236,38 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
   }
 
   Widget _buildLoginCard() {
-    return _FloatingCard(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.95),
-                  const Color(0xFF3B82F6).withOpacity(0.92), // Blue tint
-                  const Color(0xFF60A5FA).withOpacity(0.95), // Light blue tint
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.8),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF3B82F6).withOpacity(0.2), // Blue glow
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                  spreadRadius: 5,
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: Form(
-              key: _formKey,
+    return FadeTransition(
+      opacity: _cardFadeAnimation,
+      child: SlideTransition(
+        position: _cardSlideAnimation,
+        child: Container(
+      constraints: const BoxConstraints(maxWidth: 400),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(32),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title - Staggered reveal (appears after card)
+            FadeTransition(
+              opacity: _headerFadeAnimation,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Title
                   Text(
                     'Welcome Back, Teacher',
                     style: GoogleFonts.inter(
@@ -224,9 +288,17 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                ],
+              ),
+            ),
 
-                  const SizedBox(height: 22),
+            const SizedBox(height: 24),
 
+            // Input Fields - Staggered reveal (appear after header)
+            FadeTransition(
+              opacity: _fieldsFadeAnimation,
+              child: Column(
+                children: [
                   // Email Field
                   _buildEmailField(),
 
@@ -239,25 +311,30 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
                   // Remember Me
                   _buildRememberMe(),
-
-                  const SizedBox(height: 24),
-
-                  // Login Button
-                  _buildLoginButton(),
-
-                  const SizedBox(height: 20),
-
-                  // Forgot Password
-                  _buildForgotPassword(),
-
-                  const SizedBox(height: 18),
-
-                  // Back to Role Selection
-                  _buildBackToRoleSelection(),
                 ],
               ),
             ),
-          ),
+
+            const SizedBox(height: 24),
+
+            // Login Button - Staggered reveal (appears last)
+            FadeTransition(
+              opacity: _buttonFadeAnimation,
+              child: _buildLoginButton(),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Forgot Password
+            _buildForgotPassword(),
+
+            const SizedBox(height: 18),
+
+            // Back to Role Selection
+            _buildBackToRoleSelection(),
+          ],
+        ),
+      ),
         ),
       ),
     );
@@ -268,16 +345,22 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: Validators.validateEmail,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: const Color(0xFF1F2937),
+      ),
       decoration: InputDecoration(
         hintText: 'teacher@studentms.com',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF9CA3AF),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.school_outlined),
+        prefixIcon: const Icon(
+          Icons.school_outlined,
+          color: Color(0xFF6B7280),
+        ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -288,7 +371,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFFB923C), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF1F2937), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -311,17 +394,24 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: Validators.validatePassword,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: const Color(0xFF1F2937),
+      ),
       decoration: InputDecoration(
         hintText: 'Teacher@123',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF9CA3AF),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIcon: const Icon(
+          Icons.lock_outline,
+          color: Color(0xFF6B7280),
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            color: const Color(0xFF6B7280),
           ),
           onPressed: () {
             setState(() {
@@ -330,7 +420,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
           },
         ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -341,7 +431,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFFB923C), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF1F2937), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -369,7 +459,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
               _rememberMe = value ?? false;
             });
           },
-          activeColor: const Color(0xFFFB923C),
+          activeColor: const Color(0xFF1F2937),
         ),
         Text(
           'Remember Me',
@@ -383,10 +473,43 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
   }
 
   Widget _buildLoginButton() {
-    return _NeonButton(
-      onTap: _isLoading ? null : _handleLogin,
-      isLoading: _isLoading,
-      showSuccess: _showSuccess,
+    return SizedBox(
+      height: 56,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _handleLogin,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1F2937),
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.grey[300],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : _showSuccess
+                ? const Icon(
+                    Icons.check_circle,
+                    color: Colors.white,
+                    size: 28,
+                  )
+                : Text(
+                    'Sign In as Teacher',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+      ),
     );
   }
 
@@ -428,342 +551,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// Floating Card Animation Widget
-class _FloatingCard extends StatefulWidget {
-  final Widget child;
-
-  const _FloatingCard({required this.child});
-
-  @override
-  State<_FloatingCard> createState() => _FloatingCardState();
-}
-
-class _FloatingCardState extends State<_FloatingCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 7),
-    );
-
-    _animation = Tween<double>(begin: 0, end: 3).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, -_animation.value),
-          child: child,
-        );
-      },
-      child: widget.child,
-    );
-  }
-}
-
-// Parallax Background with Blue Abstract Image
-class _ParallaxBackground extends StatefulWidget {
-  const _ParallaxBackground();
-
-  @override
-  State<_ParallaxBackground> createState() => _ParallaxBackgroundState();
-}
-
-class _ParallaxBackgroundState extends State<_ParallaxBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 18),
-    );
-
-    _animation = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0.002, 0.002), // Very subtle 2px drift
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(
-            _animation.value.dx * MediaQuery.of(context).size.width,
-            _animation.value.dy * MediaQuery.of(context).size.height,
-          ),
-          child: child,
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/teacher_login_bg.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Animated Header Text with Underline
-class _AnimatedHeaderText extends StatefulWidget {
-  final String text;
-
-  const _AnimatedHeaderText({required this.text});
-
-  @override
-  State<_AnimatedHeaderText> createState() => _AnimatedHeaderTextState();
-}
-
-class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-
-    // Start animation after a short delay
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        _controller.forward();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-          Text(
-          widget.text,
-          style: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1F2937),
-          ),
-        ),
-        const SizedBox(height: 4),
-        AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Container(
-              height: 2,
-              width: 100 * _animation.value,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF60A5FA), // Light blue
-                    Color(0xFF3B82F6), // Blue
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(1),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-// Neon Button with Success Animation
-class _NeonButton extends StatefulWidget {
-  final VoidCallback? onTap;
-  final bool isLoading;
-  final bool showSuccess;
-
-  const _NeonButton({
-    required this.onTap,
-    required this.isLoading,
-    required this.showSuccess,
-  });
-
-  @override
-  State<_NeonButton> createState() => _NeonButtonState();
-}
-
-class _NeonButtonState extends State<_NeonButton>
-    with SingleTickerProviderStateMixin {
-  bool _isPressed = false;
-  late AnimationController _successController;
-  late Animation<double> _successAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _successController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
-
-    _successAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 0.8),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.8, end: 1.2),
-        weight: 25,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.2, end: 1.0),
-        weight: 25,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _successController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void didUpdateWidget(_NeonButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.showSuccess && !oldWidget.showSuccess) {
-      _successController.forward(from: 0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _successController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scale = _isPressed ? 1.03 : 1.0;
-
-    return AnimatedBuilder(
-      animation: _successAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: widget.showSuccess ? _successAnimation.value : scale,
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              gradient: const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color(0xFFF97316), // orange-500
-                  Color(0xFFCA8A04), // yellow-600
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFF97316).withOpacity(_isPressed ? 0.5 : 0.3),
-                  blurRadius: _isPressed ? 20 : 15,
-                  offset: const Offset(0, 8),
-                  spreadRadius: _isPressed ? 2 : 0,
-                ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: widget.onTap,
-                onTapDown: (_) => setState(() => _isPressed = true),
-                onTapUp: (_) => setState(() => _isPressed = false),
-                onTapCancel: () => setState(() => _isPressed = false),
-                borderRadius: BorderRadius.circular(12),
-                child: Center(
-                  child: widget.isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : widget.showSuccess
-                          ? const Icon(
-                              Icons.check_circle,
-                              color: Colors.white,
-                              size: 28,
-                            )
-                          : Text(
-                              'Sign In as Teacher',
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

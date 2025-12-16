@@ -30,27 +30,16 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.blue.withOpacity(0.1),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              _buildTabBar(),
-              Expanded(
-                child: _buildTabContent(),
-              ),
-            ],
-          ),
+      backgroundColor: const Color(0xFFF7F8FA),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            _buildTabBar(),
+            Expanded(
+              child: _buildTabContent(),
+            ),
+          ],
         ),
       ),
     );
@@ -86,20 +75,43 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
   }
 
   Widget _buildTabBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: AnimatedTabSelector(
-        tabs: const ['Attendance', 'Students', 'Materials', 'Class Info'],
-        selectedIndex: _selectedTabIndex,
-        onTabSelected: (index) {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        activeGradient: const [
-          Color(0xFF1976D2),
-          Color(0xFF00BCD4),
-        ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Row(
+        children: List.generate(4, (index) {
+          final tabs = ['Attendance', 'Students', 'Materials', 'Class Info'];
+          final isSelected = _selectedTabIndex == index;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTabIndex = index;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFF2196F3) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  tabs[index],
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -134,9 +146,19 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          GlassmorphicContainer(
-            blur: 15,
-            opacity: 0.1,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -161,23 +183,39 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          NeonGlowButton(
-            label: 'Submit Attendance',
-            onTap: () {
-              setState(() {
-                _attendanceSubmitted = true;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Attendance submitted successfully'),
-                  backgroundColor: Colors.green,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _attendanceSubmitted ? null : () {
+                setState(() {
+                  _attendanceSubmitted = true;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Attendance submitted successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2196F3),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            gradientColors: const [Color(0xFF1976D2), Color(0xFF00BCD4)],
-            icon: Icons.send,
-            enabled: !_attendanceSubmitted,
-            isLocked: _attendanceSubmitted,
+                elevation: 2,
+              ),
+              icon: const Icon(Icons.send),
+              label: Text(
+                'Submit Attendance',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -199,9 +237,19 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          GlassmorphicContainer(
-            blur: 15,
-            opacity: 0.1,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -228,10 +276,10 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.grey[200]!,
         ),
       ),
       child: Row(
@@ -263,15 +311,8 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             width: 60,
             height: 6,
             decoration: BoxDecoration(
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(3),
-              gradient: LinearGradient(
-                colors: [
-                  percentage >= 75 ? Colors.green : Colors.amber,
-                  percentage >= 75
-                      ? Colors.green.shade300
-                      : Colors.amber.shade300,
-                ],
-              ),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -292,14 +333,6 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
                   ? Colors.green.withOpacity(0.2)
                   : Colors.amber.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: isEligible
-                      ? Colors.green.withOpacity(0.3)
-                      : Colors.amber.withOpacity(0.3),
-                  blurRadius: 8,
-                ),
-              ],
             ),
             child: Text(
               isEligible ? 'Eligible' : 'At Risk',
@@ -332,15 +365,32 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          NeonGlowButton(
-            label: 'Upload Material',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Upload functionality')),
-              );
-            },
-            gradientColors: const [Color(0xFF8E24AA), Color(0xFFEC407A)],
-            icon: Icons.upload_file,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Upload functionality')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8E24AA),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
+              icon: const Icon(Icons.upload_file),
+              label: Text(
+                'Upload Material',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 20),
           _buildMaterialCard('Lecture Notes - Week 1', 'PDF • 2.4 MB'),
@@ -354,54 +404,63 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
   }
 
   Widget _buildMaterialCard(String title, String details) {
-    return _ShimmeringCard(
-      child: GlassmorphicContainer(
-        blur: 15,
-        opacity: 0.1,
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color(0xFF8E24AA).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(
-                Icons.description,
-                color: Color(0xFF8E24AA),
-              ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFF8E24AA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    details,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.download,
+            child: const Icon(
+              Icons.description,
               color: Color(0xFF8E24AA),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  details,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.download,
+            color: Color(0xFF8E24AA),
+          ),
+        ],
       ),
     );
   }
@@ -421,21 +480,29 @@ class _ClassWorkspaceScreenState extends State<ClassWorkspaceScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _SweepingGlassPanel(
-            child: GlassmorphicContainer(
-              blur: 15,
-              opacity: 0.1,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  _buildInfoRow('Course Code', 'CSE301'),
-                  _buildInfoRow('Department', 'Computer Science'),
-                  _buildInfoRow('Semester', '3rd Semester'),
-                  _buildInfoRow('Total Students', '45'),
-                  _buildInfoRow('Credits', '4'),
-                  _buildInfoRow('Room', 'Lab 301'),
-                ],
-              ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                _buildInfoRow('Course Code', 'CSE301'),
+                _buildInfoRow('Department', 'Computer Science'),
+                _buildInfoRow('Semester', '3rd Semester'),
+                _buildInfoRow('Total Students', '45'),
+                _buildInfoRow('Credits', '4'),
+                _buildInfoRow('Room', 'Lab 301'),
+              ],
             ),
           ),
         ],
@@ -516,7 +583,7 @@ class _AttendanceRowState extends State<_AttendanceRow>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: widget.isPresent
@@ -583,15 +650,6 @@ class _AttendanceRowState extends State<_AttendanceRow>
                 ? (isPresent ? Colors.green : Colors.red)
                 : Colors.grey.withOpacity(0.3),
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: (isPresent ? Colors.green : Colors.red)
-                        .withOpacity(0.3),
-                    blurRadius: 8,
-                  ),
-                ]
-              : [],
         ),
         child: Text(
           label,

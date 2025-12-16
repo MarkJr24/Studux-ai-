@@ -506,7 +506,7 @@ class _DashboardTile extends StatelessWidget {
       child: Container(
         decoration: TeacherDecorations.tintedCard(
           backgroundColor: backgroundColor,
-          borderColor: accentColor.withValues(alpha: 0.3),
+          borderColor: accentColor.withOpacity(0.3),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),

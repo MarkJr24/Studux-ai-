@@ -432,7 +432,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
       decoration: BoxDecoration(
         color: AppColors.errorBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.errorColor.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.errorColor.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

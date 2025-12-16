@@ -158,7 +158,7 @@ class _TeacherAlertsScreenState extends State<TeacherAlertsScreen> {
                 decoration: BoxDecoration(
                   color: TeacherColors.infoBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: TeacherColors.infoDark.withValues(alpha: 0.3)),
+                  border: Border.all(color: TeacherColors.infoDark.withOpacity(0.3)),
                 ),
                 child: Center(
                   child: Text(
@@ -186,7 +186,7 @@ class _TeacherAlertsScreenState extends State<TeacherAlertsScreen> {
                 decoration: BoxDecoration(
                   color: TeacherColors.errorBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: TeacherColors.errorDark.withValues(alpha: 0.3)),
+                  border: Border.all(color: TeacherColors.errorDark.withOpacity(0.3)),
                 ),
                 child: Center(
                   child: Text(

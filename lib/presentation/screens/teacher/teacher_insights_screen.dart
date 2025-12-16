@@ -39,27 +39,16 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.purple.withOpacity(0.1),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              _buildInternalTabBar(),
-              Expanded(
-                child: _buildTabContent(),
-              ),
-            ],
-          ),
+      backgroundColor: const Color(0xFFF7F8FA),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            _buildInternalTabBar(),
+            Expanded(
+              child: _buildTabContent(),
+            ),
+          ],
         ),
       ),
     );
@@ -85,20 +74,12 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [
-                        Color(0xFF8E24AA),
-                        Color(0xFFEC407A),
-                      ],
-                    ).createShader(bounds),
-                    child: Text(
-                      'Insights',
-                      style: GoogleFonts.inter(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  child: Text(
+                    'Insights',
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF8E24AA),
                     ),
                   ),
                 ),
@@ -121,20 +102,43 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
   }
 
   Widget _buildInternalTabBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: AnimatedTabSelector(
-        tabs: const ['Attendance Insights', 'Performance Insights', 'At-Risk Students'],
-        selectedIndex: _selectedTabIndex,
-        onTabSelected: (index) {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        activeGradient: const [
-          Color(0xFF8E24AA),
-          Color(0xFFEC407A),
-        ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Row(
+        children: List.generate(3, (index) {
+          final tabs = ['Attendance Insights', 'Performance Insights', 'At-Risk Students'];
+          final isSelected = _selectedTabIndex == index;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTabIndex = index;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFF8E24AA) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  tabs[index],
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -167,64 +171,80 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
             ),
           ),
           const SizedBox(height: 16),
-          _FloatingAnalyticsCard(
-            child: GlassmorphicContainer(
-              blur: 15,
-              opacity: 0.1,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Overall Attendance Rate',
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Overall Attendance Rate',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    '87%',
                     style: GoogleFonts.inter(
-                      fontSize: 16,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: Colors.green,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: Text(
-                      '87%',
-                      style: GoogleFonts.inter(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildProgressBar('Present', 87, Colors.green),
-                  const SizedBox(height: 12),
-                  _buildProgressBar('Absent', 13, Colors.red),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                _buildProgressBar('Present', 87, Colors.green),
+                const SizedBox(height: 12),
+                _buildProgressBar('Absent', 13, Colors.red),
+              ],
             ),
           ),
           const SizedBox(height: 16),
-          _FloatingAnalyticsCard(
-            child: GlassmorphicContainer(
-              blur: 15,
-              opacity: 0.1,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Class-wise Breakdown',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Class-wise Breakdown',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
-                  const SizedBox(height: 16),
-                  _buildClassAttendance('Data Structures', 92),
-                  _buildClassAttendance('Operating Systems', 85),
-                  _buildClassAttendance('DBMS', 84),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                _buildClassAttendance('Data Structures', 92),
+                _buildClassAttendance('Operating Systems', 85),
+                _buildClassAttendance('DBMS', 84),
+              ],
             ),
           ),
         ],
@@ -250,7 +270,7 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
           Row(
             children: [
               Expanded(
-                child: _PulsingMetricCard(
+                child: _buildMetricCard(
                   title: 'Avg Score',
                   value: '78%',
                   color: Colors.blue,
@@ -258,7 +278,7 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _PulsingMetricCard(
+                child: _buildMetricCard(
                   title: 'Pass Rate',
                   value: '92%',
                   color: Colors.green,
@@ -267,30 +287,38 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _FloatingAnalyticsCard(
-            child: GlassmorphicContainer(
-              blur: 15,
-              opacity: 0.1,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Grade Distribution',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Grade Distribution',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
-                  const SizedBox(height: 16),
-                  _buildGradeBar('A+', 15, Colors.green),
-                  _buildGradeBar('A', 20, Colors.lightGreen),
-                  _buildGradeBar('B', 25, Colors.blue),
-                  _buildGradeBar('C', 20, Colors.orange),
-                  _buildGradeBar('F', 10, Colors.red),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                _buildGradeBar('A+', 15, Colors.green),
+                _buildGradeBar('A', 20, Colors.lightGreen),
+                _buildGradeBar('B', 25, Colors.blue),
+                _buildGradeBar('C', 20, Colors.orange),
+                _buildGradeBar('F', 10, Colors.red),
+              ],
             ),
           ),
         ],
@@ -313,9 +341,19 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
             ),
           ),
           const SizedBox(height: 16),
-          GlassmorphicContainer(
-            blur: 15,
-            opacity: 0.1,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -358,9 +396,7 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [color, color.withOpacity(0.6)],
-                    ),
+                    color: color,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -386,8 +422,9 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[200]!),
       ),
       child: Row(
         children: [
@@ -445,9 +482,7 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
                   child: Container(
                     height: 24,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [color, color.withOpacity(0.6)],
-                      ),
+                      color: color,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -484,260 +519,103 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
       riskColor = Colors.green;
     }
 
-    return _PulsingRiskRow(
-      riskLevel: riskLevel,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: riskColor.withOpacity(0.3),
-          ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: riskColor.withOpacity(0.3),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
-                  Text(
-                    rollNo,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: riskColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '$riskLevel Risk',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: riskLevel == 'High'
-                      ? const Color(0xFFC62828)
-                      : riskLevel == 'Medium'
-                          ? const Color(0xFFF57F17)
-                          : const Color(0xFF2E7D32),
                 ),
+                Text(
+                  rollNo,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: riskColor.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '$riskLevel Risk',
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: riskLevel == 'High'
+                    ? const Color(0xFFC62828)
+                    : riskLevel == 'Medium'
+                        ? const Color(0xFFF57F17)
+                        : const Color(0xFF2E7D32),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-}
 
-/// Floating analytics card with gentle animation
-class _FloatingAnalyticsCard extends StatefulWidget {
-  final Widget child;
-
-  const _FloatingAnalyticsCard({required this.child});
-
-  @override
-  State<_FloatingAnalyticsCard> createState() => _FloatingAnalyticsCardState();
-}
-
-class _FloatingAnalyticsCardState extends State<_FloatingAnalyticsCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 7),
-    );
-    _animation = Tween<double>(begin: 0.0, end: 2.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, _) {
-        return Transform.translate(
-          offset: Offset(0, _animation.value),
-          child: widget.child,
-        );
-      },
-    );
-  }
-}
-
-/// Pulsing metric card
-class _PulsingMetricCard extends StatefulWidget {
-  final String title;
-  final String value;
-  final Color color;
-
-  const _PulsingMetricCard({
-    required this.title,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  State<_PulsingMetricCard> createState() => _PulsingMetricCardState();
-}
-
-class _PulsingMetricCardState extends State<_PulsingMetricCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _animation = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, _) {
-        return GlassmorphicContainer(
-          blur: 15,
-          opacity: 0.1,
-          padding: const EdgeInsets.all(20),
-          boxShadow: [
-            BoxShadow(
-              color: widget.color.withOpacity(_animation.value * 0.3),
-              blurRadius: 15,
-              spreadRadius: 2,
+  Widget _buildMetricCard({
+    required String title,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: AppColors.textSecondary,
             ),
-          ],
-          child: Column(
-            children: [
-              Text(
-                widget.title,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.value,
-                style: GoogleFonts.inter(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: widget.color,
-                ),
-              ),
-            ],
           ),
-        );
-      },
-    );
-  }
-}
-
-/// Pulsing risk row
-class _PulsingRiskRow extends StatefulWidget {
-  final Widget child;
-  final String riskLevel;
-
-  const _PulsingRiskRow({
-    required this.child,
-    required this.riskLevel,
-  });
-
-  @override
-  State<_PulsingRiskRow> createState() => _PulsingRiskRowState();
-}
-
-class _PulsingRiskRowState extends State<_PulsingRiskRow>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-    _animation = Tween<double>(begin: 0.3, end: 0.8).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    if (widget.riskLevel == 'High') {
-      _controller.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.riskLevel != 'High') {
-      return widget.child;
-    }
-
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, _) {
-        return Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.red.withOpacity(_animation.value * 0.4),
-                blurRadius: 12,
-                spreadRadius: 2,
-              ),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
-          child: widget.child,
-        );
-      },
+        ],
+      ),
     );
   }
 }

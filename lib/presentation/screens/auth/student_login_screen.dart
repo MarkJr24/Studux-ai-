@@ -15,7 +15,8 @@ class StudentLoginScreen extends StatefulWidget {
   State<StudentLoginScreen> createState() => _StudentLoginScreenState();
 }
 
-class _StudentLoginScreenState extends State<StudentLoginScreen> {
+class _StudentLoginScreenState extends State<StudentLoginScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -23,13 +24,54 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
   bool _rememberMe = false;
   bool _isLoading = false;
   bool _showSuccess = false;
+  
+  // Animation controllers
+  late AnimationController _entryAnimationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   // Hardcoded credentials
   static const String _validEmail = 'student@studentms.com';
   static const String _validPassword = 'Student@123';
 
   @override
+  void initState() {
+    super.initState();
+    
+    // Initialize entry animation
+    _entryAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entryAnimationController,
+        curve: Curves.easeOut,
+      ),
+    );
+    
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.05),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _entryAnimationController,
+        curve: Curves.easeOut,
+      ),
+    );
+    
+    // Start entry animation after a brief delay
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        _entryAnimationController.forward();
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    _entryAnimationController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -162,39 +204,42 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
   }
 
   Widget _buildLoginCard() {
-    return _FloatingCard(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: _FloatingCard(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.95),
-                  const Color(0xFFFFC0CB).withOpacity(0.92), // Pink tint
-                  const Color(0xFFFFD700).withOpacity(0.95), // Yellow tint
+                  const Color(0xFF4FACFE).withOpacity(0.75), // Softer blue with transparency
+                  const Color(0xFF00F2FE).withOpacity(0.80), // Softer cyan with transparency
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.white.withOpacity(0.8),
-                width: 2,
+                color: Colors.white.withOpacity(0.3),
+                width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFFC0CB).withOpacity(0.2), // Pink glow
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                  spreadRadius: 5,
+                  color: const Color(0xFF4FACFE).withOpacity(0.1), // Very subtle glow
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                  spreadRadius: 0,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -210,7 +255,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1F2937),
+                      color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -221,7 +266,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     'Sign in to view your courses and grades',
                     style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: const Color(0xFF6B7280),
+                      color: Colors.black87,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -261,6 +306,8 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           ),
         ),
       ),
+      ),
+      ),
     );
   }
 
@@ -269,16 +316,22 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: Validators.validateEmail,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'student@studentms.com',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.person_outline),
+        prefixIcon: const Icon(
+          Icons.person_outline,
+          color: Color(0xFF9CA3AF),
+        ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -312,17 +365,24 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: Validators.validatePassword,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'Student@123',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIcon: const Icon(
+          Icons.lock_outline,
+          color: Color(0xFF9CA3AF),
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            color: const Color(0xFF9CA3AF),
           ),
           onPressed: () {
             setState(() {
@@ -331,7 +391,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           },
         ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -370,13 +430,14 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
               _rememberMe = value ?? false;
             });
           },
-          activeColor: const Color(0xFF60A5FA),
+          activeColor: Colors.black,
+          checkColor: Colors.white,
         ),
         Text(
           'Remember Me',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: const Color(0xFF374151),
+            color: Colors.black,
           ),
         ),
       ],
@@ -408,7 +469,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           'Forgot Password?',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: const Color(0xFF6B7280),
+            color: Colors.black87,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -424,7 +485,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
           'Back to Login Selection',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: const Color(0xFF9CA3AF),
+            color: Colors.black54,
             fontWeight: FontWeight.w500,
           ),
         ),

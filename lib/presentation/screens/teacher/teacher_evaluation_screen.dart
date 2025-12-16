@@ -72,27 +72,16 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.orange.withOpacity(0.1),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              _buildInternalTabBar(),
-              Expanded(
-                child: _buildTabContent(),
-              ),
-            ],
-          ),
+      backgroundColor: const Color(0xFFF7F8FA),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            _buildInternalTabBar(),
+            Expanded(
+              child: _buildTabContent(),
+            ),
+          ],
         ),
       ),
     );
@@ -118,20 +107,12 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [
-                        Color(0xFFF97316),
-                        Color(0xFFCA8A04),
-                      ],
-                    ).createShader(bounds),
-                    child: Text(
-                      'Evaluation',
-                      style: GoogleFonts.inter(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  child: Text(
+                    'Evaluation',
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFF97316),
                     ),
                   ),
                 ),
@@ -154,20 +135,43 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
   }
 
   Widget _buildInternalTabBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: AnimatedTabSelector(
-        tabs: const ['CIA Evaluation', 'Semester Evaluation', 'Submission Status'],
-        selectedIndex: _selectedTabIndex,
-        onTabSelected: (index) {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        activeGradient: const [
-          Color(0xFFF97316),
-          Color(0xFFCA8A04),
-        ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Row(
+        children: List.generate(3, (index) {
+          final tabs = ['CIA Evaluation', 'Semester Evaluation', 'Submission Status'];
+          final isSelected = _selectedTabIndex == index;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTabIndex = index;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFFF97316) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  tabs[index],
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -200,9 +204,19 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
             ),
           ),
           const SizedBox(height: 16),
-          GlassmorphicContainer(
-            blur: 15,
-            opacity: 0.1,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -219,23 +233,39 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
             ),
           ),
           const SizedBox(height: 24),
-          NeonGlowButton(
-            label: 'Submit to Admin',
-            onTap: () {
-              setState(() {
-                _ciaSubmitted = true;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('CIA marks submitted successfully'),
-                  backgroundColor: Colors.green,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _ciaSubmitted ? null : () {
+                setState(() {
+                  _ciaSubmitted = true;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('CIA marks submitted successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF97316),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            gradientColors: const [Color(0xFFF97316), Color(0xFFCA8A04)],
-            icon: Icons.send,
-            enabled: !_ciaSubmitted,
-            isLocked: _ciaSubmitted,
+                elevation: 2,
+              ),
+              icon: const Icon(Icons.send),
+              label: Text(
+                'Submit to Admin',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -265,9 +295,19 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
             ],
           ),
           const SizedBox(height: 16),
-          GlassmorphicContainer(
-            blur: 15,
-            opacity: 0.1,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -284,23 +324,39 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
             ),
           ),
           const SizedBox(height: 24),
-          NeonGlowButton(
-            label: 'Submit to Admin',
-            onTap: () {
-              setState(() {
-                _semesterSubmitted = true;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Semester marks submitted successfully'),
-                  backgroundColor: Colors.green,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _semesterSubmitted ? null : () {
+                setState(() {
+                  _semesterSubmitted = true;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Semester marks submitted successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF97316),
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            gradientColors: const [Color(0xFFF97316), Color(0xFFCA8A04)],
-            icon: Icons.send,
-            enabled: !_semesterSubmitted,
-            isLocked: _semesterSubmitted,
+                elevation: 2,
+              ),
+              icon: const Icon(Icons.send),
+              label: Text(
+                'Submit to Admin',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -315,31 +371,14 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
           _evaluationType = label;
         });
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          gradient: isSelected
-              ? const LinearGradient(
-                  colors: [Color(0xFFF97316), Color(0xFFCA8A04)],
-                )
-              : null,
-          color: isSelected ? null : Colors.white.withOpacity(0.05),
+          color: isSelected ? const Color(0xFFF97316) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? Colors.transparent
-                : Colors.white.withOpacity(0.2),
+            color: isSelected ? const Color(0xFFF97316) : Colors.grey[300]!,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFFF97316).withOpacity(0.4),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : [],
         ),
         child: Text(
           label,
@@ -396,97 +435,104 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: GlassmorphicContainer(
-        blur: 15,
-        opacity: 0.1,
-        padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: statusColor.withOpacity(0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withOpacity(0.2),
-            blurRadius: 12,
-            spreadRadius: 2,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  exam,
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                exam,
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
                   style: GoogleFonts.inter(
-                    fontSize: 16,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: status == 'Approved' 
+                        ? const Color(0xFF2E7D32)
+                        : status == 'Pending'
+                            ? const Color(0xFFF57F17)
+                            : const Color(0xFFC62828),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: statusColor.withOpacity(0.3),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    status,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: status == 'Approved' 
-                          ? const Color(0xFF2E7D32)
-                          : status == 'Pending'
-                              ? const Color(0xFFF57F17)
-                              : const Color(0xFFC62828),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subject,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Submitted on $date',
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            if (status == 'Rejected') ...[
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: NeonGlowButton(
-                  label: 'Edit',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Edit functionality')),
-                    );
-                  },
-                  gradientColors: const [Color(0xFFF97316), Color(0xFFCA8A04)],
-                  icon: Icons.edit,
-                  height: 40,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subject,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Submitted on $date',
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          if (status == 'Rejected') ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Edit functionality')),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF97316),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 2,
+                ),
+                icon: const Icon(Icons.edit, size: 18),
+                label: Text(
+                  'Edit',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -495,7 +541,7 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: const Color(0xFFF97316).withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -549,10 +595,10 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.grey[50],
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.grey[200]!,
         ),
       ),
       child: Row(

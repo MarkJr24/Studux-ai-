@@ -692,7 +692,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
   void _showLogoutDialog() {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

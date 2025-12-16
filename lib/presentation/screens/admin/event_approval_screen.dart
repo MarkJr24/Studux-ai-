@@ -376,7 +376,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                 color: AppColors.warningBg,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.warningColor.withValues(alpha: 0.3),
+                  color: AppColors.warningColor.withOpacity(0.3),
                   width: 1,
                 ),
               ),
