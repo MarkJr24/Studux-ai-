@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'teacher_design_system.dart';
+import 'today_exam_duty_screen.dart';
+import 'reporting_details_screen.dart';
+import 'upcoming_invigilation_screen.dart';
+import 'past_invigilation_screen.dart';
 
 class DutyExamManagementScreen extends StatelessWidget {
   const DutyExamManagementScreen({super.key});
@@ -24,7 +28,12 @@ class DutyExamManagementScreen extends StatelessWidget {
                       Icons.event_note,
                       TeacherColors.invigilationColor,
                       TeacherColors.invigilationBg,
-                      () => debugPrint('View Exam Duty'),
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TodayExamDutyScreen(),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildMenuItem(
@@ -33,7 +42,12 @@ class DutyExamManagementScreen extends StatelessWidget {
                       Icons.schedule,
                       TeacherColors.invigilationColor,
                       TeacherColors.invigilationBg,
-                      () => debugPrint('Reporting Time'),
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ReportingDetailsScreen(),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildMenuItem(
@@ -42,7 +56,12 @@ class DutyExamManagementScreen extends StatelessWidget {
                       Icons.calendar_today,
                       TeacherColors.infoDark,
                       TeacherColors.infoBg,
-                      () => debugPrint('Upcoming Schedule'),
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UpcomingInvigilationScreen(),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildMenuItem(
@@ -51,7 +70,12 @@ class DutyExamManagementScreen extends StatelessWidget {
                       Icons.history,
                       TeacherColors.successDark,
                       TeacherColors.successBg,
-                      () => debugPrint('History'),
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PastInvigilationScreen(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
