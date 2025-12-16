@@ -6,6 +6,7 @@ import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../student/student_main_navigation.dart';
+import 'forgot_password_email.dart';
 
 class StudentLoginScreen extends StatefulWidget {
   const StudentLoginScreen({super.key});
@@ -394,10 +395,13 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
     return Center(
       child: TextButton(
         onPressed: () {
-          debugPrint('Forgot Password tapped');
-          SnackbarHelper.showInfo(
+          Navigator.push(
             context,
-            'Password reset feature coming soon!',
+            MaterialPageRoute(
+              builder: (context) => const ForgotPasswordEmailScreen(
+                userType: 'student',
+              ),
+            ),
           );
         },
         child: Text(

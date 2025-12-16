@@ -6,6 +6,7 @@ import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../admin/admin_main_navigation.dart';
+import 'forgot_password_email.dart';
 
 class AdminLoginScreen extends StatefulWidget {
   const AdminLoginScreen({super.key});
@@ -393,10 +394,13 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     return Center(
       child: TextButton(
         onPressed: () {
-          debugPrint('Forgot Password tapped');
-          SnackbarHelper.showInfo(
+          Navigator.push(
             context,
-            'Password reset feature coming soon!',
+            MaterialPageRoute(
+              builder: (context) => const ForgotPasswordEmailScreen(
+                userType: 'admin',
+              ),
+            ),
           );
         },
         child: Text(
