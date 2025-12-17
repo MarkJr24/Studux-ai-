@@ -45,6 +45,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     // Check credentials
@@ -57,6 +58,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         // Wait for success animation
         await Future.delayed(const Duration(milliseconds: 250));
         
+        if (!mounted) return;
         setState(() => _showSuccess = false);
         
         SnackbarHelper.showSuccess(context, 'Login successful!');

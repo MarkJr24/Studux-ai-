@@ -1,8 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
-import '../../../core/widgets/glassmorphic_widgets.dart';
 
 class ClassWorkspaceScreen extends StatefulWidget {
   final String className;

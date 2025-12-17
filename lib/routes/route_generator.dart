@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import '../screens/auth/role_selection_screen.dart';
-import '../screens/auth/login_screen.dart';
-import '../../routes/app_routes.dart';
+import '../presentation/screens/auth/role_selection_screen.dart';
+import '../presentation/screens/auth/login_screen.dart';
+import 'app_routes.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // Extract arguments if any
-    final args = settings.arguments;
-
     switch (settings.name) {
       case AppRoutes.roleSelection:
         // You'll need to pass theme toggle and mode from the app

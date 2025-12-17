@@ -434,7 +434,7 @@ class _AcademicCalendarScreenState extends State<AcademicCalendarScreen> {
           _selectedDate = date;
         });
       },
-      child: Container(
+      child: SizedBox(
         width: 40,
         height: 50,
         child: Column(

@@ -26,7 +26,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
   // Notification settings
   bool _attendanceReminders = true;
   bool _evaluationAlerts = true;
-  bool _examDutyAlerts = true;
+  final bool _examDutyAlerts = true; // Fixed always-on toggle (disabled in UI)
   bool _systemAnnouncements = true;
 
   // App behavior

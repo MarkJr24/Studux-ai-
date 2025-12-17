@@ -22,7 +22,6 @@ class SubmitQRAttendanceScreen extends StatefulWidget {
 class _SubmitQRAttendanceScreenState extends State<SubmitQRAttendanceScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _currentTab = 0;
 
   // Mock data
   final List<ScannedStudent> _scannedStudents = [
@@ -49,11 +48,6 @@ class _SubmitQRAttendanceScreenState extends State<SubmitQRAttendanceScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _currentTab = _tabController.index;
-      });
-    });
   }
 
   @override

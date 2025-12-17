@@ -26,9 +26,9 @@ class MarkAttendanceScreen extends StatefulWidget {
 }
 
 class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
-  bool _isSubmitted = false;
+  final bool _isSubmitted = false;
   int _scannedCount = 0;
-  int _manuallyMarkedCount = 0;
+  final int _manuallyMarkedCount = 0;
 
   @override
   Widget build(BuildContext context) {

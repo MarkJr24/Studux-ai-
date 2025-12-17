@@ -7,22 +7,48 @@ import 'student_alerts_screen.dart';
 /// Student Main Navigation Wrapper
 /// Prevents back navigation to login and keeps bottom nav visible
 class StudentMainNavigation extends StatefulWidget {
-  const StudentMainNavigation({super.key});
+  const StudentMainNavigation({
+    super.key,
+    this.initialIndex = 0,
+  });
+
+  final int initialIndex;
+
+  /// Accessor to allow child screens to switch tabs without pushing new routes
+  static State<StudentMainNavigation>? of(BuildContext context) {
+    return context.findAncestorStateOfType<_StudentMainNavigationState>();
+  }
+
+  static void switchToTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_StudentMainNavigationState>();
+    state?.setTab(index);
+  }
 
   @override
   State<StudentMainNavigation> createState() => _StudentMainNavigationState();
 }
 
 class _StudentMainNavigationState extends State<StudentMainNavigation> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+  late final List<Widget> _pages;
 
-  // Core pages displayed in bottom navigation
-  final List<Widget> _pages = [
-    const StudentHomeScreen(),      // Index 0: Home
-    const StudentAcademicsScreen(), // Index 1: Academics
-    const StudentExamsScreen(),     // Index 2: Exams
-    const StudentAlertsScreen(),    // Index 3: Alerts
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pages = [
+      StudentHomeScreen(onOpenExamsTab: () => setTab(2)),
+      const StudentAcademicsScreen(),
+      const StudentExamsScreen(),
+      const StudentAlertsScreen(),
+    ];
+  }
+
+  void setTab(int index) {
+    if (index < 0 || index >= _pages.length) return;
+    if (_currentIndex == index) return;
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
-import '../../../core/widgets/glassmorphic_widgets.dart';
 
 class TeacherEvaluationScreen extends StatefulWidget {
   const TeacherEvaluationScreen({super.key});
@@ -14,7 +13,6 @@ class TeacherEvaluationScreen extends StatefulWidget {
 class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
     with SingleTickerProviderStateMixin {
   int _selectedTabIndex = 0;
-  int _bottomNavIndex = 2; // Evaluation tab
   bool _ciaSubmitted = false;
   bool _semesterSubmitted = false;
   String _evaluationType = 'Theory';
@@ -672,74 +670,4 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
     );
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home, 'Home', 0),
-          _buildNavItem(Icons.class_, 'Classes', 1),
-          _buildNavItem(Icons.edit_note, 'Evaluation', 2),
-          _buildNavItem(Icons.insights, 'Insights', 3),
-          _buildNavItem(Icons.notifications, 'Alerts', 4),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    final isActive = _bottomNavIndex == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _bottomNavIndex = index;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isActive
-                  ? const Color(0xFFF97316)
-                  : AppColors.textSecondary,
-              size: 24,
-              shadows: isActive
-                  ? [
-                      Shadow(
-                        color: const Color(0xFFF97316).withOpacity(0.5),
-                        blurRadius: 10,
-                      ),
-                    ]
-                  : [],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                color: isActive
-                    ? const Color(0xFFF97316)
-                    : AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

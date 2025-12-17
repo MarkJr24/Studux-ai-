@@ -857,7 +857,7 @@ class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
-        return Container(
+        return SizedBox(
           width: 140,
           height: 140,
           child: ClipOval(

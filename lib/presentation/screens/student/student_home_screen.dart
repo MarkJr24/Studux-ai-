@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
-import 'student_academics_screen.dart';
 import 'student_exams_screen.dart';
 import 'student_alerts_screen.dart';
 import 'student_profile_screen.dart';
@@ -9,7 +8,12 @@ import 'study_chatbot_screen.dart';
 import 'academic_calendar_screen.dart';
 
 class StudentHomeScreen extends StatefulWidget {
-  const StudentHomeScreen({super.key});
+  const StudentHomeScreen({
+    super.key,
+    this.onOpenExamsTab,
+  });
+
+  final VoidCallback? onOpenExamsTab;
 
   @override
   State<StudentHomeScreen> createState() => _StudentHomeScreenState();
@@ -23,6 +27,18 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   final String _todayExamType = 'CIA';
   final String _todayExamTime = '10:00 AM – 01:00 PM';
   final bool _hallTicketReleased = true;
+
+  void _openExamsTab() {
+    if (widget.onOpenExamsTab != null) {
+      widget.onOpenExamsTab!();
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,12 +124,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       return Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-            );
-          },
+          onTap: _openExamsTab,
           borderRadius: BorderRadius.circular(16),
           child: Container(
             decoration: BoxDecoration(
@@ -345,33 +356,13 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        _buildShortcutCard('Exam Schedule', Icons.calendar_today, Colors.blue, () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        }),
+        _buildShortcutCard('Exam Schedule', Icons.calendar_today, Colors.blue, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Hall Ticket', Icons.confirmation_number, Colors.purple, () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        }),
+        _buildShortcutCard('Hall Ticket', Icons.confirmation_number, Colors.purple, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Seating Information', Icons.event_seat, Colors.orange, () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        }),
+        _buildShortcutCard('Seating Information', Icons.event_seat, Colors.orange, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Marks / Results', Icons.assessment, Colors.green, () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        }),
+        _buildShortcutCard('Marks / Results', Icons.assessment, Colors.green, _openExamsTab),
       ],
     );
   }
@@ -696,72 +687,5 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     );
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home, 'Home', true),
-          _buildNavItem(Icons.school, 'Academics', false),
-          _buildNavItem(Icons.description, 'Exams', false),
-          _buildNavItem(Icons.notifications, 'Alerts', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return GestureDetector(
-      onTap: () {
-        if (isActive) return;
-        
-        if (label == 'Academics') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentAcademicsScreen()),
-          );
-        } else if (label == 'Exams') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentExamsScreen()),
-          );
-        } else if (label == 'Alerts') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
-          );
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.blue : Colors.grey,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              color: isActive ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // NOTE: A bottom navigation implementation previously existed here but was unused.
 }

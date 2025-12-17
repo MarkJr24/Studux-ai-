@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../presentation/screens/auth/role_selection_screen.dart';
-import '../presentation/screens/auth/student_login_screen.dart';
-import '../presentation/screens/auth/teacher_login_screen.dart';
-import '../presentation/screens/auth/admin_login_screen.dart';
 import '../presentation/screens/student/student_home_screen.dart';
 import '../presentation/screens/teacher/teacher_home_screen.dart';
 import '../presentation/screens/admin/admin_home_screen.dart';
@@ -31,7 +27,12 @@ class NavigationService {
     
     Navigator.pushAndRemoveUntil(
       context!,
-      MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+      MaterialPageRoute(
+        builder: (_) => RoleSelectionScreen(
+          onThemeToggle: () {},
+          themeMode: ThemeMode.light,
+        ),
+      ),
       (route) => false, // Remove ALL previous routes
     );
   }
@@ -179,7 +180,12 @@ class LogoutHandler {
     // Navigate back to login and clear entire stack
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+      MaterialPageRoute(
+        builder: (_) => RoleSelectionScreen(
+          onThemeToggle: () {},
+          themeMode: ThemeMode.light,
+        ),
+      ),
       (route) => false, // Remove ALL routes
     );
   }

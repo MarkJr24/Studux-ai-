@@ -14,7 +14,7 @@ class TodayExamDutyScreen extends StatefulWidget {
 class _TodayExamDutyScreenState extends State<TodayExamDutyScreen> {
   bool _isLoading = false;
   bool _hasError = false;
-  bool _hasDutyToday = true; // Set to false to see empty state
+  final bool _hasDutyToday = true; // Set to false to see empty state
 
   // Mock data - Replace with actual API data
   final Map<String, dynamic> _dutyData = {

@@ -14,7 +14,7 @@ class ClassAttendanceScreen extends StatefulWidget {
 class _ClassAttendanceScreenState extends State<ClassAttendanceScreen> {
   bool _isSubmitted = false;
   int _scannedCount = 0;
-  int _manuallyMarkedCount = 0;
+  final int _manuallyMarkedCount = 0;
   
   // Class details (would come from navigation params in real app)
   final String _className = 'Data Structures – CSE 3A';

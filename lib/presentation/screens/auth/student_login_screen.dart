@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
-import 'dart:math' as math;
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -87,6 +86,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     // Check credentials
@@ -99,6 +99,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
         // Wait for success animation
         await Future.delayed(const Duration(milliseconds: 250));
         
+        if (!mounted) return;
         setState(() => _showSuccess = false);
         
         SnackbarHelper.showSuccess(context, 'Login successful!');

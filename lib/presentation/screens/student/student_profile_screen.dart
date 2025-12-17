@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
 import '../auth/student_login_screen.dart';
 import 'student_settings_screen.dart';
-import '../auth/student_login_screen.dart';
 
 class StudentProfileScreen extends StatefulWidget {
   const StudentProfileScreen({super.key});

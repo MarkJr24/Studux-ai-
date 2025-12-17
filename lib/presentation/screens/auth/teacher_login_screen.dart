@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui' as ui;
-import 'dart:math' as math;
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -33,7 +31,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   late Animation<double> _headerFadeAnimation;
   late Animation<double> _fieldsFadeAnimation;
   late Animation<double> _buttonFadeAnimation;
-  late Animation<double> _checkmarkAnimation;
 
   // Hardcoded credentials
   static const String _validEmail = 'teacher@studentms.com';
@@ -97,13 +94,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       duration: const Duration(milliseconds: 800),
     );
     
-    _checkmarkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _successController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    
     // Start entrance animation after brief delay
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) {
@@ -131,6 +121,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     // Check credentials
@@ -143,6 +134,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
         // Wait for success animation
         await Future.delayed(const Duration(milliseconds: 250));
         
+        if (!mounted) return;
         setState(() => _showSuccess = false);
         
         SnackbarHelper.showSuccess(context, 'Login successful!');

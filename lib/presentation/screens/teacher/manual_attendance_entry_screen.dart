@@ -24,7 +24,7 @@ class _ManualAttendanceEntryScreenState
   DateTime _selectedDate = DateTime.now();
   String _selectedPeriod = '2nd Hour (10:00 - 11:00)';
   String _searchQuery = '';
-  String _filterStatus = 'All'; // All, Present, Absent
+  final String _filterStatus = 'All'; // All, Present, Absent
 
   // Mock student data
   final List<Student> _students = [

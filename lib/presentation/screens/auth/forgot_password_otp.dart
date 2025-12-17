@@ -50,10 +50,6 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
     }
   }
 
-  String get _userTypeDisplay {
-    return widget.userType[0].toUpperCase() + widget.userType.substring(1);
-  }
-
   String get _otp {
     return _otpControllers.map((c) => c.text).join();
   }

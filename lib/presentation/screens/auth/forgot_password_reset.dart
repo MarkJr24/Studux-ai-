@@ -46,10 +46,6 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
     }
   }
 
-  String get _userTypeDisplay {
-    return widget.userType[0].toUpperCase() + widget.userType.substring(1);
-  }
-
   Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) return;
 
