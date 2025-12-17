@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'teacher_design_system.dart';
+import 'manual_attendance_entry_screen.dart';
+import 'submit_qr_attendance_screen.dart';
+import 'batch_attendance_screen.dart';
+import 'booklet_entry_screen.dart';
+import 'upload_signature_screen.dart';
 
 /// Faculty Attendance Screen - QR-based and Manual Attendance
 /// Follows strict one-time submission workflow
@@ -763,122 +768,53 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
   }
 
   void _openManualEntry() {
-    // Navigate to manual attendance entry screen
-    // This would show the student list with Present/Absent buttons
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Opening manual attendance entry...',
-          style: GoogleFonts.inter(),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ManualAttendanceEntryScreen(
+          className: widget.className,
+          classCode: widget.classCode,
         ),
-        backgroundColor: TeacherColors.infoDark,
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   void _submitAttendance() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Submit Attendance?',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+    // Navigate to Submit QR Scanned Attendance screen for review
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SubmitQRAttendanceScreen(
+          className: widget.className,
+          classCode: widget.classCode,
         ),
-        content: Text(
-          'Once submitted, attendance cannot be modified. Are you sure you want to submit?',
-          style: GoogleFonts.inter(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.inter(
-                color: TeacherColors.secondaryText,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _isSubmitted = true;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TeacherColors.successDark,
-            ),
-            child: Text('Submit', style: GoogleFonts.inter()),
-          ),
-        ],
       ),
     );
   }
 
   void _submitAsBatch() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Submit Batch Attendance?',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-        ),
-        content: Text(
-          'Submit all $_scannedCount scanned students together? This action cannot be undone.',
-          style: GoogleFonts.inter(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.inter(
-                color: TeacherColors.secondaryText,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _isSubmitted = true;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TeacherColors.successDark,
-            ),
-            child: Text('Submit', style: GoogleFonts.inter()),
-          ),
-        ],
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BatchAttendanceScreen(),
       ),
     );
   }
 
   void _openBookletEntry() {
-    // Navigate to booklet number entry screen (optional feature)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Opening booklet number entry...',
-          style: GoogleFonts.inter(),
-        ),
-        backgroundColor: TeacherColors.infoDark,
-        behavior: SnackBarBehavior.floating,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BookletEntryScreen(),
       ),
     );
   }
 
   void _uploadSignature() {
-    // Open file picker for signature upload (optional feature)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Opening signature upload...',
-          style: GoogleFonts.inter(),
-        ),
-        backgroundColor: TeacherColors.infoDark,
-        behavior: SnackBarBehavior.floating,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UploadSignatureScreen(),
       ),
     );
   }
