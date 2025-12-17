@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'admin_design_system.dart';
+import '../../core/navigation_service.dart';
 import '../auth/admin_login_screen.dart';
 
 class AdminProfileScreen extends StatefulWidget {
@@ -130,6 +131,22 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                   style: AppTextStyles.subtitle,
                 ),
               ],
+            ),
+          ),
+
+          // Quick logout action
+          Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: AppColors.errorBg,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              tooltip: 'Logout',
+              onPressed: _showLogoutConfirmation,
+              icon: const Icon(Icons.logout, size: 20, color: AppColors.errorDark),
+              padding: EdgeInsets.zero,
             ),
           ),
         ],
@@ -631,13 +648,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
             onPressed: () {
               Navigator.pop(context); // Close dialog
               // Navigate to login screen and clear entire navigation stack
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AdminLoginScreen(),
-                ),
-                (route) => false, // Remove ALL previous routes
-              );
+              LogoutHandler.logout(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.dangerButton,
