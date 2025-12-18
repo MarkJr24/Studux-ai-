@@ -222,7 +222,7 @@ class _RoleAccessVisibilityScreenState extends State<RoleAccessVisibilityScreen>
                 'Attendance Audit',
                 'Alerts & Notifications',
                 'Event Approval',
-                'System Settings',
+                'Admin Profile',
               ],
               true,
             ),

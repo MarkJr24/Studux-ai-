@@ -32,7 +32,6 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
           const SizedBox(height: 20),
           _buildAlertPreview(),
           const SizedBox(height: 20),
-          _buildQuickActions(),
           const SizedBox(height: 80), // Bottom nav spacing
         ],
       ),
@@ -617,87 +616,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     );
   }
 
-  Widget _buildQuickActions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'QUICK ACTIONS',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[700],
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildActionButton(
-                'Mark Attendance',
-                Icons.check_circle_outline,
-                Colors.green,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildActionButton(
-                'Enter Evaluation',
-                Icons.edit_note,
-                Colors.blue,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: _buildActionButton(
-            'View Insights',
-            Icons.analytics_outlined,
-            Colors.purple,
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildActionButton(String label, IconData icon, Color color) {
-    return ElevatedButton(
-      onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Opening $label...', style: GoogleFonts.inter()),
-            backgroundColor: color,
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 2,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildBottomNav() {
     return Container(

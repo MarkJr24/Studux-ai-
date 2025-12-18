@@ -444,14 +444,9 @@ class AppDecorations {
     return BoxDecoration(
       color: backgroundColor ?? AppColors.cardBackground,
       borderRadius: BorderRadius.circular(12),
-      border: Border(
-        left: BorderSide(
-          color: borderColor ?? AppColors.actionRequiredBorder,
-          width: 4,
-        ),
-        top: BorderSide(color: AppColors.cardBorder, width: 1),
-        right: BorderSide(color: AppColors.cardBorder, width: 1),
-        bottom: BorderSide(color: AppColors.cardBorder, width: 1),
+      border: Border.all(
+        color: borderColor ?? AppColors.actionRequiredBorder,
+        width: 2,
       ),
       boxShadow: const [
         BoxShadow(
@@ -492,11 +487,9 @@ class AppDecorations {
     return BoxDecoration(
       color: backgroundColor,
       borderRadius: BorderRadius.circular(12),
-      border: Border(
-        left: BorderSide(color: borderColor, width: 4),
-        top: BorderSide(color: AppColors.cardBorder, width: 1),
-        right: BorderSide(color: AppColors.cardBorder, width: 1),
-        bottom: BorderSide(color: AppColors.cardBorder, width: 1),
+      border: Border.all(
+        color: borderColor,
+        width: 2,
       ),
       boxShadow: const [
         BoxShadow(

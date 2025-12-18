@@ -5,7 +5,7 @@ import 'exam_invigilator_screen.dart';
 import 'attendance_audit_screen.dart';
 import 'event_approval_screen.dart';
 import 'notifications_management_screen.dart';
-import 'settings_profile_screen.dart';
+import 'admin_profile_screen.dart';
 import 'admin_design_system.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -148,7 +148,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SettingsProfileScreen(),
+                  builder: (context) => const AdminProfileScreen(),
                 ),
               );
             },
@@ -436,15 +436,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         },
       ),
       _DashboardTile(
-        title: 'Settings',
-        icon: Icons.settings,
-        backgroundColor: Color(0xFFEEEEEE),
-        accentColor: Color(0xFF616161),
+        title: 'Admin Profile',
+        icon: Icons.person,
+        backgroundColor: Color(0xFFE3F2FD),
+        accentColor: Color(0xFF1976D2),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SettingsProfileScreen(),
+              builder: (context) => const AdminProfileScreen(),
             ),
           );
         },

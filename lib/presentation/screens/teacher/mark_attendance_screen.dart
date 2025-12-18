@@ -1,238 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'teacher_design_system.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'manual_attendance_entry_screen.dart';
 import 'submit_qr_attendance_screen.dart';
 import 'batch_attendance_screen.dart';
 import 'booklet_entry_screen.dart';
 import 'upload_signature_screen.dart';
 
-/// Faculty Attendance Screen - QR-based and Manual Attendance
-/// Follows strict one-time submission workflow
+/// Mark Attendance Screen
+/// Implements exact 4-section structure with single QR button
 class MarkAttendanceScreen extends StatefulWidget {
-  final String className;
-  final String classCode;
-  final DateTime date;
-
-  const MarkAttendanceScreen({
-    super.key,
-    required this.className,
-    required this.classCode,
-    required this.date,
-  });
+  const MarkAttendanceScreen({super.key});
 
   @override
   State<MarkAttendanceScreen> createState() => _MarkAttendanceScreenState();
 }
 
 class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
-  final bool _isSubmitted = false;
-  int _scannedCount = 0;
-  final int _manuallyMarkedCount = 0;
+  final List<String> scannedQRCodes = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TeacherColors.background,
-      body: SafeArea(
-        child: Column(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context),
-            Expanded(
-              child: _isSubmitted
-                  ? _buildSubmittedState()
-                  : _buildMainContent(),
+            const Text(
+              'Mark Attendance',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            Text(
+              'Scan QR or enter manually',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // SECTION 1: QR SCANNER (Primary Widget)
+            _buildQRScannerSection(),
+            
+            const SizedBox(height: 24),
+            
+            // OR Divider
+            _buildOrDivider(),
+            
+            const SizedBox(height: 24),
+            
+            // SECTION 2: ATTENDANCE METHODS
+            _buildAttendanceMethodsSection(),
+            
+            const SizedBox(height: 32),
+            
+            // SECTION 3: SUBMISSION OPTIONS
+            _buildSubmissionOptionsSection(),
+            
+            const SizedBox(height: 32),
+            
+            // SECTION 4: ADDITIONAL OPTIONS
+            _buildAdditionalOptionsSection(),
           ],
         ),
       ),
     );
   }
 
-  // ==================== SECTION 1: HEADER ====================
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: TeacherSpacing.headerHorizontal,
-        vertical: TeacherSpacing.headerVertical,
-      ),
-      decoration: const BoxDecoration(
-        color: TeacherColors.background,
-        border: Border(
-          bottom: BorderSide(
-            color: TeacherColors.divider,
-            width: 1,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Back button
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: TeacherColors.backButtonBg,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, size: 20),
-              color: TeacherColors.iconGray,
-              padding: EdgeInsets.zero,
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Title and subtitle
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Mark Attendance',
-                  style: GoogleFonts.inter(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: TeacherColors.primaryText,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Scan QR or enter manually',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: TeacherColors.secondaryText,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ==================== MAIN CONTENT ====================
-  Widget _buildMainContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(TeacherSpacing.pageHorizontal),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Class info
-          _buildClassInfoCard(),
-          const SizedBox(height: 24),
-
-          // SECTION 2: QR SCANNER (PRIMARY ACTION - ONLY ONE)
-          _buildQRScannerSection(),
-          const SizedBox(height: 24),
-
-          // Divider with "OR"
-          _buildOrDivider(),
-          const SizedBox(height: 24),
-
-          // SECTION 3: ATTENDANCE METHODS (MANUAL ONLY)
-          _buildAttendanceMethodsSection(),
-          const SizedBox(height: 32),
-
-          // SECTION 4: SUBMISSION ACTIONS
-          _buildSubmissionSection(),
-          const SizedBox(height: 32),
-
-          // SECTION 5: ADDITIONAL OPTIONS (SECONDARY)
-          _buildAdditionalOptionsSection(),
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-  }
-
-  // Class info card
-  Widget _buildClassInfoCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TeacherColors.infoBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TeacherColors.infoDark.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.school,
-              color: TeacherColors.infoDark,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.className,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: TeacherColors.primaryText,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${widget.classCode} • ${_formatDate(widget.date)}',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: TeacherColors.secondaryText,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (_scannedCount > 0 || _manuallyMarkedCount > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: TeacherColors.successBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '${_scannedCount + _manuallyMarkedCount} marked',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: TeacherColors.successDark,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  // ==================== SECTION 2: QR SCANNER (PRIMARY) ====================
+  // ==================== SECTION 1: QR SCANNER ====================
   Widget _buildQRScannerSection() {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: TeacherColors.infoBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TeacherColors.infoDark.withOpacity(0.2),
-          width: 1.5,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: TeacherColors.infoDark.withOpacity(0.08),
+            color: const Color(0xFF3B82F6).withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -240,103 +105,96 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
       ),
       child: Column(
         children: [
-          // QR Icon
+          // Camera Icon
           Container(
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: TeacherColors.infoDark.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
-            child: Icon(
+            child: const Icon(
               Icons.qr_code_scanner,
-              size: 40,
-              color: TeacherColors.infoDark,
+              size: 48,
+              color: Colors.white,
             ),
           ),
+          
           const SizedBox(height: 16),
-
+          
           // Title
-          Text(
+          const Text(
             'Scan Student QR Code',
-            style: GoogleFonts.inter(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: TeacherColors.primaryText,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
+          
           const SizedBox(height: 8),
-
+          
           // Subtitle
           Text(
-            'Position the QR code within the frame',
-            style: GoogleFonts.inter(
+            'Position QR code within frame',
+            style: TextStyle(
               fontSize: 14,
-              color: TeacherColors.secondaryText,
+              color: Colors.white.withOpacity(0.9),
             ),
             textAlign: TextAlign.center,
           ),
+          
           const SizedBox(height: 20),
-
-          // Primary Action Button
+          
+          // ONLY QR BUTTON - "Open Scanner"
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                _openQRScanner();
-              },
-              icon: const Icon(Icons.qr_code_scanner, size: 20),
-              label: Text(
-                'Open Scanner',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            child: ElevatedButton(
+              onPressed: _openQRScanner,
               style: ElevatedButton.styleFrom(
-                backgroundColor: TeacherColors.infoDark,
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF3B82F6),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                elevation: 2,
+                elevation: 0,
+              ),
+              child: const Text(
+                'Open Scanner',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-
-          // Scan count indicator
-          if (_scannedCount > 0) ...[
-            const SizedBox(height: 12),
+          
+          // Scanned count badge
+          if (scannedQRCodes.isNotEmpty) ...[
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFF10B981),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check_circle,
-                    size: 16,
-                    color: TeacherColors.successDark,
+                    size: 18,
+                    color: Colors.white,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
                   Text(
-                    '$_scannedCount student${_scannedCount > 1 ? 's' : ''} scanned',
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
+                    '${scannedQRCodes.length} codes scanned',
+                    style: const TextStyle(
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: TeacherColors.successDark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -348,72 +206,214 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     );
   }
 
-  // OR divider
+  // ==================== OR DIVIDER ====================
   Widget _buildOrDivider() {
     return Row(
       children: [
-        const Expanded(child: Divider(color: TeacherColors.divider)),
+        Expanded(
+          child: Divider(color: Colors.grey[300], thickness: 1),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'OR',
-            style: GoogleFonts.inter(
+            style: TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: TeacherColors.labelText,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[600],
               letterSpacing: 1.2,
             ),
           ),
         ),
-        const Expanded(child: Divider(color: TeacherColors.divider)),
+        Expanded(
+          child: Divider(color: Colors.grey[300], thickness: 1),
+        ),
       ],
     );
   }
 
-  // ==================== SECTION 3: ATTENDANCE METHODS ====================
+  // ==================== SECTION 2: ATTENDANCE METHODS ====================
   Widget _buildAttendanceMethodsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section Header
         Text(
           'ATTENDANCE METHODS',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: TeacherColors.labelText,
+            color: Colors.grey[600],
             letterSpacing: 0.5,
           ),
         ),
+        
         const SizedBox(height: 12),
-
-        // Manual Attendance Entry (ONLY option here - NO QR)
+        
+        // ONLY ONE OPTION: Manual Attendance Entry
         _buildMethodCard(
           icon: Icons.edit,
-          iconColor: TeacherColors.attendanceColor,
-          backgroundColor: TeacherColors.attendanceBg,
+          iconColor: const Color(0xFF8B5CF6),
+          backgroundColor: const Color(0xFFF3E8FF),
           title: 'Manual Attendance Entry',
           subtitle: 'Mark attendance student-wise',
           onTap: () {
-            _openManualEntry();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ManualAttendanceEntryScreen(),
+              ),
+            );
           },
         ),
       ],
     );
   }
 
+  // ==================== SECTION 3: SUBMISSION OPTIONS ====================
+  Widget _buildSubmissionOptionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Text(
+          'SUBMISSION OPTIONS',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[600],
+            letterSpacing: 0.5,
+          ),
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Option 1: Submit QR Scanned Attendance
+        _buildMethodCard(
+          icon: Icons.upload,
+          iconColor: const Color(0xFF10B981),
+          backgroundColor: const Color(0xFFD1FAE5),
+          title: 'Submit QR Scanned Attendance',
+          subtitle: 'Review and submit scanned codes',
+          badge: scannedQRCodes.isNotEmpty ? '${scannedQRCodes.length}' : null,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SubmitQRAttendanceScreen(
+                  className: 'Sample Class',
+                  classCode: 'CS101',
+                ),
+              ),
+            );
+          },
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Option 2: Submit as Batch
+        _buildMethodCard(
+          icon: Icons.inventory_2,
+          iconColor: const Color(0xFF3B82F6),
+          backgroundColor: const Color(0xFFDBEAFE),
+          title: 'Submit as Batch',
+          subtitle: 'Batch submission workflow',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BatchAttendanceScreen(),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  // ==================== SECTION 4: ADDITIONAL OPTIONS ====================
+  Widget _buildAdditionalOptionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Text(
+          'ADDITIONAL OPTIONS',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[600],
+            letterSpacing: 0.5,
+          ),
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Option 1: Booklet Number Entry
+        _buildMethodCard(
+          icon: Icons.menu_book,
+          iconColor: const Color(0xFFF59E0B),
+          backgroundColor: const Color(0xFFFEF3C7),
+          title: 'Booklet Number Entry',
+          subtitle: 'Enter answer booklet numbers',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BookletEntryScreen(),
+              ),
+            );
+          },
+        ),
+        
+        const SizedBox(height: 12),
+        
+        // Option 2: Upload Signature Image
+        _buildMethodCard(
+          icon: Icons.draw,
+          iconColor: const Color(0xFFEC4899),
+          backgroundColor: const Color(0xFFFCE7F3),
+          title: 'Upload Signature Image',
+          subtitle: 'Upload attendance signature',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UploadSignatureScreen(),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  // ==================== REUSABLE METHOD CARD ====================
   Widget _buildMethodCard({
     required IconData icon,
     required Color iconColor,
     required Color backgroundColor,
     required String title,
     required String subtitle,
+    String? badge,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: TeacherDecorations.whiteCard,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             // Icon
@@ -424,210 +424,15 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                 color: backgroundColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: iconColor, size: 24),
-            ),
-            const SizedBox(width: 16),
-
-            // Title and subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: TeacherColors.primaryText,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: TeacherColors.secondaryText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Arrow indicator
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: TeacherColors.arrowIcon,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ==================== SECTION 4: SUBMISSION ====================
-  Widget _buildSubmissionSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'SUBMISSION',
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: TeacherColors.labelText,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        // Submit Attendance (Primary)
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: _canSubmit() ? () => _submitAttendance() : null,
-            icon: const Icon(Icons.check_circle, size: 20),
-            label: Text(
-              'Submit Attendance',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TeacherColors.successDark,
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: TeacherColors.secondaryBackground,
-              disabledForegroundColor: TeacherColors.labelText,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: _canSubmit() ? 2 : 0,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        // Submit as Batch (Only if multiple scans pending)
-        if (_scannedCount > 1) ...[
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _submitAsBatch(),
-              icon: const Icon(Icons.groups, size: 20),
-              label: Text(
-                'Submit as Batch',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: TeacherColors.successDark,
-                side: BorderSide(
-                  color: TeacherColors.successDark,
-                  width: 1.5,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              'Submit $_scannedCount scanned students together',
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: TeacherColors.secondaryText,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  // ==================== SECTION 5: ADDITIONAL OPTIONS ====================
-  Widget _buildAdditionalOptionsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'ADDITIONAL (OPTIONAL)',
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: TeacherColors.labelText,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        // Booklet Number Entry (Secondary)
-        _buildSecondaryCard(
-          icon: Icons.numbers,
-          title: 'Booklet Number Entry',
-          subtitle: 'Enter answer booklet numbers',
-          onTap: () {
-            _openBookletEntry();
-          },
-        ),
-        const SizedBox(height: 12),
-
-        // Upload Signature (Secondary)
-        _buildSecondaryCard(
-          icon: Icons.upload_file,
-          title: 'Upload Signature Image',
-          subtitle: 'Upload attendance signature',
-          onTap: () {
-            _uploadSignature();
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSecondaryCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: TeacherColors.secondaryBackground,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: TeacherColors.divider,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Icon (smaller, lighter)
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
               child: Icon(
                 icon,
-                color: TeacherColors.iconGray,
-                size: 20,
+                color: iconColor,
+                size: 28,
               ),
             ),
-            const SizedBox(width: 12),
-
+            
+            const SizedBox(width: 16),
+            
             // Title and subtitle
             Expanded(
               child: Column(
@@ -635,29 +440,49 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: TeacherColors.primaryText,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: TeacherColors.secondaryText,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
                     ),
                   ),
                 ],
               ),
             ),
-
-            // Arrow indicator (subtle)
+            
+            // Badge (if provided)
+            if (badge != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badge,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            
+            // Chevron
             Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-              color: TeacherColors.iconLight,
+              Icons.chevron_right,
+              color: Colors.grey[400],
+              size: 24,
             ),
           ],
         ),
@@ -665,158 +490,88 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     );
   }
 
-  // ==================== SUBMITTED STATE ====================
-  Widget _buildSubmittedState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: TeacherColors.successBg,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.check_circle,
-                size: 60,
-                color: TeacherColors.successDark,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Attendance Submitted',
-              style: GoogleFonts.inter(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: TeacherColors.primaryText,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Attendance has been successfully recorded and locked. No further changes can be made.',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: TeacherColors.secondaryText,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            OutlinedButton.icon(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, size: 18),
-              label: Text(
-                'Back to Classes',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: TeacherColors.infoDark,
-                side: BorderSide(
-                  color: TeacherColors.infoDark,
-                  width: 1.5,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ==================== HELPER METHODS ====================
-
-  bool _canSubmit() {
-    return (_scannedCount > 0 || _manuallyMarkedCount > 0) && !_isSubmitted;
-  }
-
-  String _formatDate(DateTime date) {
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
-  }
-
+  // ==================== QR SCANNER FUNCTIONALITY ====================
   void _openQRScanner() {
-    // Navigate to QR scanner screen (to be implemented)
-    // For now, simulate scanning
-    setState(() {
-      _scannedCount += 1;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'QR Code scanned successfully',
-          style: GoogleFonts.inter(),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _QRScannerScreen(
+          onCodeScanned: (String code) {
+            setState(() {
+              // Avoid duplicates
+              if (!scannedQRCodes.contains(code)) {
+                scannedQRCodes.add(code);
+              }
+            });
+            
+            // Show success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('QR Code scanned successfully'),
+                backgroundColor: const Color(0xFF10B981),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
         ),
-        backgroundColor: TeacherColors.successDark,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void _openManualEntry() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ManualAttendanceEntryScreen(
-          className: widget.className,
-          classCode: widget.classCode,
-        ),
-      ),
-    );
-  }
-
-  void _submitAttendance() {
-    // Navigate to Submit QR Scanned Attendance screen for review
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SubmitQRAttendanceScreen(
-          className: widget.className,
-          classCode: widget.classCode,
-        ),
-      ),
-    );
-  }
-
-  void _submitAsBatch() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const BatchAttendanceScreen(),
-      ),
-    );
-  }
-
-  void _openBookletEntry() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const BookletEntryScreen(),
-      ),
-    );
-  }
-
-  void _uploadSignature() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const UploadSignatureScreen(),
       ),
     );
   }
 }
 
+// ==================== QR SCANNER SCREEN ====================
+class _QRScannerScreen extends StatefulWidget {
+  final Function(String) onCodeScanned;
+
+  const _QRScannerScreen({required this.onCodeScanned});
+
+  @override
+  State<_QRScannerScreen> createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<_QRScannerScreen> {
+  MobileScannerController cameraController = MobileScannerController();
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF3B82F6),
+        elevation: 0,
+        title: const Text(
+          'Scan QR Code',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: MobileScanner(
+        controller: cameraController,
+        onDetect: (capture) {
+          final List<Barcode> barcodes = capture.barcodes;
+          for (final barcode in barcodes) {
+            if (barcode.rawValue != null) {
+              widget.onCodeScanned(barcode.rawValue!);
+              Navigator.pop(context);
+              break;
+            }
+          }
+        },
+      ),
+    );
+  }
+}

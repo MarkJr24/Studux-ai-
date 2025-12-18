@@ -327,11 +327,9 @@ class TeacherDecorations {
     return BoxDecoration(
       color: backgroundColor ?? TeacherColors.cardBackground,
       borderRadius: BorderRadius.circular(16),
-      border: Border(
-        left: BorderSide(color: borderColor, width: 4),
-        top: BorderSide(color: TeacherColors.cardBorder, width: 1),
-        right: BorderSide(color: TeacherColors.cardBorder, width: 1),
-        bottom: BorderSide(color: TeacherColors.cardBorder, width: 1),
+      border: Border.all(
+        color: borderColor,
+        width: 2,
       ),
       boxShadow: const [
         BoxShadow(
@@ -373,11 +371,9 @@ class TeacherDecorations {
     return BoxDecoration(
       color: backgroundColor,
       borderRadius: BorderRadius.circular(12),
-      border: Border(
-        left: BorderSide(color: borderColor, width: 4),
-        top: BorderSide(color: TeacherColors.cardBorder, width: 1),
-        right: BorderSide(color: TeacherColors.cardBorder, width: 1),
-        bottom: BorderSide(color: TeacherColors.cardBorder, width: 1),
+      border: Border.all(
+        color: borderColor,
+        width: 2,
       ),
       boxShadow: const [
         BoxShadow(

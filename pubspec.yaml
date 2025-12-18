@@ -42,6 +42,7 @@ dependencies:
   fluttertoast: ^8.2.4
   qr_flutter: ^4.1.0
   table_calendar: ^3.0.9
+  mobile_scanner: ^5.2.3
 
 dev_dependencies:
   flutter_test:
