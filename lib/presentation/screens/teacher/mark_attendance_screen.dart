@@ -261,7 +261,10 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ManualAttendanceEntryScreen(),
+                builder: (context) => const ManualAttendanceEntryScreen(
+                  className: 'Sample Class',
+                  classCode: 'CS101',
+                ),
               ),
             );
           },

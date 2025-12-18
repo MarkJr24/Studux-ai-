@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'teacher_design_system.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class AttendanceSystemScreen extends StatefulWidget {
   const AttendanceSystemScreen({super.key});
@@ -43,6 +44,8 @@ class _AttendanceSystemScreenState extends State<AttendanceSystemScreen> {
                     const SizedBox(height: 20),
                     _buildAttendanceModeSelector(),
                     const SizedBox(height: 20),
+                    if (_attendanceMode == 'qr') _buildQRCodeSection(),
+                    if (_attendanceMode == 'qr') const SizedBox(height: 20),
                     _buildStudentList(),
                     const SizedBox(height: 80),
                   ],
@@ -218,6 +221,74 @@ class _AttendanceSystemScreenState extends State<AttendanceSystemScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildQRCodeSection() {
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // Generate unique QR data based on class, date, and time
+    final qrData = 'CLASS:Sample Class|DATE:$today|MODE:QR|TIME:${DateTime.now().millisecondsSinceEpoch}';
+    
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '👥 Class Attendance',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Academic Day : ${DateFormat('d MMM yyyy').format(DateTime.now())}',
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: QrImageView(
+                data: qrData,
+                version: QrVersions.auto,
+                size: 200,
+                backgroundColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Students scan this QR code to mark attendance',
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: Colors.white.withOpacity(0.95),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

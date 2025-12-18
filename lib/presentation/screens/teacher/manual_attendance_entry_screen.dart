@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
+enum AttendanceMode { manual, qr }
 
 /// Screen 1: Manual Attendance Entry
 /// Allow faculty to manually mark attendance with Present/Absent toggles
@@ -25,6 +28,7 @@ class _ManualAttendanceEntryScreenState
   String _selectedPeriod = '2nd Hour (10:00 - 11:00)';
   String _searchQuery = '';
   final String _filterStatus = 'All'; // All, Present, Absent
+  AttendanceMode _attendanceMode = AttendanceMode.manual;
 
   // Mock student data
   final List<Student> _students = [
@@ -65,7 +69,9 @@ class _ManualAttendanceEntryScreenState
       body: Column(
         children: [
           _buildDatePeriodSelector(),
-          _buildQuickActionsBar(),
+          _buildAttendanceModeSelector(),
+          if (_attendanceMode == AttendanceMode.qr) _buildQRCodeSection(),
+          if (_attendanceMode == AttendanceMode.manual) _buildQuickActionsBar(),
           Expanded(
             child: _buildStudentList(),
           ),
@@ -194,6 +200,190 @@ class _ManualAttendanceEntryScreenState
                   const Icon(Icons.arrow_drop_down, color: Color(0xFF6B7280)),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAttendanceModeSelector() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Attendance Mode',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1F2937),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildModeOption(
+                    'Manual Attendance',
+                    AttendanceMode.manual,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildModeOption(
+                    'QR Attendance',
+                    AttendanceMode.qr,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModeOption(String label, AttendanceMode mode) {
+    final isSelected = _attendanceMode == mode;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _attendanceMode = mode;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected
+                      ? const Color(0xFF3B82F6)
+                      : const Color(0xFF9CA3AF),
+                  width: 2,
+                ),
+                color: Colors.white,
+              ),
+              child: isSelected
+                  ? Center(
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFF3B82F6),
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? const Color(0xFF1F2937)
+                    : const Color(0xFF6B7280),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQRCodeSection() {
+    // Generate unique QR data based on class, date, and period
+    final qrData = 'CLASS:${widget.className}|DATE:${DateFormat('yyyy-MM-dd').format(_selectedDate)}|PERIOD:$_selectedPeriod|TIME:${DateTime.now().millisecondsSinceEpoch}';
+    
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '👥 Class Attendance',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Academic Day : ${DateFormat('d MMM yyyy').format(_selectedDate)}',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: QrImageView(
+                    data: qrData,
+                    version: QrVersions.auto,
+                    size: 200,
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Students scan this QR code to mark attendance',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ],
