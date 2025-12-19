@@ -1,0 +1,125 @@
+{
+  "faculties": [
+    {
+      "faculty_id": "FAC001",
+      "name": "Dr. Rajesh Kumar",
+      "email": "rajesh.kumar@faculty.com",
+      "department": "CSE",
+      "designation": "Professor",
+      "specialization": "Machine Learning"
+    },
+    {
+      "faculty_id": "FAC002",
+      "name": "Dr. Priya Sharma",
+      "email": "priya.sharma@faculty.com",
+      "department": "CSE",
+      "designation": "Associate Professor",
+      "specialization": "Data Structures"
+    },
+    {
+      "faculty_id": "FAC003",
+      "name": "Prof. Amit Verma",
+      "email": "amit.verma@faculty.com",
+      "department": "CSE",
+      "designation": "Assistant Professor",
+      "specialization": "Cloud Computing"
+    },
+    {
+      "faculty_id": "FAC004",
+      "name": "Dr. Sneha Reddy",
+      "email": "sneha.reddy@faculty.com",
+      "department": "CSE",
+      "designation": "Professor",
+      "specialization": "Artificial Intelligence"
+    },
+    {
+      "faculty_id": "FAC005",
+      "name": "Prof. Karthik Rao",
+      "email": "karthik.rao@faculty.com",
+      "department": "CSE",
+      "designation": "Associate Professor",
+      "specialization": "Database Systems"
+    },
+    {
+      "faculty_id": "FAC006",
+      "name": "Dr. Meera Nair",
+      "email": "meera.nair@faculty.com",
+      "department": "ECE",
+      "designation": "Professor",
+      "specialization": "Digital Signal Processing"
+    },
+    {
+      "faculty_id": "FAC007",
+      "name": "Prof. Suresh Babu",
+      "email": "suresh.babu@faculty.com",
+      "department": "ECE",
+      "designation": "Associate Professor",
+      "specialization": "VLSI Design"
+    },
+    {
+      "faculty_id": "FAC008",
+      "name": "Dr. Lakshmi Iyer",
+      "email": "lakshmi.iyer@faculty.com",
+      "department": "ECE",
+      "designation": "Assistant Professor",
+      "specialization": "Communication Systems"
+    },
+    {
+      "faculty_id": "FAC009",
+      "name": "Prof. Venkatesh Murthy",
+      "email": "venkatesh.murthy@faculty.com",
+      "department": "ECE",
+      "designation": "Professor",
+      "specialization": "Embedded Systems"
+    },
+    {
+      "faculty_id": "FAC010",
+      "name": "Dr. Anita Desai",
+      "email": "anita.desai@faculty.com",
+      "department": "ECE",
+      "designation": "Associate Professor",
+      "specialization": "Microprocessors"
+    },
+    {
+      "faculty_id": "FAC011",
+      "name": "Dr. Ramesh Patel",
+      "email": "ramesh.patel@faculty.com",
+      "department": "AIDS",
+      "designation": "Professor",
+      "specialization": "Deep Learning"
+    },
+    {
+      "faculty_id": "FAC012",
+      "name": "Prof. Kavita Singh",
+      "email": "kavita.singh@faculty.com",
+      "department": "AIDS",
+      "designation": "Associate Professor",
+      "specialization": "Natural Language Processing"
+    },
+    {
+      "faculty_id": "FAC013",
+      "name": "Dr. Arjun Mehta",
+      "email": "arjun.mehta@faculty.com",
+      "department": "AIDS",
+      "designation": "Assistant Professor",
+      "specialization": "Computer Vision"
+    },
+    {
+      "faculty_id": "FAC014",
+      "name": "Prof. Divya Krishnan",
+      "email": "divya.krishnan@faculty.com",
+      "department": "AIDS",
+      "designation": "Professor",
+      "specialization": "Big Data Analytics"
+    },
+    {
+      "faculty_id": "FAC015",
+      "name": "Dr. Sanjay Gupta",
+      "email": "sanjay.gupta@faculty.com",
+      "department": "AIDS",
+      "designation": "Associate Professor",
+      "specialization": "Data Mining"
+    }
+  ]
+}
+

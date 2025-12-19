@@ -1,0 +1,85 @@
+{
+  "admins": [
+    {
+      "admin_id": "ADM001",
+      "name": "Dr. Ramakrishna Rao",
+      "email": "principal@admin.studx.com",
+      "designation": "Principal",
+      "department": "Administration",
+      "phone": "+91-9876543210"
+    },
+    {
+      "admin_id": "ADM002",
+      "name": "Prof. Lakshmi Devi",
+      "email": "viceprincipal@admin.studx.com",
+      "designation": "Vice Principal",
+      "department": "Administration",
+      "phone": "+91-9876543211"
+    },
+    {
+      "admin_id": "ADM003",
+      "name": "Dr. Suresh Kumar",
+      "email": "dean.academics@admin.studx.com",
+      "designation": "Dean - Academics",
+      "department": "Academic Affairs",
+      "phone": "+91-9876543212"
+    },
+    {
+      "admin_id": "ADM004",
+      "name": "Prof. Anita Sharma",
+      "email": "dean.students@admin.studx.com",
+      "designation": "Dean - Student Affairs",
+      "department": "Student Welfare",
+      "phone": "+91-9876543213"
+    },
+    {
+      "admin_id": "ADM005",
+      "name": "Dr. Venkatesh Iyer",
+      "email": "hod.cse@admin.studx.com",
+      "designation": "HOD - CSE",
+      "department": "CSE",
+      "phone": "+91-9876543214"
+    },
+    {
+      "admin_id": "ADM006",
+      "name": "Prof. Meera Reddy",
+      "email": "hod.ece@admin.studx.com",
+      "designation": "HOD - ECE",
+      "department": "ECE",
+      "phone": "+91-9876543215"
+    },
+    {
+      "admin_id": "ADM007",
+      "name": "Dr. Rajesh Patel",
+      "email": "hod.aids@admin.studx.com",
+      "designation": "HOD - AIDS",
+      "department": "AIDS",
+      "phone": "+91-9876543216"
+    },
+    {
+      "admin_id": "ADM008",
+      "name": "Mr. Karthik Nair",
+      "email": "registrar@admin.studx.com",
+      "designation": "Registrar",
+      "department": "Administration",
+      "phone": "+91-9876543217"
+    },
+    {
+      "admin_id": "ADM009",
+      "name": "Dr. Priya Menon",
+      "email": "controller.exams@admin.studx.com",
+      "designation": "Controller of Examinations",
+      "department": "Examination Cell",
+      "phone": "+91-9876543218"
+    },
+    {
+      "admin_id": "ADM010",
+      "name": "Prof. Arjun Kumar",
+      "email": "director.admissions@admin.studx.com",
+      "designation": "Director - Admissions",
+      "department": "Admissions",
+      "phone": "+91-9876543219"
+    }
+  ]
+}
+
