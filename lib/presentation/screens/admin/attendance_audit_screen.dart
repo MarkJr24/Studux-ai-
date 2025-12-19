@@ -152,10 +152,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           const SizedBox(height: 8),
           
           // Select Exam Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: AppDecorations.whiteCard,
-            child: Column(
+          _AnimatedCard(
+            accentColor: AppColors.auditAccent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -248,25 +249,18 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                   if (attendanceAvailable)
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: GradientButton(
+                        text: 'Next: Configure Audit',
                         onPressed: () {
                           _tabController.animateTo(1);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.auditAccent,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          'Next: Configure Audit',
-                          style: AppTextStyles.buttonText,
-                        ),
+                        decoration: AppDecorations.warningGradientButton,
+                        height: 50,
                       ),
                     ),
                 ],
               ],
+            ),
             ),
           ),
           
@@ -292,10 +286,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           const SizedBox(height: 16),
           
           // Configuration options
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: AppDecorations.whiteCard,
-            child: Column(
+          _AnimatedCard(
+            accentColor: AppColors.auditAccent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildConfigOption('Include absent students', true),
@@ -307,6 +302,7 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                 _buildConfigOption('Generate detailed report', true),
               ],
             ),
+            ),
           ),
           
           const SizedBox(height: 20),
@@ -314,21 +310,13 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           // Action buttons
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: GradientButton(
+              text: 'Next: Generate Audit',
               onPressed: () {
                 _tabController.animateTo(2);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.auditAccent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Next: Generate Audit',
-                style: AppTextStyles.buttonText,
-              ),
+              decoration: AppDecorations.warningGradientButton,
+              height: 50,
             ),
           ),
           
@@ -372,10 +360,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           const SizedBox(height: 16),
           
           // Generation card
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: AppDecorations.whiteCard,
-            child: Column(
+          _AnimatedCard(
+            accentColor: AppColors.auditAccent,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
               children: [
                 Icon(
                   auditGenerated ? Icons.check_circle : Icons.assessment,
@@ -406,7 +395,8 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                 
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: GradientButton(
+                    text: auditGenerated ? 'View Report' : 'Generate Audit',
                     onPressed: () {
                       setState(() {
                         auditGenerated = true;
@@ -415,20 +405,14 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                         _tabController.animateTo(3);
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: auditGenerated ? AppColors.successColor : AppColors.auditAccent,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      auditGenerated ? 'View Report' : 'Generate Audit',
-                      style: AppTextStyles.buttonText,
-                    ),
+                    decoration: auditGenerated 
+                        ? AppDecorations.successGradientButton 
+                        : AppDecorations.warningGradientButton,
+                    height: 50,
                   ),
                 ),
               ],
+            ),
             ),
           ),
           
@@ -455,10 +439,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           
           if (auditGenerated) ...[
             // Summary card
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: AppDecorations.whiteCard,
-              child: Column(
+            _AnimatedCard(
+              accentColor: AppColors.auditAccent,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -479,6 +464,7 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                   const Divider(height: 20),
                   _buildSummaryRow('Attendance Rate', '96.7%', color: AppColors.successColor),
                 ],
+              ),
               ),
             ),
             
@@ -533,10 +519,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
             ),
           ] else ...[
             // No report message
-            Container(
-              padding: const EdgeInsets.all(32),
-              decoration: AppDecorations.whiteCard,
-              child: Column(
+            _AnimatedCard(
+              accentColor: AppColors.auditAccent,
+              child: Container(
+                padding: const EdgeInsets.all(32),
+                child: Column(
                 children: [
                   Icon(
                     Icons.description_outlined,
@@ -559,6 +546,7 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
                     textAlign: TextAlign.center,
                   ),
                 ],
+              ),
               ),
             ),
           ],
@@ -586,6 +574,88 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
           ),
         ),
       ],
+    );
+  }
+}
+
+// Animated Card Widget
+class _AnimatedCard extends StatefulWidget {
+  final Widget child;
+  final Color accentColor;
+
+  const _AnimatedCard({
+    required this.child,
+    required this.accentColor,
+  });
+
+  @override
+  State<_AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: SweepGradient(
+                  colors: [
+                    widget.accentColor.withOpacity(0.3),
+                    widget.accentColor,
+                    widget.accentColor.withOpacity(0.5),
+                    widget.accentColor.withOpacity(0.8),
+                    widget.accentColor,
+                  ],
+                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  transform: GradientRotation(_controller.value * 2 * 3.14159),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.accentColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: AppDecorations.whiteCard,
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

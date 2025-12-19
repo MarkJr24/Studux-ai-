@@ -560,6 +560,133 @@ class AppDecorations {
       ),
     );
   }
+  
+  // Gradient Button Decorations
+  static BoxDecoration gradientButton({
+    required List<Color> colors,
+    double borderRadius = 12.0,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: colors,
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(borderRadius),
+      boxShadow: [
+        BoxShadow(
+          color: colors[0].withOpacity(0.3),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+  
+  // Primary Gradient Button (Blue)
+  static BoxDecoration primaryGradientButton = BoxDecoration(
+    gradient: const LinearGradient(
+      colors: [
+        Color(0xFF42A5F5), // Lighter blue
+        Color(0xFF2196F3), // Primary blue
+        Color(0xFF1976D2), // Darker blue
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.primaryButton.withOpacity(0.4),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+  
+  // Success Gradient Button (Green)
+  static BoxDecoration successGradientButton = BoxDecoration(
+    gradient: const LinearGradient(
+      colors: [
+        Color(0xFF66BB6A), // Lighter green
+        Color(0xFF4CAF50), // Primary green
+        Color(0xFF43A047), // Darker green
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.successColor.withOpacity(0.4),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+  
+  // Danger Gradient Button (Red)
+  static BoxDecoration dangerGradientButton = BoxDecoration(
+    gradient: const LinearGradient(
+      colors: [
+        Color(0xFFEF5350), // Lighter red
+        Color(0xFFE53935), // Primary red
+        Color(0xFFD32F2F), // Darker red
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.errorColor.withOpacity(0.4),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+  
+  // Warning Gradient Button (Orange)
+  static BoxDecoration warningGradientButton = BoxDecoration(
+    gradient: const LinearGradient(
+      colors: [
+        Color(0xFFFFA726), // Lighter orange
+        Color(0xFFFF9800), // Primary orange
+        Color(0xFFEF6C00), // Darker orange
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.warningColor.withOpacity(0.4),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+  
+  // Purple Gradient Button (for Generate Seating)
+  static BoxDecoration purpleGradientButton = BoxDecoration(
+    gradient: const LinearGradient(
+      colors: [
+        Color(0xFFAB47BC), // Lighter purple
+        Color(0xFF9C27B0), // Primary purple
+        Color(0xFF7B1FA2), // Darker purple
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: AppColors.generateSeatingAccent.withOpacity(0.4),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
 }
 
 class AppSpacing {
@@ -586,3 +713,74 @@ class AppElevations {
   static const double bottomNav = 8.0;
 }
 
+// Gradient Button Widget
+class GradientButton extends StatefulWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final BoxDecoration decoration;
+  final double? width;
+  final double height;
+  final TextStyle? textStyle;
+
+  const GradientButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.decoration,
+    this.width,
+    this.height = 50,
+    this.textStyle,
+  });
+
+  @override
+  State<GradientButton> createState() => _GradientButtonState();
+}
+
+class _GradientButtonState extends State<GradientButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) {
+        _controller.reverse();
+        widget.onPressed();
+      },
+      onTapCancel: () => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: widget.decoration,
+          child: Center(
+            child: Text(
+              widget.text,
+              style: widget.textStyle ?? AppTextStyles.buttonText,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

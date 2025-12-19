@@ -4,8 +4,35 @@ import 'admin_design_system.dart';
 
 import '../../../core/navigation_service.dart';
 
-class AdminProfileScreen extends StatelessWidget {
+class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
+
+  @override
+  State<AdminProfileScreen> createState() => _AdminProfileScreenState();
+}
+
+class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+    
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,23 +120,59 @@ class AdminProfileScreen extends StatelessWidget {
   Widget _buildAdminDetails(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: AppDecorations.whiteCard,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFF8F9FA),
+            Color(0xFFFFFFFF),
+            Color(0xFFF0F4F8),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorder),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile Avatar
+          // Profile Avatar with Pulse Animation
           Center(
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: AppColors.profileBg,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person,
-                size: 50,
-                color: AppColors.profileIcon,
+            child: ScaleTransition(
+              scale: _pulseAnimation,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFBBDEFB),
+                      Color(0xFFE3F2FD),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.profileIcon.withOpacity(0.3),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.person,
+                  size: 50,
+                  color: AppColors.profileIcon,
+                ),
               ),
             ),
           ),
@@ -191,13 +254,27 @@ class AdminProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFFAFAFA),
+            Color(0xFFFFFFFF),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.divider),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x05000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.infoDark, size: 20),
+          _AnimatedIcon(icon: icon, color: AppColors.infoDark),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -268,7 +345,8 @@ class AdminProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          ElevatedButton(
+          GradientButton(
+            text: 'Save',
             onPressed: () {
               // TODO: Save the updated value
               Navigator.pop(context);
@@ -279,19 +357,8 @@ class AdminProfileScreen extends StatelessWidget {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.infoDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              'Save',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            decoration: AppDecorations.primaryGradientButton,
+            height: 48,
           ),
         ],
       ),
@@ -316,26 +383,11 @@ class AdminProfileScreen extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: GradientButton(
+              text: 'Logout',
               onPressed: () => _showLogoutConfirmation(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dangerButton,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.logout, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Logout',
-                    style: AppTextStyles.buttonText,
-                  ),
-                ],
-              ),
+              decoration: AppDecorations.dangerGradientButton,
+              height: 50,
             ),
           ),
         ],
@@ -390,6 +442,56 @@ class AdminProfileScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Animated Icon Widget
+class _AnimatedIcon extends StatefulWidget {
+  final IconData icon;
+  final Color color;
+
+  const _AnimatedIcon({
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  State<_AnimatedIcon> createState() => _AnimatedIconState();
+}
+
+class _AnimatedIconState extends State<_AnimatedIcon> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Icon(
+        widget.icon,
+        color: widget.color,
+        size: 20,
       ),
     );
   }

@@ -207,11 +207,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
   }
 
   Widget _buildExamCard(ExamData exam) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(18),
-      decoration: AppDecorations.whiteCard,
-      child: Column(
+    return _AnimatedCard(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(18),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title and Badge
@@ -299,6 +299,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
             ],
           ),
         ],
+      ),
       ),
     );
   }
@@ -400,11 +401,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
 
     return suggestions.map((s) {
       final available = s['available'] as bool;
-      return Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: AppDecorations.whiteCard,
-        child: Column(
+      return _AnimatedCard(
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -454,6 +455,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
               ],
             ),
           ],
+        ),
         ),
       );
     }).toList();
@@ -512,11 +514,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
   }
 
   Widget _buildHallTicketCard(ExamData exam) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(18),
-      decoration: AppDecorations.whiteCard,
-      child: Column(
+    return _AnimatedCard(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(18),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -553,6 +555,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -583,24 +586,14 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
               ),
             ),
           ),
-          ElevatedButton(
+          GradientButton(
+            text: 'Save Exam',
             onPressed: () {
               Navigator.pop(context);
               // Add exam logic here
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryButton,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              'Save Exam',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            decoration: AppDecorations.primaryGradientButton,
+            height: 48,
           ),
         ],
       ),
@@ -633,4 +626,84 @@ class ExamData {
     required this.hasSeating,
     required this.hasHallTicket,
   });
+}
+
+// Animated Card Widget with Premium Effects
+class _AnimatedCard extends StatefulWidget {
+  final Widget child;
+
+  const _AnimatedCard({required this.child});
+
+  @override
+  State<_AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: SweepGradient(
+                  colors: [
+                    AppColors.primaryButton.withOpacity(0.3),
+                    AppColors.primaryButton,
+                    AppColors.primaryButton.withOpacity(0.5),
+                    AppColors.primaryButton.withOpacity(0.8),
+                    AppColors.primaryButton,
+                  ],
+                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  transform: GradientRotation(_controller.value * 2 * 3.14159),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryButton.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

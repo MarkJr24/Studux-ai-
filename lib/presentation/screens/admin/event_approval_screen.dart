@@ -180,11 +180,12 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
           selectedEvent = event;
         });
       },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(18),
-        decoration: AppDecorations.whiteCard,
-        child: Column(
+      child: _AnimatedCard(
+        accentColor: AppColors.eventAccent,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(18),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title and Status Badge
@@ -281,6 +282,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             ),
           ],
         ),
+        ),
       ),
     );
   }
@@ -312,10 +314,11 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Event Info Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: AppDecorations.whiteCard,
-            child: Column(
+          _AnimatedCard(
+            accentColor: AppColors.eventAccent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -339,15 +342,17 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                 _buildDetailRow('Expected Attendees', '${event.expectedAttendees}'),
               ],
             ),
+            ),
           ),
           
           const SizedBox(height: 16),
           
           // Description Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: AppDecorations.whiteCard,
-            child: Column(
+          _AnimatedCard(
+            accentColor: AppColors.eventAccent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -364,6 +369,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                   style: AppTextStyles.bodyText,
                 ),
               ],
+            ),
             ),
           ),
           
@@ -440,40 +446,24 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
+                child: GradientButton(
+                  text: 'Reject',
                   onPressed: () {
                     _showRejectDialog();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.errorColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Reject',
-                    style: AppTextStyles.buttonText,
-                  ),
+                  decoration: AppDecorations.dangerGradientButton,
+                  height: 50,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
+                child: GradientButton(
+                  text: 'Approve',
                   onPressed: () {
                     _showApproveDialog();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.successColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Approve',
-                    style: AppTextStyles.buttonText,
-                  ),
+                  decoration: AppDecorations.successGradientButton,
+                  height: 50,
                 ),
               ),
             ],
@@ -611,6 +601,88 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Animated Card Widget
+class _AnimatedCard extends StatefulWidget {
+  final Widget child;
+  final Color accentColor;
+
+  const _AnimatedCard({
+    required this.child,
+    required this.accentColor,
+  });
+
+  @override
+  State<_AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: SweepGradient(
+                  colors: [
+                    widget.accentColor.withOpacity(0.3),
+                    widget.accentColor,
+                    widget.accentColor.withOpacity(0.5),
+                    widget.accentColor.withOpacity(0.8),
+                    widget.accentColor,
+                  ],
+                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  transform: GradientRotation(_controller.value * 2 * 3.14159),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.accentColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: AppDecorations.whiteCard,
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

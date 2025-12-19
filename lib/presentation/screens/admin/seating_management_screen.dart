@@ -245,16 +245,18 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
     );
   }
 
-  // White card container wrapper
+  // Animated card container wrapper with gradient border
   Widget _buildGlassContainer({
     required Widget child,
     EdgeInsets? padding,
     Color? glowColor,
   }) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(20),
-      decoration: AppDecorations.cardDecoration,
-      child: child,
+    return _AnimatedGradientCard(
+      accentColor: glowColor ?? AppColors.generateSeatingAccent,
+      child: Container(
+        padding: padding ?? const EdgeInsets.all(20),
+        child: child,
+      ),
     );
   }
 
@@ -1073,23 +1075,98 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
               style: AppTextStyles.textButton.copyWith(color: AppColors.secondaryText),
             ),
           ),
-          ElevatedButton(
+          GradientButton(
+            text: 'Publish',
             onPressed: () {
               Navigator.pop(context);
               // Publish logic here
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.successButton,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              'Publish',
-              style: AppTextStyles.buttonTextWhite,
-            ),
+            decoration: AppDecorations.successGradientButton,
+            height: 48,
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Animated Gradient Card Widget
+class _AnimatedGradientCard extends StatefulWidget {
+  final Widget child;
+  final Color accentColor;
+
+  const _AnimatedGradientCard({
+    required this.child,
+    required this.accentColor,
+  });
+
+  @override
+  State<_AnimatedGradientCard> createState() => _AnimatedGradientCardState();
+}
+
+class _AnimatedGradientCardState extends State<_AnimatedGradientCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.01 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: SweepGradient(
+                  colors: [
+                    widget.accentColor.withOpacity(0.3),
+                    widget.accentColor,
+                    widget.accentColor.withOpacity(0.5),
+                    widget.accentColor.withOpacity(0.8),
+                    widget.accentColor,
+                  ],
+                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  transform: GradientRotation(_controller.value * 2 * 3.14159),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.accentColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: AppDecorations.cardDecoration,
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
