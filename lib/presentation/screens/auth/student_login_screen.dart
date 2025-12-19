@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
+import 'dart:math' as math;
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -158,6 +159,11 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
             ),
           ),
           
+          // Animated Student Icons Background
+          const Positioned.fill(
+            child: _AnimatedStudentBackground(),
+          ),
+          
           // Main content
           SafeArea(
             child: Column(
@@ -213,7 +219,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: BackdropFilter(
-              filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
             decoration: BoxDecoration(
@@ -221,26 +227,27 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF4FACFE).withOpacity(0.75), // Softer blue with transparency
-                  const Color(0xFF00F2FE).withOpacity(0.80), // Softer cyan with transparency
+                  Colors.white.withOpacity(0.95),
+                  const Color(0xFFD4E9F7).withOpacity(0.92), // Light blue
+                  const Color(0xFFE0F7FA).withOpacity(0.95), // Light cyan
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1.5,
+                color: Colors.white.withOpacity(0.8),
+                width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF4FACFE).withOpacity(0.1), // Very subtle glow
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 0,
+                  color: const Color(0xFF4A90E2).withOpacity(0.2),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                  spreadRadius: 5,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
@@ -682,8 +689,8 @@ class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [
-                    Color(0xFFFFC0CB), // Pink
-                    Color(0xFFFFD700), // Yellow
+                    Color(0xFF4A90E2), // Blue
+                    Color(0xFF50C9C3), // Cyan
                   ],
                 ),
                 borderRadius: BorderRadius.circular(1),
@@ -829,4 +836,168 @@ class _NeonButtonState extends State<_NeonButton>
       },
     );
   }
+}
+
+// Animated Student Background with Study Icons
+class _AnimatedStudentBackground extends StatefulWidget {
+  const _AnimatedStudentBackground();
+
+  @override
+  State<_AnimatedStudentBackground> createState() => _AnimatedStudentBackgroundState();
+}
+
+class _AnimatedStudentBackgroundState extends State<_AnimatedStudentBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<_StudentFloatingIcon> _icons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+
+    // Create floating student-related icons (graduation, study, achievements, learning)
+    final studentIcons = [
+      Icons.school,
+      Icons.backpack,
+      Icons.badge_outlined,
+      Icons.workspace_premium,
+      Icons.assignment_outlined,
+      Icons.description_outlined,
+      Icons.assignment_outlined,
+      Icons.task_alt,
+      Icons.emoji_events_outlined,
+      Icons.stars_outlined,
+      Icons.quiz_outlined,
+      Icons.lightbulb_outline,
+      Icons.explore_outlined,
+      Icons.science_outlined,
+      Icons.calculate_outlined,
+    ];
+
+    // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
+    final random = math.Random(44); // Different seed
+    
+    for (int i = 0; i < 15; i++) {
+      // Grid position
+      final col = i % 3;
+      final row = i ~/ 3;
+      
+      double x = (col * 0.33) + random.nextDouble() * 0.25;
+      double y = (row * 0.2) + random.nextDouble() * 0.15;
+      
+      _icons.add(_StudentFloatingIcon(
+        icon: studentIcons[i % studentIcons.length],
+        x: x,
+        y: y,
+        size: 25 + random.nextDouble() * 20,
+        speed: 0.01 + random.nextDouble() * 0.02,
+        delay: random.nextDouble(),
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _StudentIconPainter(
+            icons: _icons,
+            progress: _controller.value,
+            color: const Color(0xFF4A90E2), // Blue
+          ),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _StudentFloatingIcon {
+  final IconData icon;
+  final double x;
+  final double y;
+  final double size;
+  final double speed;
+  final double delay;
+
+  _StudentFloatingIcon({
+    required this.icon,
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speed,
+    required this.delay,
+  });
+}
+
+class _StudentIconPainter extends CustomPainter {
+  final List<_StudentFloatingIcon> icons;
+  final double progress;
+  final Color color;
+
+  _StudentIconPainter({
+    required this.icons,
+    required this.progress,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (var iconData in icons) {
+      final adjustedProgress = ((progress + iconData.delay) % 1.0);
+      
+      // Vertical movement (floating upward)
+      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+      
+      // Horizontal wave motion (sine wave)
+      final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
+      final xPos = size.width * iconData.x + waveOffset;
+      
+      if (yPos > -iconData.size && yPos < size.height + iconData.size) {
+        final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
+        
+        // Scale pulsing (gentle breathing effect)
+        final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
+        
+        canvas.save();
+        canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
+        canvas.scale(scale);
+        
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: String.fromCharCode(iconData.icon.codePoint),
+            style: TextStyle(
+              fontSize: iconData.size,
+              fontFamily: iconData.icon.fontFamily,
+              color: color.withOpacity(opacity),
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        );
+        
+        textPainter.layout();
+        textPainter.paint(
+          canvas,
+          Offset(-textPainter.width / 2, -textPainter.height / 2),
+        );
+        
+        canvas.restore();
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_StudentIconPainter oldDelegate) => true;
 }

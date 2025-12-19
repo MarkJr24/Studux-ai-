@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui' as ui;
+import 'dart:math' as math;
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -22,8 +24,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   bool _rememberMe = false;
   bool _isLoading = false;
   bool _showSuccess = false;
-  
-  // Animation controllers
+
   late AnimationController _entranceController;
   late AnimationController _successController;
   late Animation<double> _cardFadeAnimation;
@@ -32,73 +33,61 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   late Animation<double> _fieldsFadeAnimation;
   late Animation<double> _buttonFadeAnimation;
 
-  // Hardcoded credentials
   static const String _validEmail = 'teacher@studentms.com';
   static const String _validPassword = 'Teacher@123';
 
   @override
   void initState() {
     super.initState();
-    
-    // Initialize entrance animation (elegant glide + staggered reveal)
+
     _entranceController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    
-    // Card glide up and fade in
-    _cardFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+
+    _cardFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
       ),
     );
-    
-    _cardSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(
+
+    _cardSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
       ),
     );
-    
-    // Staggered reveal: Header appears after card
-    _headerFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+
+    _headerFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.2, 0.7, curve: Curves.easeOut),
       ),
     );
-    
-    // Input fields appear after header
-    _fieldsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+
+    _fieldsFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
       ),
     );
-    
-    // Button appears last
-    _buttonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+
+    _buttonFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
       ),
     );
-    
-    // Initialize success animation controller (grading checkmark)
+
     _successController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    
-    // Start entrance animation after brief delay
+
     Future.delayed(const Duration(milliseconds: 150), () {
-      if (mounted) {
-        _entranceController.forward();
-      }
+      if (mounted) _entranceController.forward();
     });
   }
 
@@ -112,48 +101,35 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   }
 
   Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-
-    // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
-
     if (!mounted) return;
+
     setState(() => _isLoading = false);
 
-    // Check credentials
     if (_emailController.text == _validEmail &&
         _passwordController.text == _validPassword) {
-      if (mounted) {
-        // Show success animation
-        setState(() => _showSuccess = true);
-        
-        // Wait for success animation
-        await Future.delayed(const Duration(milliseconds: 250));
-        
-        if (!mounted) return;
-        setState(() => _showSuccess = false);
-        
-        SnackbarHelper.showSuccess(context, 'Login successful!');
-        // Navigate to teacher main navigation (clears entire navigation stack)
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TeacherMainNavigation(),
-          ),
-          (route) => false, // Remove ALL previous routes
-        );
-      }
+      setState(() => _showSuccess = true);
+      await Future.delayed(const Duration(milliseconds: 250));
+      if (!mounted) return;
+
+      setState(() => _showSuccess = false);
+      SnackbarHelper.showSuccess(context, 'Login successful!');
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TeacherMainNavigation(),
+        ),
+        (route) => false,
+      );
     } else {
-      if (mounted) {
-        SnackbarHelper.showError(
-          context,
-          'Invalid credentials. Please try again.',
-        );
-      }
+      SnackbarHelper.showError(
+        context,
+        'Invalid credentials. Please try again.',
+      );
     }
   }
 
@@ -162,28 +138,24 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
               'assets/images/teacher_login_bg.png',
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                // Fallback to solid color if image not found
-                return Container(
-                  color: const Color(0xFFF7F8FA),
-                );
-              },
+              errorBuilder: (_, __, ___) =>
+                  Container(color: const Color(0xFFF7F8FA)),
             ),
           ),
           
-          // Main content
+          // Animated Teacher Icons Background
+          const Positioned.fill(
+            child: _AnimatedTeacherBackground(),
+          ),
+          
           SafeArea(
             child: Column(
               children: [
-                // App Bar
                 _buildAppBar(),
-
-                // Login Card
                 Expanded(
                   child: Center(
                     child: SingleChildScrollView(
@@ -214,14 +186,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
             ),
           ),
           const SizedBox(width: 16),
-          Text(
-            'Teacher Login',
-            style: GoogleFonts.inter(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF1F2937),
-            ),
-          ),
+          const _AnimatedHeaderText(text: 'Teacher Login'),
         ],
       ),
     );
@@ -232,101 +197,102 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       opacity: _cardFadeAnimation,
       child: SlideTransition(
         position: _cardSlideAnimation,
-        child: Container(
-      constraints: const BoxConstraints(maxWidth: 400),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+        child: _FloatingCard(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(0.95),
+                      const Color(0xFFFFE8D9).withOpacity(0.92), // Light orange
+                      const Color(0xFFFFF3E0).withOpacity(0.95), // Light amber
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.8),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF7B54).withOpacity(0.2),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
+                      spreadRadius: 5,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Title
+                      Text(
+                        'Welcome Back, Teacher',
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1F2937),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        'Sign in to access your teaching dashboard',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: const Color(0xFF6B7280),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 22),
+
+                      // Email Field
+                      _buildEmailField(),
+
+                      const SizedBox(height: 16),
+
+                      // Password Field
+                      _buildPasswordField(),
+
+                      const SizedBox(height: 16),
+
+                      // Remember Me
+                      _buildRememberMe(),
+
+                      const SizedBox(height: 24),
+
+                      // Login Button
+                      FadeTransition(
+                        opacity: _buttonFadeAnimation,
+                        child: _buildLoginButton(),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildForgotPassword(),
+                      const SizedBox(height: 18),
+                      _buildBackToRoleSelection(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(32),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Title - Staggered reveal (appears after card)
-            FadeTransition(
-              opacity: _headerFadeAnimation,
-              child: Column(
-                children: [
-                  Text(
-                    'Welcome Back, Teacher',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1F2937),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Text(
-                    'Sign in to access your teaching dashboard',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: const Color(0xFF6B7280),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Input Fields - Staggered reveal (appear after header)
-            FadeTransition(
-              opacity: _fieldsFadeAnimation,
-              child: Column(
-                children: [
-                  // Email Field
-                  _buildEmailField(),
-
-                  const SizedBox(height: 16),
-
-                  // Password Field
-                  _buildPasswordField(),
-
-                  const SizedBox(height: 16),
-
-                  // Remember Me
-                  _buildRememberMe(),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Login Button - Staggered reveal (appears last)
-            FadeTransition(
-              opacity: _buttonFadeAnimation,
-              child: _buildLoginButton(),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Forgot Password
-            _buildForgotPassword(),
-
-            const SizedBox(height: 18),
-
-            // Back to Role Selection
-            _buildBackToRoleSelection(),
-          ],
-        ),
-      ),
         ),
       ),
     );
@@ -337,22 +303,16 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: Validators.validateEmail,
-      style: GoogleFonts.inter(
-        fontSize: 16,
-        color: const Color(0xFF1F2937),
-      ),
+      style: GoogleFonts.inter(fontSize: 16),
       decoration: InputDecoration(
         hintText: 'teacher@studentms.com',
         hintStyle: GoogleFonts.inter(
-          color: const Color(0xFF9CA3AF),
+          color: AppColors.textSecondary,
           fontSize: 16,
         ),
-        prefixIcon: const Icon(
-          Icons.school_outlined,
-          color: Color(0xFF6B7280),
-        ),
+        prefixIcon: const Icon(Icons.school_outlined),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.lightSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -363,7 +323,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF1F2937), width: 2),
+          borderSide: const BorderSide(color: Color(0xFFFF7B54), width: 2), // Orange focus
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -386,24 +346,17 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: Validators.validatePassword,
-      style: GoogleFonts.inter(
-        fontSize: 16,
-        color: const Color(0xFF1F2937),
-      ),
+      style: GoogleFonts.inter(fontSize: 16),
       decoration: InputDecoration(
         hintText: 'Teacher@123',
         hintStyle: GoogleFonts.inter(
-          color: const Color(0xFF9CA3AF),
+          color: AppColors.textSecondary,
           fontSize: 16,
         ),
-        prefixIcon: const Icon(
-          Icons.lock_outline,
-          color: Color(0xFF6B7280),
-        ),
+        prefixIcon: const Icon(Icons.lock_outline),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
-            color: const Color(0xFF6B7280),
           ),
           onPressed: () {
             setState(() {
@@ -412,7 +365,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
           },
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.lightSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -423,7 +376,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF1F2937), width: 2),
+          borderSide: const BorderSide(color: Color(0xFFFF7B54), width: 2), // Orange focus
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -451,7 +404,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
               _rememberMe = value ?? false;
             });
           },
-          activeColor: const Color(0xFF1F2937),
+          activeColor: const Color(0xFFFF7B54), // Orange color
         ),
         Text(
           'Remember Me',
@@ -465,43 +418,10 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   }
 
   Widget _buildLoginButton() {
-    return SizedBox(
-      height: 56,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleLogin,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1F2937),
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: Colors.grey[300],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-        ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : _showSuccess
-                ? const Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: 28,
-                  )
-                : Text(
-                    'Sign In as Teacher',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-      ),
+    return _NeonButton(
+      onTap: _isLoading ? null : _handleLogin,
+      isLoading: _isLoading,
+      showSuccess: _showSuccess,
     );
   }
 
@@ -545,4 +465,421 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       ),
     );
   }
+}
+
+class _FloatingCard extends StatefulWidget {
+  final Widget child;
+  const _FloatingCard({required this.child});
+
+  @override
+  State<_FloatingCard> createState() => _FloatingCardState();
+}
+
+class _FloatingCardState extends State<_FloatingCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 7))
+          ..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0, end: 3).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (_, child) =>
+          Transform.translate(offset: Offset(0, -_animation.value), child: child),
+      child: widget.child,
+    );
+  }
+}
+
+class _AnimatedHeaderText extends StatefulWidget {
+  final String text;
+
+  const _AnimatedHeaderText({required this.text});
+
+  @override
+  State<_AnimatedHeaderText> createState() => _AnimatedHeaderTextState();
+}
+
+class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    // Start animation after a short delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+          Text(
+          widget.text,
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF1F2937),
+          ),
+        ),
+        const SizedBox(height: 4),
+        AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return Container(
+              height: 2,
+              width: 100 * _animation.value,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFFF7B54), // Orange
+                    Color(0xFFFFB84D), // Yellow-Orange
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// Neon Button with Success Animation
+class _NeonButton extends StatefulWidget {
+  final VoidCallback? onTap;
+  final bool isLoading;
+  final bool showSuccess;
+
+  const _NeonButton({
+    required this.onTap,
+    required this.isLoading,
+    required this.showSuccess,
+  });
+
+  @override
+  State<_NeonButton> createState() => _NeonButtonState();
+}
+
+class _NeonButtonState extends State<_NeonButton>
+    with SingleTickerProviderStateMixin {
+  bool _isPressed = false;
+  late AnimationController _successController;
+  late Animation<double> _successAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _successController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+
+    _successAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.8),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.8, end: 1.2),
+        weight: 25,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.2, end: 1.0),
+        weight: 25,
+      ),
+    ]).animate(CurvedAnimation(
+      parent: _successController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(_NeonButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showSuccess && !oldWidget.showSuccess) {
+      _successController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _successController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scale = _isPressed ? 1.03 : 1.0;
+
+    return AnimatedBuilder(
+      animation: _successAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: widget.showSuccess ? _successAnimation.value : scale,
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xFFFF7B54), // Orange
+                  Color(0xFFFFB84D), // Yellow-Orange
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF7B54).withOpacity(_isPressed ? 0.5 : 0.3),
+                  blurRadius: _isPressed ? 20 : 15,
+                  offset: const Offset(0, 8),
+                  spreadRadius: _isPressed ? 2 : 0,
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: widget.onTap,
+                onTapDown: (_) => setState(() => _isPressed = true),
+                onTapUp: (_) => setState(() => _isPressed = false),
+                onTapCancel: () => setState(() => _isPressed = false),
+                borderRadius: BorderRadius.circular(12),
+                child: Center(
+                  child: widget.isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : widget.showSuccess
+                          ? const Icon(
+                              Icons.check_circle,
+                              color: Colors.white,
+                              size: 28,
+                            )
+                          : Text(
+                              'Sign In as Teacher',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Animated Teacher Background with Education Icons
+class _AnimatedTeacherBackground extends StatefulWidget {
+  const _AnimatedTeacherBackground();
+
+  @override
+  State<_AnimatedTeacherBackground> createState() => _AnimatedTeacherBackgroundState();
+}
+
+class _AnimatedTeacherBackgroundState extends State<_AnimatedTeacherBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<_TeacherFloatingIcon> _icons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+
+    // Create floating teacher-related icons (books, teaching materials, education)
+    final teacherIcons = [
+      Icons.menu_book,
+      Icons.auto_stories,
+      Icons.book_outlined,
+      Icons.chrome_reader_mode,
+      Icons.library_books,
+      Icons.import_contacts,
+      Icons.subject_outlined,
+      Icons.article_outlined,
+      Icons.description_outlined,
+      Icons.library_add_outlined,
+      Icons.bookmark_outline,
+      Icons.format_quote,
+      Icons.text_snippet_outlined,
+      Icons.note_outlined,
+      Icons.sticky_note_2_outlined,
+    ];
+
+    // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
+    final random = math.Random(43); // Different seed
+    
+    for (int i = 0; i < 15; i++) {
+      // Grid position
+      final col = i % 3;
+      final row = i ~/ 3;
+      
+      double x = (col * 0.33) + random.nextDouble() * 0.25;
+      double y = (row * 0.2) + random.nextDouble() * 0.15;
+      
+      _icons.add(_TeacherFloatingIcon(
+        icon: teacherIcons[i % teacherIcons.length],
+        x: x,
+        y: y,
+        size: 25 + random.nextDouble() * 20,
+        speed: 0.01 + random.nextDouble() * 0.02,
+        delay: random.nextDouble(),
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _TeacherIconPainter(
+            icons: _icons,
+            progress: _controller.value,
+            color: const Color(0xFFFF7B54), // Orange
+          ),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _TeacherFloatingIcon {
+  final IconData icon;
+  final double x;
+  final double y;
+  final double size;
+  final double speed;
+  final double delay;
+
+  _TeacherFloatingIcon({
+    required this.icon,
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speed,
+    required this.delay,
+  });
+}
+
+class _TeacherIconPainter extends CustomPainter {
+  final List<_TeacherFloatingIcon> icons;
+  final double progress;
+  final Color color;
+
+  _TeacherIconPainter({
+    required this.icons,
+    required this.progress,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (var iconData in icons) {
+      final adjustedProgress = ((progress + iconData.delay) % 1.0);
+      
+      // Vertical movement (floating upward)
+      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+      
+      // Horizontal wave motion (sine wave)
+      final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
+      final xPos = size.width * iconData.x + waveOffset;
+      
+      if (yPos > -iconData.size && yPos < size.height + iconData.size) {
+        final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
+        
+        // Scale pulsing (gentle breathing effect)
+        final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
+        
+        canvas.save();
+        canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
+        canvas.scale(scale);
+        
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: String.fromCharCode(iconData.icon.codePoint),
+            style: TextStyle(
+              fontSize: iconData.size,
+              fontFamily: iconData.icon.fontFamily,
+              color: color.withOpacity(opacity),
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        );
+        
+        textPainter.layout();
+        textPainter.paint(
+          canvas,
+          Offset(-textPainter.width / 2, -textPainter.height / 2),
+        );
+        
+        canvas.restore();
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_TeacherIconPainter oldDelegate) => true;
 }

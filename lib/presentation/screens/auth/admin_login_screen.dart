@@ -116,6 +116,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             ),
           ),
           
+          // Animated Admin Icons Background
+          const Positioned.fill(
+            child: _AnimatedAdminBackground(),
+          ),
+          
           // Main content
           SafeArea(
             child: Column(
@@ -865,4 +870,171 @@ class _ParallaxBackgroundState extends State<_ParallaxBackground>
       ),
     );
   }
+}
+
+// Animated Admin Background with Security Icons
+class _AnimatedAdminBackground extends StatefulWidget {
+  const _AnimatedAdminBackground();
+
+  @override
+  State<_AnimatedAdminBackground> createState() => _AnimatedAdminBackgroundState();
+}
+
+class _AnimatedAdminBackgroundState extends State<_AnimatedAdminBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<_FloatingIcon> _icons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+
+    // Create floating admin-related icons (unique admin dashboard items)
+    final adminIcons = [
+      Icons.dashboard_outlined,
+      Icons.admin_panel_settings,
+      Icons.settings_outlined,
+      Icons.analytics_outlined,
+      Icons.bar_chart_outlined,
+      Icons.supervisor_account_outlined,
+      Icons.pie_chart_outline,
+      Icons.trending_up,
+      Icons.assessment_outlined,
+      Icons.show_chart,
+      Icons.leaderboard_outlined,
+      Icons.business_center_outlined,
+      Icons.verified_user_outlined,
+      Icons.security_outlined,
+      Icons.policy_outlined,
+    ];
+
+    // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
+    final random = math.Random(42); // Fixed seed for consistent layout
+    
+    for (int i = 0; i < 15; i++) {
+      // Grid position
+      final col = i % 3;
+      final row = i ~/ 3;
+      
+      // Base position + random offset within grid cell
+      // X: 0-0.33, 0.33-0.66, 0.66-1.0
+      // Y: 0-0.2, 0.2-0.4, etc.
+      double x = (col * 0.33) + random.nextDouble() * 0.25;
+      double y = (row * 0.2) + random.nextDouble() * 0.15;
+      
+      _icons.add(_FloatingIcon(
+        icon: adminIcons[i % adminIcons.length],
+        x: x,
+        y: y,
+        size: 25 + random.nextDouble() * 20, // Random size 25-45
+        speed: 0.01 + random.nextDouble() * 0.02, // Random speed
+        delay: random.nextDouble(), // Random delay
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _FloatingIconPainter(
+            icons: _icons,
+            progress: _controller.value,
+            color: const Color(0xFF9333EA), // Purple
+          ),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _FloatingIcon {
+  final IconData icon;
+  final double x;
+  final double y;
+  final double size;
+  final double speed;
+  final double delay;
+
+  _FloatingIcon({
+    required this.icon,
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speed,
+    required this.delay,
+  });
+}
+
+class _FloatingIconPainter extends CustomPainter {
+  final List<_FloatingIcon> icons;
+  final double progress;
+  final Color color;
+
+  _FloatingIconPainter({
+    required this.icons,
+    required this.progress,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (var iconData in icons) {
+      final adjustedProgress = ((progress + iconData.delay) % 1.0);
+      
+      // Vertical movement (floating upward)
+      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+      
+      // Horizontal wave motion (sine wave)
+      final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
+      final xPos = size.width * iconData.x + waveOffset;
+      
+      if (yPos > -iconData.size && yPos < size.height + iconData.size) {
+        final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
+        
+        // Scale pulsing (gentle breathing effect)
+        final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
+        
+        canvas.save();
+        canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
+        canvas.scale(scale);
+        
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: String.fromCharCode(iconData.icon.codePoint),
+            style: TextStyle(
+              fontSize: iconData.size,
+              fontFamily: iconData.icon.fontFamily,
+              color: color.withOpacity(opacity),
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        );
+        
+        textPainter.layout();
+        textPainter.paint(
+          canvas,
+          Offset(-textPainter.width / 2, -textPainter.height / 2),
+        );
+        
+        canvas.restore();
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_FloatingIconPainter oldDelegate) => true;
 }
