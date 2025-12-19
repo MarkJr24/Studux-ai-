@@ -109,14 +109,33 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
-          child: IconButton(
-            icon: const Icon(Icons.person, color: Colors.blue),
-            onPressed: () {
+          child: GestureDetector(
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const StudentProfileScreen()),
               );
             },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0D50A9), // Dark Blue
+                    Color(0xFF8FFEB0), // Cyan/Mint
+                  ],
+                ),
+              ),
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
           ),
         ),
       ],
@@ -426,92 +445,15 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
     String? badge,
     VoidCallback? onTap,
   }) {
-    return Opacity(
-      opacity: enabled ? 1.0 : 0.5,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
-          boxShadow: enabled
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: enabled ? onTap : null,
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: iconColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(icon, color: iconColor, size: 24),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (statusBadge != null)
-                    Text(statusBadge, style: const TextStyle(fontSize: 20)),
-                  if (badge != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        badge,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  if (enabled) const SizedBox(width: 8),
-                  if (enabled)
-                    Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+    return _AnimatedActionCard(
+      icon: icon,
+      iconColor: iconColor,
+      title: title,
+      subtitle: subtitle,
+      enabled: enabled,
+      statusBadge: statusBadge,
+      badge: badge,
+      onTap: onTap,
     );
   }
 
@@ -692,6 +634,251 @@ class _StudentExamsScreenState extends State<StudentExamsScreen> {
       ),
     );
   }
-
-  // NOTE: A bottom navigation implementation previously existed here but was unused.
 }
+
+// Animated Action Card Widget
+class _AnimatedActionCard extends StatefulWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final bool enabled;
+  final String? statusBadge;
+  final String? badge;
+  final VoidCallback? onTap;
+
+  const _AnimatedActionCard({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.enabled,
+    this.statusBadge,
+    this.badge,
+    this.onTap,
+  });
+
+  @override
+  State<_AnimatedActionCard> createState() => _AnimatedActionCardState();
+}
+
+class _AnimatedActionCardState extends State<_AnimatedActionCard> with TickerProviderStateMixin {
+  late AnimationController _shimmerController;
+  late AnimationController _scaleController;
+  late Animation<double> _shimmerAnim;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Shimmer animation
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    if (widget.enabled) {
+      _shimmerController.repeat();
+    }
+    _shimmerAnim = Tween<double>(begin: -1.0, end: 2.0).animate(_shimmerController);
+    
+    // Scale animation for tap
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  List<Color> _getGradientColors(Color baseColor) {
+    final hsl = HSLColor.fromColor(baseColor);
+    return [
+      hsl.withLightness((hsl.lightness + 0.1).clamp(0.0, 1.0)).toColor(),
+      baseColor,
+      hsl.withLightness((hsl.lightness - 0.1).clamp(0.0, 1.0)).toColor(),
+    ];
+  }
+
+  void _handleTap() {
+    if (widget.enabled && widget.onTap != null) {
+      _scaleController.forward().then((_) => _scaleController.reverse());
+      widget.onTap!();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final gradientColors = _getGradientColors(widget.iconColor);
+
+    return ScaleTransition(
+      scale: _scaleAnim,
+      child: Opacity(
+        opacity: widget.enabled ? 1.0 : 0.5,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+            boxShadow: widget.enabled
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _handleTap,
+              onTapDown: widget.enabled ? (_) => _scaleController.forward() : null,
+              onTapUp: widget.enabled ? (_) => _scaleController.reverse() : null,
+              onTapCancel: widget.enabled ? () => _scaleController.reverse() : null,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    // Gradient icon container with shimmer
+                    AnimatedBuilder(
+                      animation: _shimmerAnim,
+                      builder: (context, child) {
+                        return Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: gradientColors,
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: widget.enabled
+                                ? [
+                                    BoxShadow(
+                                      color: widget.iconColor.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: Stack(
+                            children: [
+                              // Shimmer overlay
+                              if (widget.enabled)
+                                Positioned.fill(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Transform.translate(
+                                      offset: Offset(_shimmerAnim.value * 60, 0),
+                                      child: Container(
+                                        width: 30,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.white.withOpacity(0.3),
+                                              Colors.transparent,
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              // Icon
+                              Center(
+                                child: Icon(
+                                  widget.icon,
+                                  color: Colors.white,
+                                  size: 24,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            widget.subtitle,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (widget.statusBadge != null)
+                      Text(widget.statusBadge!, style: const TextStyle(fontSize: 20)),
+                    if (widget.badge != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF5252), Color(0xFFD32F2F)],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.3),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          widget.badge!,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    if (widget.enabled) const SizedBox(width: 8),
+                    if (widget.enabled)
+                      Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

@@ -103,35 +103,57 @@ class _TeacherInsightsScreenState extends State<TeacherInsightsScreen>
   Widget _buildInternalTabBar() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: List.generate(3, (index) {
-          final tabs = ['Attendance Insights', 'Performance Insights', 'At-Risk Students'];
+          final tabs = ['Attendance\nInsights', 'Performance\nInsights', 'At-Risk\nStudents'];
           final isSelected = _selectedTabIndex == index;
           return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedTabIndex = index;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF8E24AA) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  tabs[index],
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: index == 0 ? 0 : 4,
+                right: index == 2 ? 0 : 4,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedTabIndex = index;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFF8E24AA) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected 
+                          ? const Color(0xFF8E24AA) 
+                          : Colors.grey[300]!,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    tabs[index],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                      height: 1.2,
+                    ),
                   ),
                 ),
               ),

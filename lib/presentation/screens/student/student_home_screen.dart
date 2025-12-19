@@ -19,7 +19,7 @@ class StudentHomeScreen extends StatefulWidget {
   State<StudentHomeScreen> createState() => _StudentHomeScreenState();
 }
 
-class _StudentHomeScreenState extends State<StudentHomeScreen> {
+class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTickerProviderStateMixin {
   // Mock data
   final String _studentName = 'Harsha';
   final bool _hasExamToday = true;
@@ -27,6 +27,38 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   final String _todayExamType = 'CIA';
   final String _todayExamTime = '10:00 AM – 01:00 PM';
   final bool _hallTicketReleased = true;
+  
+  // Status chip data
+  final String _academicStatus = 'Active'; // Can be: Active, Credit Shortage, Detained
+  final bool _examRestriction = false; // true = Yes, false = No
+
+  late AnimationController _gradientController;
+  late Animation<double> _gradientAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _gradientController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+    _gradientAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_gradientController);
+    
+    // Fade-in animation for status chips
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _gradientController,
+        curve: const Interval(0.0, 0.03, curve: Curves.easeIn), // 300ms of 10s
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _gradientController.dispose();
+    super.dispose();
+  }
 
   void _openExamsTab() {
     if (widget.onOpenExamsTab != null) {
@@ -56,7 +88,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     final dateStr = 'Today: ${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(greeting, dateStr),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -79,44 +111,169 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(String greeting, String dateStr) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return PreferredSize(
+      preferredSize: Size.fromHeight(_examRestriction ? 160 : 140), // Adjust height based on helper text
+      child: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        flexibleSpace: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$greeting, $_studentName',
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        dateStr,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      // Status Chips with Fade-in Animation
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Row(
+                          children: [
+                            // Academic Status Chip
+                            _buildStatusChip(
+                              label: 'Academic Status',
+                              value: _academicStatus,
+                              color: _getAcademicStatusColor(_academicStatus),
+                            ),
+                            const SizedBox(width: 12),
+                            
+                            // Exam Restriction Chip
+                            _buildStatusChip(
+                              label: 'Exam Restriction',
+                              value: _examRestriction ? 'Yes' : 'No',
+                              color: _examRestriction ? Colors.red : Colors.green,
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Helper text for exam restriction
+                      if (_examRestriction) ...[
+                        const SizedBox(height: 8),
+                        FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            'Exam restriction applied by faculty.',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: Colors.red[700],
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                
+                // Profile Icon
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StudentProfileScreen()),
+                    );
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFF0D50A9), // Top: Dark Blue
+                          Color(0xFF8FFEB0), // Bottom: Cyan/Mint
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildStatusChip({
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '$greeting, $_studentName',
+            '$label: ',
             style: GoogleFonts.inter(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              fontSize: 12,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
             ),
           ),
           Text(
-            dateStr,
+            value,
             style: GoogleFonts.inter(
-              fontSize: 14,
-              color: Colors.grey[600],
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: IconButton(
-            icon: const Icon(Icons.person, color: Color(0xFF2196F3)), // Brighter blue
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const StudentProfileScreen()),
-              );
-            },
-          ),
-        ),
-      ],
     );
+  }
+  
+  Color _getAcademicStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Colors.green;
+      case 'credit shortage':
+        return Colors.orange;
+      case 'detained':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildTodaysExam() {

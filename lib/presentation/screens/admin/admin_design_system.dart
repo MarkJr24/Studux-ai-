@@ -74,11 +74,11 @@ class AppColors {
   static const Color pendingEventsBg = Color(0xFFFCE4EC);
   static const Color pendingEventsAccent = Color(0xFFD81B60); // Brighter pink
   
-  // Action Required Colors (Brightened)
-  static const Color actionRequiredBg = Color(0xFFFFEBEE);
-  static const Color actionRequiredText = Color(0xFFE53935); // Brighter red
-  static const Color actionRequiredBorder = Color(0xFFEF5350);
-  static const Color actionRequiredDot = Color(0xFFEF5350);
+  // Action Required Colors (Purple for less alarm, more informational)
+  static const Color actionRequiredBg = Color(0xFFF3E5F5);
+  static const Color actionRequiredText = Color(0xFF7B1FA2); // Purple
+  static const Color actionRequiredBorder = Color(0xFF9C27B0); // Purple
+  static const Color actionRequiredDot = Color(0xFF9C27B0); // Purple
   
   // Quick Action Colors (Brightened)
   static const Color createExamBg = Color(0xFFE3F2FD);
@@ -167,6 +167,7 @@ class AppTextStyles {
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: AppColors.primaryText,
+    decoration: TextDecoration.none,
   );
   
   // Page Title with Custom Color
@@ -182,6 +183,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.labelText,
     letterSpacing: 0.5,
+    decoration: TextDecoration.none,
   );
   
   // Section Title with Custom Color
@@ -197,6 +199,7 @@ class AppTextStyles {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.primaryText,
+    decoration: TextDecoration.none,
   );
   
   // Card Number
@@ -218,6 +221,7 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.secondaryText,
+    decoration: TextDecoration.none,
   );
   
   // Body Text Medium
@@ -225,6 +229,7 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.primaryText,
+    decoration: TextDecoration.none,
   );
   
   // Caption
@@ -316,6 +321,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w600,
     color: AppColors.captionText,
+    decoration: TextDecoration.none,
   );
   
   // Body Text Bold
@@ -323,6 +329,7 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w600,
     color: AppColors.primaryText,
+    decoration: TextDecoration.none,
   );
   
   // Caption Bold
@@ -330,6 +337,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w600,
     color: AppColors.primaryText,
+    decoration: TextDecoration.none,
   );
   
   // Table Header
@@ -337,6 +345,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w700,
     color: AppColors.pendingSeatingAccent,
+    decoration: TextDecoration.none,
   );
   
   // Button Text White
@@ -779,6 +788,91 @@ class _GradientButtonState extends State<GradientButton> with SingleTickerProvid
               style: widget.textStyle ?? AppTextStyles.buttonText,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// Animated Card Widget with Premium Effects
+class AnimatedGradientCard extends StatefulWidget {
+  final Widget child;
+  final Color gradientColor;
+
+  const AnimatedGradientCard({
+    super.key, 
+    required this.child, 
+    this.gradientColor = AppColors.primaryButton,
+  });
+
+  @override
+  State<AnimatedGradientCard> createState() => _AnimatedGradientCardState();
+}
+
+class _AnimatedGradientCardState extends State<AnimatedGradientCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: SweepGradient(
+                  colors: [
+                    widget.gradientColor.withOpacity(0.3),
+                    widget.gradientColor,
+                    widget.gradientColor.withOpacity(0.5),
+                    widget.gradientColor.withOpacity(0.8),
+                    widget.gradientColor,
+                  ],
+                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                  transform: GradientRotation(_controller.value * 2 * 3.14159),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.gradientColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

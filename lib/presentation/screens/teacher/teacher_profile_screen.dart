@@ -149,19 +149,26 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
           ),
           const SizedBox(height: 16),
           
-          // Profile Picture
+          // Profile Picture with Pink-to-Orange Gradient
           Center(
             child: Container(
               width: 80,
               height: 80,
               decoration: const BoxDecoration(
-                color: TeacherColors.profileBg,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF02262), // Top: Pink/Red
+                    Color(0xFFFFEB70), // Bottom: Orange/Yellow
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.person,
                 size: 40,
-                color: TeacherColors.profileIcon,
+                color: Colors.white,
               ),
             ),
           ),

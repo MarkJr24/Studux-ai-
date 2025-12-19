@@ -28,10 +28,7 @@ class NavigationService {
     Navigator.pushAndRemoveUntil(
       context!,
       MaterialPageRoute(
-        builder: (_) => RoleSelectionScreen(
-          onThemeToggle: () {},
-          themeMode: ThemeMode.light,
-        ),
+        builder: (_) => const RoleSelectionScreen(),
       ),
       (route) => false, // Remove ALL previous routes
     );
@@ -181,10 +178,7 @@ class LogoutHandler {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (_) => RoleSelectionScreen(
-          onThemeToggle: () {},
-          themeMode: ThemeMode.light,
-        ),
+        builder: (_) => const RoleSelectionScreen(),
       ),
       (route) => false, // Remove ALL routes
     );

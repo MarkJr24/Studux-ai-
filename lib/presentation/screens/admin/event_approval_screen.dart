@@ -180,108 +180,113 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
           selectedEvent = event;
         });
       },
-      child: _AnimatedCard(
-        accentColor: AppColors.eventAccent,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(18),
-          child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title and Status Badge
-            Row(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: _AnimatedCard(
+          accentColor: AppColors.eventAccent,
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    event.title,
-                    style: AppTextStyles.cardTitle,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.pendingBg,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    'Pending',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.pendingDark,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            
-            // Info Rows
-            _buildInfoRow(Icons.person, event.organizer),
-            const SizedBox(height: 6),
-            _buildInfoRow(Icons.calendar_today, 
-                '${event.date.day}/${event.date.month}/${event.date.year}'),
-            const SizedBox(height: 6),
-            _buildInfoRow(Icons.access_time, event.time),
-            const SizedBox(height: 6),
-            _buildInfoRow(Icons.location_on, event.venue),
-            
-            // Conflicts Warning
-            if (hasConflicts) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.warningBg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
+                // Title and Status Badge
+                Row(
                   children: [
-                    Icon(
-                      Icons.warning,
-                      color: AppColors.warningDark,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        '${event.conflicts.length} conflict${event.conflicts.length > 1 ? 's' : ''} detected',
+                        event.title,
+                        style: AppTextStyles.cardTitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.pendingBg,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'Pending',
                         style: GoogleFonts.inter(
-                          fontSize: 13,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.warningDark,
+                          color: AppColors.pendingDark,
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-            
-            const SizedBox(height: 12),
-            
-            // View Details Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'View Details',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.eventAccent,
+                const SizedBox(height: 12),
+                
+                // Info Rows
+                _buildInfoRow(Icons.person, event.organizer),
+                const SizedBox(height: 6),
+                _buildInfoRow(Icons.calendar_today, 
+                    '${event.date.day}/${event.date.month}/${event.date.year}'),
+                const SizedBox(height: 6),
+                _buildInfoRow(Icons.access_time, event.time),
+                const SizedBox(height: 6),
+                _buildInfoRow(Icons.location_on, event.venue),
+                
+                // Conflicts Warning
+                if (hasConflicts) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.warningBg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.warning,
+                          color: AppColors.warningDark,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '${event.conflicts.length} conflict${event.conflicts.length > 1 ? 's' : ''} detected',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.warningDark,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.arrow_forward,
-                  size: 16,
-                  color: AppColors.eventAccent,
+                ],
+                
+                const SizedBox(height: 12),
+                
+                // View Details Button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'View Details',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.eventAccent,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward,
+                      size: 16,
+                      color: AppColors.eventAccent,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
         ),
       ),
     );

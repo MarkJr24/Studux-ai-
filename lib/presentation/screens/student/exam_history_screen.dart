@@ -107,8 +107,7 @@ class _ExamHistoryScreenState extends State<ExamHistoryScreen> {
       body: Column(
         children: [
           // Filter chips
-          Container(
-            color: Colors.white,
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,

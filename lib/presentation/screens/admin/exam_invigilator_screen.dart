@@ -159,7 +159,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
   // TAB 1: EXAMS
   Widget _buildExamsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.only(
+        left: AppSpacing.pageHorizontal,
+        right: AppSpacing.pageHorizontal,
+        bottom: AppSpacing.bottomNavClearance,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -199,18 +203,17 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
           
           // Exam Cards
           ...exams.map((exam) => _buildExamCard(exam)),
-          
-          const SizedBox(height: 80),
         ],
       ),
     );
   }
 
   Widget _buildExamCard(ExamData exam) {
-    return _AnimatedCard(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(18),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: AnimatedGradientCard(
+        child: Container(
+          padding: const EdgeInsets.all(18),
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -301,7 +304,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
         ],
       ),
       ),
-    );
+    ));
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
@@ -372,7 +375,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
   // TAB 2: INVIGILATORS
   Widget _buildInvigilatorsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.only(
+        left: AppSpacing.pageHorizontal,
+        right: AppSpacing.pageHorizontal,
+        bottom: AppSpacing.bottomNavClearance,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -385,8 +392,6 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
           
           // Invigilator suggestions
           ..._buildInvigilatorSuggestions(),
-          
-          const SizedBox(height: 80),
         ],
       ),
     );
@@ -401,61 +406,63 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
 
     return suggestions.map((s) {
       final available = s['available'] as bool;
-      return _AnimatedCard(
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 24),
+        child: AnimatedGradientCard(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    s['name'] as String,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryText,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        s['name'] as String,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryText,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: available ? AppColors.successBg : AppColors.warningBg,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        s['score'] as String,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: available ? AppColors.successDark : AppColors.warningDark,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: available ? AppColors.successBg : AppColors.warningBg,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    s['score'] as String,
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: available ? AppColors.successDark : AppColors.warningDark,
+                const SizedBox(height: 8),
+                Text(
+                  '${s['dept']} • ${available ? "Available" : "Clash Detected"}',
+                  style: AppTextStyles.bodyText,
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildSmallButton('Approve', Icons.check, AppColors.successColor, () {}),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildSmallButton('Override', Icons.edit, AppColors.warningColor, () {}),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${s['dept']} • ${available ? "Available" : "Clash Detected"}',
-              style: AppTextStyles.bodyText,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSmallButton('Approve', Icons.check, AppColors.successColor, () {}),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _buildSmallButton('Override', Icons.edit, AppColors.warningColor, () {}),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
         ),
       );
     }).toList();
@@ -493,7 +500,11 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
   // TAB 3: HALL TICKET
   Widget _buildHallTicketTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.only(
+        left: AppSpacing.pageHorizontal,
+        right: AppSpacing.pageHorizontal,
+        bottom: AppSpacing.bottomNavClearance,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -505,59 +516,14 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
           const SizedBox(height: 16),
           
           // Hall ticket options
-          ...exams.map((exam) => _buildHallTicketCard(exam)),
-          
-          const SizedBox(height: 80),
+          // Hall ticket options
+          ...exams.map((exam) => HallTicketGeneratorCard(exam: exam)),
         ],
       ),
     );
   }
 
-  Widget _buildHallTicketCard(ExamData exam) {
-    return _AnimatedCard(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(18),
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            exam.subject,
-            style: AppTextStyles.cardTitle,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${exam.department} - ${exam.year}',
-            style: AppTextStyles.bodyText,
-          ),
-          const SizedBox(height: 16),
-          
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionButton(
-                  label: exam.hasHallTicket ? 'Regenerate' : 'Generate',
-                  isPrimary: !exam.hasHallTicket,
-                  onTap: () {},
-                ),
-              ),
-              if (exam.hasHallTicket) ...[
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildActionButton(
-                    label: 'Download',
-                    isPrimary: false,
-                    onTap: () {},
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-      ),
-    );
-  }
+
 
   void _showCreateExamDialog() {
     showDialog(
@@ -628,80 +594,582 @@ class ExamData {
   });
 }
 
-// Animated Card Widget with Premium Effects
-class _AnimatedCard extends StatefulWidget {
-  final Widget child;
 
-  const _AnimatedCard({required this.child});
+
+class HallTicketGeneratorCard extends StatefulWidget {
+  final ExamData exam;
+
+  const HallTicketGeneratorCard({super.key, required this.exam});
 
   @override
-  State<_AnimatedCard> createState() => _AnimatedCardState();
+  State<HallTicketGeneratorCard> createState() => _HallTicketGeneratorCardState();
 }
 
-class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool _isHovered = false;
+class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
+  String? selectedYear;
+  String? selectedDepartment;
+  bool isGenerated = false;
+  bool isGenerating = false;
+  List<Map<String, dynamic>> generatedStudents = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  final List<String> departments = ['CSE', 'ECE', 'MECH', 'CIVIL', 'BME', 'IT'];
+  final List<String> years = ['I Year', 'II Year', 'III Year', 'IV Year'];
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Container(
-              padding: const EdgeInsets.all(2.5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: SweepGradient(
-                  colors: [
-                    AppColors.primaryButton.withOpacity(0.3),
-                    AppColors.primaryButton,
-                    AppColors.primaryButton.withOpacity(0.5),
-                    AppColors.primaryButton.withOpacity(0.8),
-                    AppColors.primaryButton,
-                  ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                  transform: GradientRotation(_controller.value * 2 * 3.14159),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryButton.withOpacity(0.2),
-                    blurRadius: 8,
-                    spreadRadius: 1,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: AnimatedGradientCard(
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.exam.subject, style: AppTextStyles.cardTitle),
+                        const SizedBox(height: 4),
+                        Text(widget.exam.examType, style: AppTextStyles.captionBold.copyWith(color: AppColors.primaryButton)),
+                      ],
+                    ),
                   ),
+                  Icon(Icons.assignment_ind_outlined, color: AppColors.examAccent, size: 28),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+              const SizedBox(height: 20),
+
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: !isGenerated
+                    ? _buildInputSection()
+                    : _buildGeneratedPreview(),
+              ),
+            ],
+          ),
+        ),
+      ));
+  }
+
+  Widget _buildInputSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildDropdown('Year', years, selectedYear, (val) => setState(() => selectedYear = val)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildDropdown('Department', departments, selectedDepartment, (val) => setState(() => selectedDepartment = val)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        GestureDetector(
+          onTap: _generateHallTicket,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: AppDecorations.primaryGradientButton,
+            child: isGenerating
+                ? const Center(child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)))
+                : Text(
+                    'Generate Hall Tickets',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.buttonTextWhite,
                   ),
-                  child: widget.child,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGeneratedPreview() {
+    return Column(
+      children: [
+        // Success Message
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColors.successBg,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+               Icon(Icons.check_circle, color: AppColors.successDark, size: 18),
+               const SizedBox(width: 8),
+               Expanded(
+                 child: Text(
+                   'Generated ${generatedStudents.length} Hall Tickets for $selectedDepartment - $selectedYear',
+                   style: AppTextStyles.caption.copyWith(color: AppColors.successDark, fontWeight: FontWeight.bold),
+                 ),
+               ),
+               GestureDetector(
+                 onTap: () {
+                   setState(() {
+                     isGenerated = false;
+                     generatedStudents.clear();
+                   });
+                 },
+                 child: Icon(Icons.refresh, size: 18, color: AppColors.successDark),
+               ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Scrollable List of Certificates
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: generatedStudents.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 32),
+          itemBuilder: (context, index) {
+            final student = generatedStudents[index];
+            return _buildHallTicketItem(student);
+          },
+        ),
+        
+        // Publish All Button
+        const SizedBox(height: 32),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2196F3).withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                // Publish all hall tickets
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Successfully published ${generatedStudents.length} hall tickets!'),
+                    backgroundColor: AppColors.successColor,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.publish_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Publish All Hall Tickets (${generatedStudents.length})',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _buildHallTicketItem(Map<String, dynamic> student) {
+    return Container(
+      decoration: BoxDecoration(
+         color: Colors.white,
+         border: Border.all(color: AppColors.divider),
+         boxShadow: [
+           BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 8)),
+          ],
+       ),
+      child: Column(
+        children: [
+          // Header - Zenith College
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Column(
+              children: [
+                Text(
+                  'ZENITH COLLEGE',
+                  style: GoogleFonts.inter(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2196F3),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'EXAMINATION HALL TICKET',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: Colors.grey[600],
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          const Divider(height: 1, thickness: 1),
+          
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                // Student Photo (Circular)
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFF2196F3), width: 3),
+                    color: Colors.grey[100],
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: const Color(0xFF2196F3),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // STUDENT DETAILS Section
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3F2FD),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'STUDENT DETAILS',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2196F3),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Student Info
+                _buildDetailRow('Name', student['name']),
+                _buildDetailRow('Register Number', student['rollNo']),
+                _buildDetailRow('Department', selectedDepartment ?? 'Computer Science'),
+                _buildDetailRow('Year / Semester', '$selectedYear / IV Semester'),
+                
+                const SizedBox(height: 24),
+                
+                // EXAM DETAILS Section
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3F2FD),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'EXAM DETAILS',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2196F3),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Exam Info
+                _buildDetailRow('Subject', widget.exam.subject),
+                _buildDetailRow('Exam Type', 'CIA 2'),
+                _buildDetailRow('Date', '${widget.exam.date.day} December 2025'),
+                _buildDetailRow('Time', widget.exam.timeSlot),
+                
+                const SizedBox(height: 24),
+                
+                // Hall and Seat Number Box
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFF2196F3), width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              'HALL',
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Hall A',
+                              style: GoogleFonts.inter(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF2196F3),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 40,
+                        color: const Color(0xFF2196F3),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              'SEAT NUMBER',
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'A-${15 + generatedStudents.indexOf(student)}',
+                              style: GoogleFonts.inter(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF2196F3),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // QR Code
+                Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.qr_code_2, size: 80),
+                  ),
+                ),
+                
+                const SizedBox(height: 8),
+                
+                Text(
+                  'Scan for verification',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Helper method for detail rows
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          Text(
+            ': ',
+            style: GoogleFonts.inter(fontSize: 12, color: Colors.grey[600]),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHallTicketActions(Map<String, dynamic> student) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: Colors.grey[50],
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildActionButton('View', Icons.visibility, false, () {
+              showDialog(context: context, builder: (_) => Dialog(child: SizedBox(height: 400, child: Center(child: Text("Full View: ${student['name']}")))));
+            }),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildActionButton('Publish', Icons.publish_rounded, true, () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hall ticket published successfully!'), backgroundColor: AppColors.successColor));
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  TextStyle _pdfHeaderStyle() => GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold);
+  TextStyle _pdfBodyStyle() => GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w500);
+  
+  Widget _pdfLabelValue(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 110, child: Text(label, style: GoogleFonts.inter(fontSize: 10, color: Colors.grey[600], fontWeight: FontWeight.w500))),
+          Text(":", style: GoogleFonts.inter(fontSize: 10, color: Colors.grey[600])),
+          const SizedBox(width: 8),
+          Expanded(child: Text(value, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black87))),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _generateHallTicket() async {
+    if (selectedYear == null || selectedDepartment == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select both Year and Department'), backgroundColor: AppColors.errorColor),
+      );
+      return;
+    }
+
+    setState(() => isGenerating = true);
+    
+    // Simulate Batch Processing
+    await Future.delayed(const Duration(milliseconds: 1500));
+    
+    final students = List.generate(5, (index) {
+      final id = (index + 1).toString().padLeft(2, '0');
+      return {
+        'name': 'Student $id',
+        'rollNo': '21${selectedDepartment}10$id',
+        'id': id,
+      };
+    });
+
+    setState(() {
+      isGenerating = false;
+      isGenerated = true;
+      generatedStudents = students;
+    });
+  }
+
+  Widget _buildDropdown(String label, List<String> items, String? value, Function(String?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppTextStyles.label),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.inputBorder),
+            borderRadius: BorderRadius.circular(8),
+            color: AppColors.cardBackground,
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              hint: Text('Select', style: AppTextStyles.caption),
+              icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryText),
+              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: AppTextStyles.bodyText))).toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildActionButton(String label, IconData icon, bool isPrimary, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isPrimary ? AppColors.primaryButton : AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(6),
+          border: isPrimary ? null : Border.all(color: AppColors.primaryButton),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 16, color: isPrimary ? Colors.white : AppColors.primaryButton),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: isPrimary 
+                  ? AppTextStyles.buttonTextWhite 
+                  : AppTextStyles.buttonText.copyWith(color: AppColors.primaryButton),
+            ),
+          ],
         ),
       ),
     );

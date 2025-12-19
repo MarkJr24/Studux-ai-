@@ -10,6 +10,7 @@ class TeacherEvaluationScreen extends StatefulWidget {
       _TeacherEvaluationScreenState();
 }
 
+
 class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
     with SingleTickerProviderStateMixin {
   int _selectedTabIndex = 0;
@@ -24,6 +25,20 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
     {'name': 'John Doe', 'rollNo': 'CSE001', 'marks': 18, 'maxMarks': 20},
     {'name': 'Jane Smith', 'rollNo': 'CSE002', 'marks': 16, 'maxMarks': 20},
     {'name': 'Mike Johnson', 'rollNo': 'CSE003', 'marks': 14, 'maxMarks': 20},
+  ];
+
+  // Theory semester data
+  final List<Map<String, dynamic>> _semesterTheoryStudents = [
+    {'name': 'John Doe', 'rollNo': 'CSE001', 'marks': 72, 'maxMarks': 100},
+    {'name': 'Jane Smith', 'rollNo': 'CSE002', 'marks': 64, 'maxMarks': 100},
+    {'name': 'Mike Johnson', 'rollNo': 'CSE003', 'marks': 56, 'maxMarks': 100},
+  ];
+
+  // Practical semester data
+  final List<Map<String, dynamic>> _semesterPracticalStudents = [
+    {'name': 'John Doe', 'rollNo': 'CSE001', 'marks': 45, 'maxMarks': 50},
+    {'name': 'Jane Smith', 'rollNo': 'CSE002', 'marks': 42, 'maxMarks': 50},
+    {'name': 'Mike Johnson', 'rollNo': 'CSE003', 'marks': 38, 'maxMarks': 50},
   ];
 
   final List<Map<String, dynamic>> _submissions = [
@@ -135,35 +150,57 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
   Widget _buildInternalTabBar() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: List.generate(3, (index) {
-          final tabs = ['CIA Evaluation', 'Semester Evaluation', 'Submission Status'];
+          final tabs = ['CIA\nEvaluation', 'Semester\nEvaluation', 'Submission\nStatus'];
           final isSelected = _selectedTabIndex == index;
           return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedTabIndex = index;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFF97316) : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  tabs[index],
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: index == 0 ? 0 : 4,
+                right: index == 2 ? 0 : 4,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedTabIndex = index;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFFF97316) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected 
+                          ? const Color(0xFFF97316) 
+                          : Colors.grey[300]!,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    tabs[index],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                      height: 1.2,
+                    ),
                   ),
                 ),
               ),
@@ -311,13 +348,17 @@ class _TeacherEvaluationScreenState extends State<TeacherEvaluationScreen>
               children: [
                 _buildMarksTableHeader(),
                 const SizedBox(height: 12),
-                ..._ciaStudents.map((student) => _buildMarksRow(
-                      student['name'],
-                      student['rollNo'],
-                      student['marks'] * 4,
-                      100,
-                      _semesterSubmitted,
-                    )),
+                // Show different data based on Theory/Practical selection
+                ...(_evaluationType == 'Theory' 
+                    ? _semesterTheoryStudents 
+                    : _semesterPracticalStudents)
+                  .map((student) => _buildMarksRow(
+                        student['name'],
+                        student['rollNo'],
+                        student['marks'],
+                        student['maxMarks'],
+                        _semesterSubmitted,
+                      )),
               ],
             ),
           ),

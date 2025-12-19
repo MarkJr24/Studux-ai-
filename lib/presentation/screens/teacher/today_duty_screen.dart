@@ -15,7 +15,7 @@ class _TodayDutyScreenState extends State<TodayDutyScreen> {
   bool _isLoading = false;
 
   // Mock data - Replace with actual API data
-  final Map<String, dynamic>? _todayDuty = {
+  final Map<String, dynamic> _todayDuty = {
     'id': '1',
     'date': DateTime.now(),
     'time': '2:00 PM - 5:00 PM',
@@ -122,10 +122,6 @@ class _TodayDutyScreenState extends State<TodayDutyScreen> {
       );
     }
 
-    if (_todayDuty == null) {
-      return _buildNoDutyState();
-    }
-
     return RefreshIndicator(
       onRefresh: () async {
         setState(() {
@@ -228,7 +224,7 @@ class _TodayDutyScreenState extends State<TodayDutyScreen> {
   }
 
   Widget _buildDutyCard() {
-    final duty = _todayDuty!;
+    final duty = _todayDuty;
     final statusType = duty['status'] == 'Confirmed'
         ? StatusType.confirmed
         : StatusType.tentative;

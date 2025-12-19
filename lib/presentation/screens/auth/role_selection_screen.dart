@@ -9,20 +9,14 @@ import 'teacher_login_screen.dart';
 import 'student_login_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  final VoidCallback onThemeToggle;
-  final ThemeMode themeMode;
-
-  const RoleSelectionScreen({
-    super.key,
-    required this.onThemeToggle,
-    required this.themeMode,
-  });
+  const RoleSelectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = themeMode == ThemeMode.dark;
+    const isDark = false; // Forced Light Mode
 
     return Scaffold(
+      // FAB removed
       body: Stack(
         children: [
           // Background Image
@@ -33,29 +27,24 @@ class RoleSelectionScreen extends StatelessWidget {
             ),
           ),
           
-          // Gradient Overlay for readability
+          // Gradient Overlay for readability (Light Mode Gradient)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          const Color(0xFF2D1B4E).withOpacity(0.50),
-                          const Color(0xFF1a1a2e).withOpacity(0.60),
-                        ]
-                      : [
-                          const Color(0xFFE8D5F2).withOpacity(0.50),
-                          const Color(0xFFD4E4F7).withOpacity(0.60),
-                        ],
+                  colors: [
+                    const Color(0xFFE8D5F2).withOpacity(0.50),
+                    const Color(0xFFD4E4F7).withOpacity(0.60),
+                  ],
                 ),
               ),
             ),
           ),
           
           // Animated Background with Particles
-          _AnimatedBackground(isDark: isDark),
+          const _AnimatedBackground(isDark: false),
           
           // Main Content
           Positioned.fill(
@@ -73,25 +62,38 @@ class RoleSelectionScreen extends StatelessWidget {
 
                       // Title
                       Text(
-                        'Student Management System',
+                        'StudX',
                         style: GoogleFonts.inter(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: Colors.black87,
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
+
+                      // Tagline
+                      Text(
+                         'Simplifying Campus Life',
+                         style: GoogleFonts.playfairDisplay(
+                           fontSize: 18,
+                           fontWeight: FontWeight.w600,
+                           fontStyle: FontStyle.italic,
+                           color: Colors.black87,
+                           letterSpacing: 0.5,
+                         ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 32),
 
                       // Subtitle
                       Text(
                         'Select Login Type',
                         style: GoogleFonts.inter(
                           fontSize: 18,
-                          color: isDark
-                              ? Colors.white.withOpacity(0.7)
-                              : Colors.black54,
+                          color: Colors.black54,
                         ),
                       ),
 
@@ -155,7 +157,7 @@ class RoleSelectionScreen extends StatelessWidget {
                       const SizedBox(height: 48),
 
                       // Sign Up Link
-                      _buildSignUpLink(isDark),
+                      _buildSignUpLink(),
                     ],
                   ),
                 ),
@@ -190,7 +192,7 @@ class RoleSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSignUpLink(bool isDark) {
+  Widget _buildSignUpLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -198,7 +200,7 @@ class RoleSelectionScreen extends StatelessWidget {
           "Don't have an account? ",
           style: GoogleFonts.inter(
             fontSize: 15,
-            color: isDark ? Colors.white.withOpacity(0.7) : Colors.black54,
+            color: Colors.black54,
           ),
         ),
         TextButton(
@@ -215,7 +217,7 @@ class RoleSelectionScreen extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: isDark ? const Color(0xFF6B5FBF) : const Color(0xFF6B2FBF),
+              color: const Color(0xFF6B2FBF),
             ),
           ),
         ),
@@ -227,8 +229,16 @@ class RoleSelectionScreen extends StatelessWidget {
     debugPrint('Admin Login tapped');
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AdminLoginScreen(),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const AdminLoginScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -237,8 +247,16 @@ class RoleSelectionScreen extends StatelessWidget {
     debugPrint('Teacher Login tapped');
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const TeacherLoginScreen(),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const TeacherLoginScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -247,8 +265,16 @@ class RoleSelectionScreen extends StatelessWidget {
     debugPrint('Student Login tapped');
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const StudentLoginScreen(),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const StudentLoginScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
       ),
     );
   }
@@ -705,25 +731,26 @@ class _AnimatedIconCircleState extends State<_AnimatedIconCircle>
       builder: (context, child) {
         Widget iconWidget;
         
-        // Use custom shield-person icon for Admin (pulse animation type)
+        // Use standard refined icons based on animation type / role
         if (widget.animationType == IconAnimationType.pulse) {
-          iconWidget = CustomPaint(
-            size: const Size(32, 32),
-            painter: _ShieldPersonIconPainter(color: Colors.white),
+          iconWidget = const Icon(
+            Icons.admin_panel_settings_rounded,
+            size: 32,
+            color: Colors.white,
           );
         } 
-        // Use custom teacher icon for Teacher (slide animation type)
         else if (widget.animationType == IconAnimationType.slide) {
-          iconWidget = CustomPaint(
-            size: const Size(32, 32),
-            painter: _TeacherIconPainter(color: Colors.white),
+          iconWidget = const Icon(
+            Icons.cast_for_education_rounded,
+            size: 32,
+            color: Colors.white,
           );
         }
-        // Use custom student icon for Student (bounce animation type)
         else if (widget.animationType == IconAnimationType.bounce) {
-          iconWidget = CustomPaint(
-            size: const Size(32, 32),
-            painter: _StudentIconPainter(color: Colors.white),
+          iconWidget = const Icon(
+            Icons.school_rounded,
+            size: 32,
+            color: Colors.white,
           );
         }
         else {

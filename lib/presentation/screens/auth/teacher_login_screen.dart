@@ -303,16 +303,22 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: Validators.validateEmail,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'teacher@studentms.com',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.school_outlined),
+        prefixIcon: const Icon(
+          Icons.school_outlined,
+          color: Color(0xFF9CA3AF),
+        ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -346,17 +352,24 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: Validators.validatePassword,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'Teacher@123',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIcon: const Icon(
+          Icons.lock_outline,
+          color: Color(0xFF9CA3AF),
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            color: const Color(0xFF9CA3AF),
           ),
           onPressed: () {
             setState(() {
@@ -365,7 +378,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
           },
         ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),

@@ -123,7 +123,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             ),
           ),
 
-          // Profile Icon
+          // Profile Icon with Pink-to-Orange Gradient
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -137,12 +137,19 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               width: 48,
               height: 48,
               decoration: const BoxDecoration(
-                color: TeacherColors.profileBg,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFF02262), // Top: Pink/Red
+                    Color(0xFFFFEB70), // Bottom: Orange/Yellow
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.person,
-                color: TeacherColors.profileIcon,
+                color: Colors.white,
                 size: 24,
               ),
             ),

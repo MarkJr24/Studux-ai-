@@ -123,17 +123,24 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            Color(0xFFF8F9FA),
-            Color(0xFFFFFFFF),
-            Color(0xFFF0F4F8),
+            Color(0xFFFFF5F9), // Very light pink
+            Color(0xFFFFFBFD), // Almost white with pink tint
+            Color(0xFFF8F5FB), // Very light purple
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: const [
+        border: Border.all(
+          color: const Color(0xFFFF5894).withOpacity(0.15), // Pink border
+        ),
+        boxShadow: [
           BoxShadow(
+            color: const Color(0xFF8441A4).withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+          const BoxShadow(
             color: Color(0x0F000000),
             blurRadius: 8,
             offset: Offset(0, 2),
@@ -143,7 +150,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile Avatar with Pulse Animation
+          // Profile Avatar with Pink-to-Purple Gradient
           Center(
             child: ScaleTransition(
               scale: _pulseAnimation,
@@ -153,16 +160,16 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
-                      Color(0xFFBBDEFB),
-                      Color(0xFFE3F2FD),
+                      Color(0xFFFF5894), // Top: Pink
+                      Color(0xFF8441A4), // Bottom: Purple
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.profileIcon.withOpacity(0.3),
+                      color: const Color(0xFF8441A4).withOpacity(0.3),
                       blurRadius: 12,
                       spreadRadius: 2,
                     ),
@@ -171,7 +178,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
                 child: const Icon(
                   Icons.person,
                   size: 50,
-                  color: AppColors.profileIcon,
+                  color: Colors.white,
                 ),
               ),
             ),

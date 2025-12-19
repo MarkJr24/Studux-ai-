@@ -11,7 +11,7 @@ class StudentSettingsScreen extends StatefulWidget {
 
 class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
   // Appearance Settings
-  String _selectedTheme = 'Light';
+  // Theme is now managed by ThemeProvider
   String _selectedFontSize = 'Medium';
 
   // Notification Settings
@@ -36,7 +36,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
   bool _hasUnsavedChanges = false;
 
   // Original values for comparison
-  late String _originalTheme;
+  // Theme is managed by ThemeProvider, no need to track original
   late String _originalFontSize;
   late bool _originalExamAlerts;
   late bool _originalAcademicAlerts;
@@ -56,7 +56,6 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
   }
 
   void _saveOriginalValues() {
-    _originalTheme = _selectedTheme;
     _originalFontSize = _selectedFontSize;
     _originalExamAlerts = _examAlerts;
     _originalAcademicAlerts = _academicAlerts;
@@ -72,8 +71,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
   void _checkForChanges() {
     setState(() {
-      _hasUnsavedChanges = _selectedTheme != _originalTheme ||
-          _selectedFontSize != _originalFontSize ||
+      _hasUnsavedChanges = _selectedFontSize != _originalFontSize ||
           _examAlerts != _originalExamAlerts ||
           _academicAlerts != _originalAcademicAlerts ||
           _eventAlerts != _originalEventAlerts ||
@@ -146,7 +144,6 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
   void _discardChanges() {
     setState(() {
-      _selectedTheme = _originalTheme;
       _selectedFontSize = _originalFontSize;
       _examAlerts = _originalExamAlerts;
       _academicAlerts = _originalAcademicAlerts;
@@ -241,62 +238,6 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
     return _buildSection(
       title: 'APPEARANCE',
       children: [
-        Text(
-          'Theme',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: RadioListTile<String>(
-                title: Text('Light', style: GoogleFonts.inter(fontSize: 14)),
-                value: 'Light',
-                groupValue: _selectedTheme,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedTheme = value!;
-                  });
-                  _checkForChanges();
-                },
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-            Expanded(
-              child: RadioListTile<String>(
-                title: Text('Dark', style: GoogleFonts.inter(fontSize: 14)),
-                value: 'Dark',
-                groupValue: _selectedTheme,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedTheme = value!;
-                  });
-                  _checkForChanges();
-                },
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-            Expanded(
-              child: RadioListTile<String>(
-                title: Text('System', style: GoogleFonts.inter(fontSize: 14)),
-                value: 'System',
-                groupValue: _selectedTheme,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedTheme = value!;
-                  });
-                  _checkForChanges();
-                },
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
         Text(
           'Font Size',
           style: GoogleFonts.inter(

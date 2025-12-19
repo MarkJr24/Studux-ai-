@@ -44,9 +44,28 @@ class _MarksResultsScreenState extends State<MarksResultsScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person, color: Color(0xFF2196F3)),
-            onPressed: () {},
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0D50A9), // Dark Blue
+                    Color(0xFF8FFEB0), // Cyan/Mint
+                  ],
+                ),
+              ),
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
           ),
         ],
         bottom: TabBar(

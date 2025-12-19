@@ -114,9 +114,9 @@ class _AdminSystemSettingsScreenState extends State<AdminSystemSettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.seatingBg,
+        color: AppColors.pendingSeatingBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.seatingBorder),
+        border: Border.all(color: AppColors.pendingSeatingAccent.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,13 +126,13 @@ class _AdminSystemSettingsScreenState extends State<AdminSystemSettingsScreen> {
               Icon(
                 Icons.lock,
                 size: 16,
-                color: AppColors.seatingAccent,
+                color: AppColors.pendingSeatingAccent,
               ),
               const SizedBox(width: 8),
               Text(
                 'SEATING RULES',
                 style: AppTextStyles.sectionTitleColored(
-                  AppColors.seatingAccent,
+                  AppColors.pendingSeatingAccent,
                 ),
               ),
             ],

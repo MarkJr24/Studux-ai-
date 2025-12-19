@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'admin_design_system.dart';
 
 class SeatingManagementScreen extends StatefulWidget {
@@ -24,9 +25,19 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
   // Auto-loaded departments based on selected exam
   List<Map<String, dynamic>> enrolledDepartments = [];
   
+  // Multi-select state
+  List<String> selectedDepartments = [];
+  List<String> selectedYears = [];
+  final List<String> availableDepartments = ['CSE', 'ECE', 'MECH', 'CIVIL', 'IT', 'AI & DS'];
+  final List<String> availableYears = ['I Year', 'II Year', 'III Year', 'IV Year'];
+  
   // Animation controllers
   late AnimationController _fadeController;
   late List<AnimationController> _sectionControllers;
+  
+  // Controllers
+  final TextEditingController _hallCountController = TextEditingController();
+  final TextEditingController _seatCountController = TextEditingController();
   
   @override
   void initState() {
@@ -62,6 +73,8 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
   
   @override
   void dispose() {
+    _hallCountController.dispose();
+    _seatCountController.dispose();
     _fadeController.dispose();
     for (var controller in _sectionControllers) {
       controller.dispose();
@@ -325,6 +338,31 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
               });
             },
           ),
+          const SizedBox(height: 12),
+
+          // Multi-Select Department & Year (Side-by-Side)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildMultiSelectInput(
+                  label: 'Departments',
+                  items: availableDepartments,
+                  selectedItems: selectedDepartments,
+                  onChanged: (values) => setState(() => selectedDepartments = values),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildMultiSelectInput(
+                  label: 'Years',
+                  items: availableYears,
+                  selectedItems: selectedYears,
+                  onChanged: (values) => setState(() => selectedYears = values),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -344,6 +382,111 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
       // Clear departments if exam session is incomplete
       enrolledDepartments = [];
     }
+  }
+
+  // Multi-select Input used for Dept & Year
+  Widget _buildMultiSelectInput({
+    required String label,
+    required List<String> items,
+    required List<String> selectedItems,
+    required Function(List<String>) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.label,
+        ),
+        const SizedBox(height: 6),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.inputBorder,
+              width: 1,
+            ),
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Selected Chips
+              if (selectedItems.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: selectedItems.map((item) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.generateSeatingAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.generateSeatingAccent.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            item,
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.generateSeatingAccent, 
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () {
+                              List<String> newSelection = List.from(selectedItems);
+                              newSelection.remove(item);
+                              onChanged(newSelection);
+                            },
+                            child: Icon(Icons.close, size: 14, color: AppColors.generateSeatingAccent),
+                          ),
+                        ],
+                      ),
+                    )).toList(),
+                  ),
+                ),
+                
+              // Add Dropdown
+              DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Add $label...',
+                      style: AppTextStyles.bodyText.copyWith(color: AppColors.labelText, fontSize: 13),
+                    ),
+                  ),
+                  dropdownColor: AppColors.cardBackground,
+                  icon: const Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: Icon(Icons.add_circle_outline, color: AppColors.iconGray, size: 18),
+                  ),
+                  items: items.where((i) => !selectedItems.contains(i)).map((item) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(item, style: AppTextStyles.bodyText),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      List<String> newSelection = List.from(selectedItems);
+                      newSelection.add(value);
+                      onChanged(newSelection);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // White dropdown
@@ -533,14 +676,24 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
     final ruleTitle = seatingStrategy == 'CIA' ? 'CIA EXAM RULES' : 'SEMESTER EXAM RULES';
     final rules = seatingStrategy == 'CIA'
         ? [
-            '50 students per hall',
             '2 students per bench',
+            'Left seat and Right seat arrangement',
+            'Maximum seats per hall = admin-provided',
+            'Maximum benches per hall = available_seats / 2',
             'Same bench → different exams',
+            'Continue seating across halls if students remain',
+            'No duplicate students',
+            'Deterministic ordering',
           ]
         : [
-            '25 students per hall',
             '1 student per bench',
-            'Alternate departments across rows',
+            '25 benches per hall (or as provided)',
+            'Students alternate between paired departments',
+            'Same department students must not sit adjacent',
+            'Department pairing uses 12:13 ratio per hall',
+            'Continue seating across halls if students remain',
+            'No duplicate students',
+            'Deterministic ordering',
           ];
     
     return _buildGlassContainer(
@@ -577,60 +730,78 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
     );
   }
 
-  // SECTION 6: Hall Allocation
+  // SECTION 6: Hall Allocation (Input Driven)
   Widget _buildHallAllocation() {
     return _buildGlassContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('HALL ALLOCATION', icon: Icons.meeting_room),
+          _buildSectionTitle('HALL & SEAT CONFIGURATION', icon: Icons.straighten),
           const SizedBox(height: 16),
           
-          _buildHallRow('Main Hall', '60 seats', true),
-          const SizedBox(height: 10),
-          _buildHallRow('Hall A', '30 seats', true),
-          const SizedBox(height: 10),
-          _buildHallRow('Hall B', '30 seats', false),
+          Row(
+            children: [
+              Expanded(
+                child: _buildNumericInput(
+                  label: 'How many halls are available?',
+                  controller: _hallCountController,
+                  hint: 'e.g. 5',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildNumericInput(
+                  label: 'How many seats are available per hall?',
+                  controller: _seatCountController,
+                  hint: 'e.g. 30',
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHallRow(String hall, String capacity, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.pendingSeatingBg
-            : AppColors.secondaryBackground,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isSelected
-              ? AppColors.pendingSeatingAccent
-              : AppColors.inputBorder,
-          width: 1,
+  Widget _buildNumericInput({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.label,
         ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isSelected ? Icons.check_circle : Icons.circle_outlined,
-            color: isSelected ? AppColors.pendingSeatingAccent : AppColors.labelText,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              hall,
-              style: AppTextStyles.bodyTextBold,
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.inputBorder,
+              width: 1,
             ),
           ),
-          Text(
-            capacity,
-            style: AppTextStyles.caption.copyWith(color: AppColors.secondaryText),
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: AppTextStyles.bodyText,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: AppTextStyles.bodyText.copyWith(color: AppColors.disabledText),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -725,159 +896,134 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
   }
 
   void _generateSeating() async {
+    // Validate inputs
+    if (_hallCountController.text.isEmpty || _seatCountController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter hall and seat counts')),
+      );
+      return;
+    }
+
     setState(() => isGenerating = true);
     
     // Simulate generation
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1)); // Faster animation for demo
     
+    final int halls = int.tryParse(_hallCountController.text) ?? 0;
+    final int seats = int.tryParse(_seatCountController.text) ?? 0;
+    
+    // Generate deterministic seating data
+    List<Map<String, dynamic>> generatedData = [];
+    
+    for (int h = 1; h <= halls; h++) {
+      for (int s = 1; s <= seats; s++) {
+        // Mock distribution logic with Multi-Select support
+        String exam = (h + s) % 2 == 0 ? (selectedSubject ?? 'Exam 1') : 'Alt Subject';
+        
+        // Cycle through selected departments/years if available
+        String studentInfo = 'Student';
+        if (selectedDepartments.isNotEmpty) {
+           final dept = selectedDepartments[(h + s) % selectedDepartments.length];
+           studentInfo = '$dept Student';
+        }
+        if (selectedYears.isNotEmpty) {
+           final year = selectedYears[(h * s) % selectedYears.length];
+           studentInfo += ' ($year)';
+        }
+
+        generatedData.add({
+          'hall': 'Hall $h',
+          'seat': 'S-$s',
+          'student': studentInfo,
+          'rollNo': '21CS${100 + (h * 100) + s}',
+          'exam': exam,
+        });
+      }
+    }
+
     setState(() {
       isGenerating = false;
       hasGenerated = true;
-      seatingPreview = List.generate(
-        10,
-        (index) => {
-          'seat': 'A${index + 1}',
-          'student': 'Student ${index + 1}',
-          'rollNo': '21CS${100 + index}',
-          'exam': index % 2 == 0 ? 'DS' : 'DBMS',
-        },
-      );
+      seatingPreview = generatedData;
       versionHistory.add({
         'version': 'V${versionHistory.length + 1}',
         'date': DateTime.now(),
-        'status': 'Draft',
+        'status': 'Generated',
       });
     });
   }
 
   // SECTION 9: Seating Preview
   Widget _buildSeatingPreview() {
+    // Get unique halls
+    final halls = seatingPreview.map((e) => e['hall'] as String).toSet().toList();
+    halls.sort(); // Ensure order Hall 1, Hall 2...
+
     return _buildGlassContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('SEATING PREVIEW', icon: Icons.preview),
+          _buildSectionTitle('GENERATED ARRANGEMENT', icon: Icons.grid_on),
           const SizedBox(height: 16),
           
-          // Filter buttons
-          Row(
-            children: [
-              _buildFilterChip('All', true),
-              const SizedBox(width: 8),
-              _buildFilterChip('Hall A', false),
-              const SizedBox(width: 8),
-              _buildFilterChip('Hall B', false),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Table
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppColors.divider,
-                width: 1,
+          if (halls.isEmpty)
+             const Text('No seating generated'),
+
+          ...halls.map((hallName) {
+            final hallSeats = seatingPreview.where((e) => e['hall'] == hallName).toList();
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.secondaryBackground,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.divider),
               ),
-            ),
-            child: Column(
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.pendingSeatingBg,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Seat',
-                          style: AppTextStyles.tableHeader,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Student',
-                          style: AppTextStyles.tableHeader,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Roll No',
-                          style: AppTextStyles.tableHeader,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Exam',
-                          style: AppTextStyles.tableHeader,
-                        ),
-                      ),
-                    ],
-                  ),
+              child: ExpansionTile(
+                title: Text(
+                   '$hallName (${hallSeats.length} seats)', 
+                   style: AppTextStyles.bodyTextBold
                 ),
-                
-                // Rows
-                ...seatingPreview.take(5).map((row) => Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: AppColors.dividerLight,
-                        width: 1,
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(top: 8),
+                shape: const Border(), // Remove borders
+                children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: hallSeats.take(10).map((seat) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                         color: Colors.white,
+                         borderRadius: BorderRadius.circular(4),
+                         border: Border.all(color: AppColors.dividerLight),
+                      ),
+                      child: Tooltip(
+                        message: '${seat['student']} - ${seat['rollNo']}',
+                        child: Text(
+                          '${seat['seat']}',
+                          style: AppTextStyles.caption,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                  if (hallSeats.length > 10)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        '+ ${hallSeats.length - 10} more seats',
+                        style: AppTextStyles.caption.copyWith(color: AppColors.secondaryText),
                       ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          row['seat'],
-                          style: AppTextStyles.caption,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          row['student'],
-                          style: AppTextStyles.caption,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          row['rollNo'],
-                          style: AppTextStyles.caption,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          row['exam'],
-                          style: AppTextStyles.captionBold.copyWith(color: AppColors.generateSeatingAccent),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
   }
+
 
   Widget _buildFilterChip(String label, bool isSelected) {
     return Container(
@@ -971,6 +1117,7 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
   }
 
   // SECTION 11: Seating Documents
+  // SECTION 11: Seating Documents (with PDF Preview)
   Widget _buildSeatingDocuments() {
     return _buildGlassContainer(
       child: Column(
@@ -979,14 +1126,141 @@ class _SeatingManagementScreenState extends State<SeatingManagementScreen>
           _buildSectionTitle('SEATING DOCUMENTS', icon: Icons.description),
           const SizedBox(height: 16),
           
+          // PDF Preview Card
+          Center(
+            child: Container(
+              width: 200, // Reduced width to look like a document scaling down
+              height: 280, // A4ish aspect ratio
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(color: AppColors.divider),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Document Header
+                  Row(
+                    children: [
+                      Icon(Icons.school, size: 16, color: AppColors.primaryText),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Zenith Institute',
+                          style: GoogleFonts.inter(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.primaryText),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 16, thickness: 0.5),
+                  
+                  // Title
+                  Center(
+                    child: Text(
+                      'Seating Arrangement',
+                      style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Mock Content (Hall & Seats)
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: (int.tryParse(_hallCountController.text) ?? 1).clamp(1, 4),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hall ${index + 1}',
+                                style: GoogleFonts.inter(fontSize: 8, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'Seats: S-1 to S-${_seatCountController.text}',
+                                style: GoogleFonts.inter(fontSize: 7, color: AppColors.secondaryText),
+                              ),
+                              if (selectedDepartments.isNotEmpty || selectedYears.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    'Candidates: ${selectedDepartments.join(", ")} ${selectedYears.join(", ")}',
+                                    style: GoogleFonts.inter(fontSize: 6, color: AppColors.primaryText, fontWeight: FontWeight.w500),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 2),
+                                height: 4,
+                                width: 100,
+                                color: Colors.grey[200],
+                              ),
+                              const SizedBox(height: 2),
+                              Container(
+                                height: 4,
+                                width: 60,
+                                color: Colors.grey[200],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  
+                  // Footer
+                  Text(
+                    'Page 1 of 1',
+                    style: GoogleFonts.inter(fontSize: 6, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
           Row(
             children: [
               Expanded(
-                child: _buildDocButton('View PDF', Icons.visibility, AppColors.generateSeatingAccent),
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context, 
+                      builder: (c) => Dialog(
+                        child: Container(
+                          padding: const EdgeInsets.all(20), 
+                          child: const Text('Full PDF View Mockup'),
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildDocButton('View PDF', Icons.visibility, AppColors.generateSeatingAccent),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildDocButton('Download PDFs', Icons.download, AppColors.generateSeatingAccent),
+                child: GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Seating Arrangement PDF Downloaded'),
+                        backgroundColor: AppColors.successColor,
+                      ),
+                    );
+                  },
+                  child: _buildDocButton('Download PDF', Icons.download, AppColors.generateSeatingAccent),
+                ),
               ),
             ],
           ),

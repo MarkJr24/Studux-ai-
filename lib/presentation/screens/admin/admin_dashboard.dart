@@ -6,7 +6,9 @@ import 'attendance_audit_screen.dart';
 import 'event_approval_screen.dart';
 import 'notifications_management_screen.dart';
 import 'admin_profile_screen.dart';
+import 'student_management_screen.dart';
 import 'admin_design_system.dart';
+
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -15,12 +17,31 @@ class AdminDashboard extends StatefulWidget {
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> {
+class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProviderStateMixin {
   // Mock data - Replace with actual data from backend
   final int _upcomingExams = 5;
   final int _pendingSeating = 2;
   final int _pendingAudits = 1;
   final int _pendingEvents = 3;
+
+  late AnimationController _gradientController;
+  late Animation<double> _gradientAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _gradientController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat(reverse: true);
+    _gradientAnimation = Tween<double>(begin: -1.0, end: 1.0).animate(_gradientController);
+  }
+
+  @override
+  void dispose() {
+    _gradientController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +213,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
             ),
 
-            // Profile Icon
+            // Profile Icon with Pink-to-Purple Gradient
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -206,12 +227,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 width: 48,
                 height: 48,
                 decoration: const BoxDecoration(
-                  color: AppColors.profileBg,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFFF5894), // Top: Pink
+                      Color(0xFF8441A4), // Bottom: Purple
+                    ],
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.person,
-                  color: AppColors.profileIcon,
+                  color: Colors.white,
                   size: 24,
                 ),
               ),
@@ -406,17 +434,42 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ],
         ),
+        const SizedBox(height: AppSpacing.cardSpacing),
+        Row(
+          children: [
+            Expanded(
+              child: _QuickActionButton(
+                label: 'Student Management',
+                icon: Icons.people_outline,
+                baseColor: Colors.teal, // Premium Teal Gradient
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const StudentManagementScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: AppSpacing.cardSpacing),
+            Expanded(
+              child: Container(), // Empty space for alignment
+            ),
+          ],
+        ),
       ],
     );
   }
+
 
   Widget _buildDashboardGrid(BuildContext context) {
     final tiles = [
       _DashboardTile(
         title: 'Seating Management',
-        icon: Icons.event_seat,
-        backgroundColor: AppColors.pendingSeatingBg,
-        accentColor: AppColors.pendingSeatingAccent,
+        icon: Icons.event_seat_outlined, // More minimal outlined icon
+        backgroundColor: AppColors.pendingSeatingBg, // Light Blue
+        accentColor: const Color(0xFF1565C0), // Darker blue for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -428,9 +481,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
       _DashboardTile(
         title: 'Exam & Invigilator',
-        icon: Icons.assignment,
-        backgroundColor: AppColors.upcomingExamsBg,
-        accentColor: AppColors.upcomingExamsAccent,
+        icon: Icons.assignment_outlined, // More minimal outlined icon
+        backgroundColor: AppColors.upcomingExamsBg, // Light Green
+        accentColor: const Color(0xFF2E7D32), // Darker green for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -442,9 +495,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
       _DashboardTile(
         title: 'Attendance & Audit',
-        icon: Icons.fact_check,
-        backgroundColor: AppColors.pendingAuditsBg,
-        accentColor: AppColors.pendingAuditsAccent,
+        icon: Icons.fact_check_outlined, // More minimal outlined icon
+        backgroundColor: AppColors.pendingAuditsBg, // Light Orange
+        accentColor: const Color(0xFFE65100), // Darker orange for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -456,42 +509,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ),
       _DashboardTile(
         title: 'Event Approval',
-        icon: Icons.approval,
-        backgroundColor: AppColors.pendingEventsBg,
-        accentColor: AppColors.pendingEventsAccent,
+        icon: Icons.approval_outlined, // More minimal outlined icon
+        backgroundColor: AppColors.pendingEventsBg, // Light Pink
+        accentColor: const Color(0xFF6A1B9A), // Darker purple for better contrast
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const EventApprovalScreen(),
-            ),
-          );
-        },
-      ),
-      _DashboardTile(
-        title: 'Notifications',
-        icon: Icons.notifications_active,
-        backgroundColor: AppColors.createExamBg,
-        accentColor: AppColors.createExamAccent,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NotificationsManagementScreen(),
-            ),
-          );
-        },
-      ),
-      _DashboardTile(
-        title: 'Admin Profile',
-        icon: Icons.person,
-        backgroundColor: Color(0xFFE3F2FD),
-        accentColor: Color(0xFF1976D2),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AdminProfileScreen(),
             ),
           );
         },
@@ -648,7 +673,8 @@ class _StaggeredFadeInState extends State<_StaggeredFadeIn> with SingleTickerPro
 }
 
 // Status Card Widget with Animated Border
-class _StatusCard extends StatefulWidget {
+// Status Card Widget with Animated Border
+class _StatusCard extends StatelessWidget {
   final String title;
   final String count;
   final IconData icon;
@@ -664,140 +690,79 @@ class _StatusCard extends StatefulWidget {
   });
 
   @override
-  State<_StatusCard> createState() => _StatusCardState();
-}
-
-class _StatusCardState extends State<_StatusCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool _isHovered = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? 1.03 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Container(
-              padding: const EdgeInsets.all(3),
+    return AnimatedGradientCard(
+      gradientColor: accentColor,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.cardPadding),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(13),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              backgroundColor,
+              backgroundColor.withOpacity(0.95),
+              backgroundColor.withOpacity(0.9),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Icon with premium glow
+            Container(
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: SweepGradient(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
                   colors: [
-                    widget.accentColor.withOpacity(0.3),
-                    widget.accentColor,
-                    widget.accentColor.withOpacity(0.5),
-                    widget.accentColor.withOpacity(0.8),
-                    widget.accentColor,
+                    accentColor.withOpacity(0.2),
+                    backgroundColor,
                   ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                  transform: GradientRotation(_controller.value * 2 * 3.14159),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.accentColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    spreadRadius: 1,
+                    color: accentColor.withOpacity(0.4),
+                    blurRadius: 12,
+                    spreadRadius: 2,
                   ),
                 ],
               ),
-              child: Container(
-                padding: const EdgeInsets.all(AppSpacing.cardPadding),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(13),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      widget.backgroundColor,
-                      widget.backgroundColor.withOpacity(0.95),
-                      widget.backgroundColor.withOpacity(0.9),
-                    ],
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    // Icon with premium glow
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            widget.accentColor.withOpacity(0.2),
-                            widget.backgroundColor,
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: widget.accentColor.withOpacity(0.4),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        widget.icon,
-                        size: 28,
-                        color: widget.accentColor,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Count with gradient text effect
-                    ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        colors: [
-                          widget.accentColor,
-                          widget.accentColor.withOpacity(0.7),
-                        ],
-                      ).createShader(bounds),
-                      child: Text(
-                        widget.count,
-                        style: AppTextStyles.cardNumber.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Label
-                    Text(
-                      widget.title,
-                      style: AppTextStyles.cardLabel.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+              child: Icon(
+                icon,
+                size: 28,
+                color: accentColor,
               ),
-            );
-          },
+            ),
+            const SizedBox(height: 12),
+
+            // Count with gradient text effect
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: [
+                  accentColor,
+                  accentColor.withOpacity(0.7),
+                ],
+              ).createShader(bounds),
+              child: Text(
+                count,
+                style: AppTextStyles.cardNumber.copyWith(color: Colors.white),
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            // Label
+            Text(
+              title,
+              style: AppTextStyles.cardLabel.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
@@ -910,11 +875,11 @@ class _ActionRequiredTileState extends State<_ActionRequiredTile> with SingleTic
   }
 }
 
-// Premium Quick Action Button Widget
+// Quick Action Button with Gradient Effects
 class _QuickActionButton extends StatefulWidget {
   final String label;
   final IconData icon;
-  final Color baseColor; // Base color to derive gradient
+  final Color baseColor; // Base color for gradient
   final VoidCallback onTap;
 
   const _QuickActionButton({
@@ -928,267 +893,169 @@ class _QuickActionButton extends StatefulWidget {
   State<_QuickActionButton> createState() => _QuickActionButtonState();
 }
 
-class _QuickActionButtonState extends State<_QuickActionButton> with TickerProviderStateMixin {
+class _QuickActionButtonState extends State<_QuickActionButton> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
-  late AnimationController _shimmerController;
-  late AnimationController _pulseController;
   late Animation<double> _scaleAnim;
-  late Animation<double> _shimmerAnim;
-  late Animation<double> _pulseAnim;
+  bool _isHovered = false;
 
   @override
   void initState() {
     super.initState();
+    
+    // Simple tap animation
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.97).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
-    );
-    
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-    
-    _shimmerAnim = Tween<double>(begin: -1.0, end: 2.0).animate(
-      CurvedAnimation(parent: _shimmerController, curve: Curves.easeInOut),
-    );
-    
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat(reverse: true);
-    
-    _pulseAnim = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
 
   @override
   void dispose() {
     _animController.dispose();
-    _shimmerController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
-  Color _getDarkerShade(Color color) {
-    return Color.fromRGBO(
-      (color.red * 0.7).toInt(),
-      (color.green * 0.7).toInt(),
-      (color.blue * 0.7).toInt(),
-      1,
-    );
+  // Get light gradient colors
+  List<Color> _getLightGradientColors() {
+    final hsl = HSLColor.fromColor(widget.baseColor);
+    return [
+      hsl.withLightness(0.96).withSaturation(0.3).toColor(), // Very light top
+      hsl.withLightness(0.94).withSaturation(0.35).toColor(), // Light middle
+      hsl.withLightness(0.92).withSaturation(0.4).toColor(), // Slightly deeper bottom
+    ];
   }
 
-  Color _getLighterShade(Color color) {
-    return Color.fromRGBO(
-      (color.red + (255 - color.red) * 0.3).toInt(),
-      (color.green + (255 - color.green) * 0.3).toInt(),
-      (color.blue + (255 - color.blue) * 0.3).toInt(),
-      1,
-    );
+  // Get accent color for icon
+  Color _getAccentColor() {
+    final hsl = HSLColor.fromColor(widget.baseColor);
+    return hsl
+        .withLightness(0.45)
+        .withSaturation(0.7)
+        .toColor();
+  }
+
+  // Get icon background gradient with increased opacity
+  List<Color> _getIconGradientColors() {
+    final hsl = HSLColor.fromColor(widget.baseColor);
+    return [
+      hsl.withLightness(0.55).withSaturation(0.85).toColor(), // Darker and more saturated
+      hsl.withLightness(0.50).withSaturation(0.90).toColor(), // Even darker for better contrast
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    // Generate rich gradient from base color
-    final gradient = LinearGradient(
-      colors: [
-        _getLighterShade(widget.baseColor),
-        widget.baseColor,
-        _getDarkerShade(widget.baseColor),
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      stops: const [0.0, 0.5, 1.0],
-    );
+    final gradientColors = _getLightGradientColors();
+    final accentColor = _getAccentColor();
+    final iconGradient = _getIconGradientColors();
 
-    return GestureDetector(
-      onTapDown: (_) => _animController.forward(),
-      onTapUp: (_) => _animController.reverse(),
-      onTapCancel: () => _animController.reverse(),
-      onTap: widget.onTap,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
       child: ScaleTransition(
         scale: _scaleAnim,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([_shimmerAnim, _pulseAnim]),
-          builder: (context, child) {
-            return Container(
-              height: 100,
-              decoration: BoxDecoration(
-                gradient: gradient,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.baseColor.withOpacity(0.5),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                    spreadRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  // Animated gradient background overlay
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: AnimatedBuilder(
-                        animation: _pulseController,
-                        builder: (context, child) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              gradient: RadialGradient(
-                                center: Alignment(
-                                  0.5 + (_pulseAnim.value - 0.9) * 2,
-                                  0.5 + (_pulseAnim.value - 0.9) * 2,
-                                ),
-                                radius: _pulseAnim.value * 1.5,
-                                colors: [
-                                  Colors.white.withOpacity(0.15),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  // Shimmer effect overlay
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Transform.translate(
-                        offset: Offset(_shimmerAnim.value * 200, 0),
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-                                Colors.white.withOpacity(0.25),
-                                Colors.transparent,
-                              ],
-                              stops: const [0.0, 0.5, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Particle effect (decorative circles)
-                  Positioned(
-                    top: 10,
-                    right: 15,
-                    child: FadeTransition(
-                      opacity: _pulseAnim,
-                      child: Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.4),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 15,
-                    left: 20,
-                    child: ScaleTransition(
-                      scale: _pulseAnim,
-                      child: Container(
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Content
-                  Padding(
-                    padding: const EdgeInsets.all(AppSpacing.cardPadding),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Icon with animated glow
-                        AnimatedBuilder(
-                          animation: _pulseAnim,
-                          builder: (context, child) {
-                            return Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.25),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.3 * _pulseAnim.value),
-                                    blurRadius: 8 + (4 * _pulseAnim.value),
-                                    spreadRadius: 2 * _pulseAnim.value,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                widget.icon,
-                                size: 26,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Label
-                        Text(
-                          widget.label,
-                          style: AppTextStyles.quickActionLabel.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.3),
-                                offset: const Offset(0, 1),
-                                blurRadius: 3,
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+        child: GestureDetector(
+          onTapDown: (_) => _animController.forward(),
+          onTapUp: (_) {
+            _animController.reverse();
+            widget.onTap();
           },
+          onTapCancel: () => _animController.reverse(),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 120,
+            decoration: BoxDecoration(
+              // Subtle gradient background
+              gradient: LinearGradient(
+                colors: gradientColors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              // Enhanced shadow on hover
+              boxShadow: [
+                BoxShadow(
+                  color: _isHovered 
+                      ? widget.baseColor.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.06),
+                  blurRadius: _isHovered ? 16 : 8,
+                  offset: Offset(0, _isHovered ? 6 : 2),
+                  spreadRadius: _isHovered ? 1 : 0,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              // Subtle border with gradient color
+              border: Border.all(
+                color: _isHovered 
+                    ? widget.baseColor.withOpacity(0.3)
+                    : widget.baseColor.withOpacity(0.15),
+                width: 1.5,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Icon container with gradient background (matching Manage Modules)
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withOpacity(0.15),
+                          accentColor.withOpacity(0.08),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: accentColor.withOpacity(0.2),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      color: accentColor,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  
+                  // Label with accent color
+                  Text(
+                    widget.label,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: accentColor,
+                      height: 1.2,
+                      letterSpacing: 0.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-// Dashboard Tile Widget with Hover Effect
+// Dashboard Tile Widget with Simplified Animations and Gradient
 class _DashboardTile extends StatefulWidget {
   final String title;
   final IconData icon;
@@ -1208,68 +1075,146 @@ class _DashboardTile extends StatefulWidget {
   State<_DashboardTile> createState() => _DashboardTileState();
 }
 
-class _DashboardTileState extends State<_DashboardTile> {
+class _DashboardTileState extends State<_DashboardTile> with SingleTickerProviderStateMixin {
   bool _isHovered = false;
+  late AnimationController _tapController;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Simple tap animation only
+    _tapController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnim = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _tapController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tapController.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _tapController.forward().then((_) => _tapController.reverse());
+    widget.onTap();
+  }
+
+  // Get light gradient colors for tile background
+  List<Color> _getTileGradientColors() {
+    final hsl = HSLColor.fromColor(widget.backgroundColor);
+    return [
+      widget.backgroundColor,
+      hsl.withLightness((hsl.lightness * 0.97).clamp(0.0, 1.0)).toColor(),
+      hsl.withLightness((hsl.lightness * 0.94).clamp(0.0, 1.0)).toColor(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final gradientColors = _getTileGradientColors();
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
-        scale: _isHovered ? 1.05 : 1.0,
+        scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        child: Container(
-          decoration: AppDecorations.statusCard(
-            backgroundColor: widget.backgroundColor,
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: widget.onTap,
+        child: ScaleTransition(
+          scale: _scaleAnim,
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: widget.backgroundColor,
-                        shape: BoxShape.circle,
-                        boxShadow: _isHovered
-                            ? [
-                                BoxShadow(
-                                  color: widget.accentColor.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                            : [],
+              // Minimal gradient background
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: gradientColors,
+              ),
+              // Enhanced shadow on hover
+              boxShadow: [
+                BoxShadow(
+                  color: _isHovered 
+                      ? widget.accentColor.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.06),
+                  blurRadius: _isHovered ? 16 : 8,
+                  offset: Offset(0, _isHovered ? 6 : 2),
+                  spreadRadius: _isHovered ? 1 : 0,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              // Subtle border
+              border: Border.all(
+                color: _isHovered 
+                    ? widget.accentColor.withOpacity(0.2)
+                    : widget.accentColor.withOpacity(0.1),
+                width: 1,
+              ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _handleTap,
+                borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+                splashColor: widget.accentColor.withOpacity(0.1),
+                highlightColor: widget.accentColor.withOpacity(0.05),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Icon with gradient background
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              widget.accentColor.withOpacity(0.15),
+                              widget.accentColor.withOpacity(0.08),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: widget.accentColor.withOpacity(0.2),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          widget.icon,
+                          size: 28,
+                          color: widget.accentColor,
+                        ),
                       ),
-                      child: Icon(
-                        widget.icon,
-                        size: 28,
-                        color: widget.accentColor,
+                      const SizedBox(height: 12),
+                      
+                      // Title
+                      Text(
+                        widget.title,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryText,
+                          height: 1.3,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      widget.title,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryText,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

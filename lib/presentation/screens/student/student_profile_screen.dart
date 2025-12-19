@@ -155,8 +155,57 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          _buildReadOnlyField('Name', _studentName),
-          _buildReadOnlyField('Register No', _registerNo),
+          
+          // Profile Avatar with Blue-to-Cyan Gradient
+          Center(
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF0D50A9), // Top: Dark Blue
+                    Color(0xFF8FFEB0), // Bottom: Cyan/Mint
+                  ],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.person,
+                size: 40,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Student Name
+          Center(
+            child: Text(
+              _studentName,
+              style: GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          
+          // Register Number
+          Center(
+            child: Text(
+              _registerNo,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          
           _buildReadOnlyField('Department', _department),
           _buildReadOnlyField('Year / Semester', _yearSem),
           _buildReadOnlyField('Section', _section),

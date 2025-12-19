@@ -275,16 +275,22 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: Validators.validateEmail,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'admin@studentms.com',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.email_outlined),
+        prefixIcon: const Icon(
+          Icons.email_outlined,
+          color: Color(0xFF9CA3AF),
+        ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)), // gray-300
@@ -318,17 +324,24 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: Validators.validatePassword,
-      style: GoogleFonts.inter(fontSize: 16),
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       decoration: InputDecoration(
         hintText: 'Admin@123',
         hintStyle: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: const Color(0xFF6B7280),
           fontSize: 16,
         ),
-        prefixIcon: const Icon(Icons.lock_outline),
+        prefixIcon: const Icon(
+          Icons.lock_outline,
+          color: Color(0xFF9CA3AF),
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            color: const Color(0xFF9CA3AF),
           ),
           onPressed: () {
             setState(() {
@@ -337,7 +350,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           },
         ),
         filled: true,
-        fillColor: AppColors.lightSurface,
+        fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -995,18 +1008,18 @@ class _FloatingIconPainter extends CustomPainter {
     for (var iconData in icons) {
       final adjustedProgress = ((progress + iconData.delay) % 1.0);
       
-      // Vertical movement (floating upward)
-      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+      // Vertical position (static - no movement)
+      final yPos = size.height * iconData.y;
       
-      // Horizontal wave motion (sine wave)
-      final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
-      final xPos = size.width * iconData.x + waveOffset;
+      // Horizontal position (static - no wave motion)
+      final xPos = size.width * iconData.x;
       
       if (yPos > -iconData.size && yPos < size.height + iconData.size) {
-        final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
+        // Static opacity - no blinking
+        final opacity = 0.15;
         
-        // Scale pulsing (gentle breathing effect)
-        final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
+        // No scale pulsing - static size
+        final scale = 1.0;
         
         canvas.save();
         canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);

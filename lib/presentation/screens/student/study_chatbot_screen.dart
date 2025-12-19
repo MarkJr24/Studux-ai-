@@ -558,6 +558,45 @@ class _StudyChatbotScreenState extends State<StudyChatbotScreen>
       child: SafeArea(
         child: Row(
           children: [
+            // Plus button for attachments
+            Theme(
+              data: Theme.of(context).copyWith(
+                popupMenuTheme: PopupMenuThemeData(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 8,
+                ),
+              ),
+              child: PopupMenuButton<String>(
+                offset: const Offset(0, -160), // Push menu upwards
+                tooltip: 'Attach Media',
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF5F5F5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.add,
+                    color: Color(0xFF4A90E2),
+                    size: 24,
+                  ),
+                ),
+                itemBuilder: (context) => [
+                  _buildPopupItem('photos', Icons.attach_file, 'Add photos & files', Colors.blue),
+                  _buildPopupItem('drive', Icons.add_to_drive, 'Add from Google Drive', Colors.green),
+                  _buildPopupItem('camera', Icons.camera_alt, 'Camera', Colors.orange),
+                ],
+                onSelected: (value) {
+                  if (value == 'photos') _handleDocumentAttachment();
+                  if (value == 'drive') _handleDriveAttachment();
+                  if (value == 'camera') _handleCameraAttachment();
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -566,7 +605,10 @@ class _StudyChatbotScreenState extends State<StudyChatbotScreen>
                 ),
                 child: TextField(
                   controller: _messageController,
-                  style: GoogleFonts.inter(fontSize: 14),
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: const Color(0xFF212121), // Dark text color for visibility
+                  ),
                   maxLines: null,
                   textInputAction: TextInputAction.send,
                   onSubmitted: _sendMessage,
@@ -606,6 +648,70 @@ class _StudyChatbotScreenState extends State<StudyChatbotScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildPopupItem(String value, IconData icon, String text, Color iconColor) {
+    return PopupMenuItem(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 40,
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 20),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: GoogleFonts.inter(
+              color: const Color(0xFF212121),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleDriveAttachment() {
+    // Show placeholder message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Google Drive integration - Coming soon!',
+          style: GoogleFonts.inter(),
+        ),
+        backgroundColor: const Color(0xFF4A90E2),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _handleDocumentAttachment() {
+    // Show placeholder message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'File picker - Coming soon!',
+          style: GoogleFonts.inter(),
+        ),
+        backgroundColor: const Color(0xFF4A90E2),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _handleCameraAttachment() {
+    // Show placeholder message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Camera feature - Coming soon!',
+          style: GoogleFonts.inter(),
+        ),
+        backgroundColor: const Color(0xFF4A90E2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -662,4 +768,6 @@ class ChatMessage {
     this.isWarning = false,
   });
 }
+
+
 
