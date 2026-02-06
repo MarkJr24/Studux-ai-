@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
+import '../../../core/navigation_service.dart';
 import '../../../core/widgets/glassmorphic_widgets.dart';
 import 'teacher_profile_screen.dart';
 
@@ -43,7 +43,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _headerController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 280),
@@ -52,7 +52,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
       parent: _headerController,
       curve: Curves.easeOut,
     );
-    
+
     _parallaxController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 18),
@@ -63,7 +63,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
     ).animate(
       CurvedAnimation(parent: _parallaxController, curve: Curves.easeInOut),
     );
-    
+
     _headerController.forward();
     _parallaxController.repeat(reverse: true);
   }
@@ -84,12 +84,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        if (_hasUnsavedChanges) {
-          return await _showUnsavedChangesDialog() ?? false;
-        }
-        return true;
-      },
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         body: Stack(
           children: [
@@ -162,16 +157,7 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
             Row(
               children: [
                 IconButton(
-                  onPressed: () async {
-                    if (_hasUnsavedChanges) {
-                      final shouldPop = await _showUnsavedChangesDialog();
-                      if (shouldPop == true && context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
+                  onPressed: () => LogoutHandler.handleBackToLogin(context),
                   icon: const Icon(Icons.arrow_back),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -394,7 +380,8 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            _buildToggleRow('Attendance Reminders', _attendanceReminders, (value) {
+            _buildToggleRow('Attendance Reminders', _attendanceReminders,
+                (value) {
               setState(() {
                 _attendanceReminders = value;
                 _markAsChanged();
@@ -406,8 +393,10 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
                 _markAsChanged();
               });
             }),
-            _buildToggleRow('Exam Duty Alerts', _examDutyAlerts, null, canDisable: false),
-            _buildToggleRow('System Announcements', _systemAnnouncements, (value) {
+            _buildToggleRow('Exam Duty Alerts', _examDutyAlerts, null,
+                canDisable: false),
+            _buildToggleRow('System Announcements', _systemAnnouncements,
+                (value) {
               setState(() {
                 _systemAnnouncements = value;
                 _markAsChanged();
@@ -419,7 +408,8 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
     );
   }
 
-  Widget _buildToggleRow(String label, bool value, Function(bool)? onChanged, {bool canDisable = true}) {
+  Widget _buildToggleRow(String label, bool value, Function(bool)? onChanged,
+      {bool canDisable = true}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -514,7 +504,8 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
     );
   }
 
-  Widget _buildDropdown(String value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropdown(
+      String value, List<String> items, Function(String?) onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -562,13 +553,15 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
               ),
             ),
             const SizedBox(height: 16),
-            _buildToggleRow('Show Last Active Status', _showLastActiveStatus, (value) {
+            _buildToggleRow('Show Last Active Status', _showLastActiveStatus,
+                (value) {
               setState(() {
                 _showLastActiveStatus = value;
                 _markAsChanged();
               });
             }),
-            _buildToggleRow('Allow Anonymous Analytics', _allowAnonymousAnalytics, (value) {
+            _buildToggleRow(
+                'Allow Anonymous Analytics', _allowAnonymousAnalytics, (value) {
               setState(() {
                 _allowAnonymousAnalytics = value;
                 _markAsChanged();
@@ -802,14 +795,6 @@ class _TeacherSettingsScreenState extends State<TeacherSettingsScreen>
       ],
     );
   }
-
-  Future<bool?> _showUnsavedChangesDialog() {
-    return showDialog<bool>(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) => _UnsavedChangesDialog(),
-    );
-  }
 }
 
 /// Floating card with gentle animation
@@ -977,121 +962,6 @@ class _PulsingSaveButtonState extends State<_PulsingSaveButton>
           height: 50,
         );
       },
-    );
-  }
-}
-
-/// Unsaved changes dialog
-class _UnsavedChangesDialog extends StatefulWidget {
-  @override
-  State<_UnsavedChangesDialog> createState() => _UnsavedChangesDialogState();
-}
-
-class _UnsavedChangesDialogState extends State<_UnsavedChangesDialog>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.04), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.04, end: 1.0), weight: 50),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _scaleAnimation,
-      child: Dialog(
-        backgroundColor: Colors.transparent,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withOpacity(0.2),
-                    Colors.white.withOpacity(0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    size: 48,
-                    color: Colors.orange.shade400,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Unsaved Changes',
-                    style: GoogleFonts.inter(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'You have unsaved changes. Do you want to discard them?',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: NeonGlowButton(
-                          label: 'Cancel',
-                          onTap: () => Navigator.of(context).pop(false),
-                          gradientColors: const [Color(0xFF616161), Color(0xFF424242)],
-                          height: 44,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: NeonGlowButton(
-                          label: 'Discard',
-                          onTap: () => Navigator.of(context).pop(true),
-                          gradientColors: const [Color(0xFFC62828), Color(0xFFD32F2F)],
-                          height: 44,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

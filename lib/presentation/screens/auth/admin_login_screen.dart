@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
+import '../../../core/navigation_service.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -21,8 +22,6 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoading = false;
-  bool _showSuccess = false;
 
   // Hardcoded credentials
   static const String _validEmail = 'admin@studentms.com';
@@ -40,29 +39,12 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    // Check credentials
+    // Check credentials immediately
     if (_emailController.text == _validEmail &&
         _passwordController.text == _validPassword) {
       if (mounted) {
-        // Show success animation
-        setState(() => _showSuccess = true);
-        
-        // Wait for success animation
-        await Future.delayed(const Duration(milliseconds: 250));
-        
-        if (!mounted) return;
-        setState(() => _showSuccess = false);
-        
         SnackbarHelper.showSuccess(context, 'Login successful!');
-        // Navigate to admin main navigation (clears entire navigation stack)
+        // Navigate to admin main navigation instantly
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -83,64 +65,67 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Login Screen Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/login_screen.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                // If no image found, show a subtle gradient background
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white,
-                        Colors.blue.shade50,
-                      ],
+    return WillPopScope(
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Login Screen Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/login_screen.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  // If no image found, show a subtle gradient background
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFF3E8FF),
+                          const Color(0xFFEFF6FF),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          
-          // Semi-transparent White Overlay for Readability
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withOpacity(0.25),
-            ),
-          ),
-          
-          // Animated Admin Icons Background
-          const Positioned.fill(
-            child: _AnimatedAdminBackground(),
-          ),
-          
-          // Main content
-          SafeArea(
-            child: Column(
-              children: [
-                // App Bar
-                _buildAppBar(),
 
-                // Login Card
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
-                      child: _buildLoginCard(),
+            // Semi-transparent Purple Overlay for Readability
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.25),
+              ),
+            ),
+
+            // Animated Student Icons Background
+            const Positioned.fill(
+              child: _AnimatedBackground(),
+            ),
+
+            // Main content
+            SafeArea(
+              child: Column(
+                children: [
+                  // App Bar
+                  _buildAppBar(),
+
+                  // Login Card
+                  Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: _buildLoginCard(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -151,7 +136,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => LogoutHandler.handleBackToLogin(context),
             icon: const Icon(Icons.arrow_back),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white,
@@ -404,9 +389,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   Widget _buildLoginButton() {
     return _NeonButton(
-      onTap: _isLoading ? null : _handleLogin,
-      isLoading: _isLoading,
-      showSuccess: _showSuccess,
+      onTap: _handleLogin,
+      isLoading: false,
+      showSuccess: false,
     );
   }
 
@@ -586,11 +571,11 @@ class _ParticlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF9333EA).withOpacity(0.08);
+    final paint = Paint()..color = const Color(0xFF9333EA).withOpacity(0.08);
 
     for (var particle in particles) {
-      final yPos = size.height * (particle.y - progress * particle.speed) % size.height;
+      final yPos =
+          size.height * (particle.y - progress * particle.speed) % size.height;
       canvas.drawCircle(
         Offset(size.width * particle.x, yPos),
         particle.size,
@@ -651,7 +636,7 @@ class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-          Text(
+        Text(
           widget.text,
           style: GoogleFonts.inter(
             fontSize: 20,
@@ -769,7 +754,8 @@ class _NeonButtonState extends State<_NeonButton>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF9333EA).withOpacity(_isPressed ? 0.5 : 0.3),
+                  color: const Color(0xFF9333EA)
+                      .withOpacity(_isPressed ? 0.5 : 0.3),
                   blurRadius: _isPressed ? 20 : 15,
                   offset: const Offset(0, 8),
                   spreadRadius: _isPressed ? 2 : 0,
@@ -791,7 +777,8 @@ class _NeonButtonState extends State<_NeonButton>
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : widget.showSuccess
@@ -890,7 +877,8 @@ class _AnimatedAdminBackground extends StatefulWidget {
   const _AnimatedAdminBackground();
 
   @override
-  State<_AnimatedAdminBackground> createState() => _AnimatedAdminBackgroundState();
+  State<_AnimatedAdminBackground> createState() =>
+      _AnimatedAdminBackgroundState();
 }
 
 class _AnimatedAdminBackgroundState extends State<_AnimatedAdminBackground>
@@ -927,18 +915,18 @@ class _AnimatedAdminBackgroundState extends State<_AnimatedAdminBackground>
 
     // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
     final random = math.Random(42); // Fixed seed for consistent layout
-    
+
     for (int i = 0; i < 15; i++) {
       // Grid position
       final col = i % 3;
       final row = i ~/ 3;
-      
+
       // Base position + random offset within grid cell
       // X: 0-0.33, 0.33-0.66, 0.66-1.0
       // Y: 0-0.2, 0.2-0.4, etc.
       double x = (col * 0.33) + random.nextDouble() * 0.25;
       double y = (row * 0.2) + random.nextDouble() * 0.15;
-      
+
       _icons.add(_FloatingIcon(
         icon: adminIcons[i % adminIcons.length],
         x: x,
@@ -1006,25 +994,23 @@ class _FloatingIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (var iconData in icons) {
-      final adjustedProgress = ((progress + iconData.delay) % 1.0);
-      
       // Vertical position (static - no movement)
       final yPos = size.height * iconData.y;
-      
+
       // Horizontal position (static - no wave motion)
       final xPos = size.width * iconData.x;
-      
+
       if (yPos > -iconData.size && yPos < size.height + iconData.size) {
         // Static opacity - no blinking
         final opacity = 0.15;
-        
+
         // No scale pulsing - static size
         final scale = 1.0;
-        
+
         canvas.save();
         canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
         canvas.scale(scale);
-        
+
         final textPainter = TextPainter(
           text: TextSpan(
             text: String.fromCharCode(iconData.icon.codePoint),
@@ -1036,13 +1022,13 @@ class _FloatingIconPainter extends CustomPainter {
           ),
           textDirection: TextDirection.ltr,
         );
-        
+
         textPainter.layout();
         textPainter.paint(
           canvas,
           Offset(-textPainter.width / 2, -textPainter.height / 2),
         );
-        
+
         canvas.restore();
       }
     }

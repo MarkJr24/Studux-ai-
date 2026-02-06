@@ -153,76 +153,6 @@ class _TodayDutyScreenState extends State<TodayDutyScreen> {
     );
   }
 
-  Widget _buildNoDutyState() {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.all(40),
-        padding: const EdgeInsets.all(32),
-        decoration: TeacherDecorations.whiteCard,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '🎉',
-              style: TextStyle(fontSize: 64),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No Exam Duty Today',
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: TeacherColors.primaryText,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Enjoy your free time!',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: TeacherColors.secondaryText,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to upcoming duties
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TeacherColors.invigilationColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'View Upcoming Duties',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.arrow_forward, size: 16),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildDutyCard() {
     final duty = _todayDuty;
     final statusType = duty['status'] == 'Confirmed'
@@ -355,9 +285,8 @@ class _TodayDutyScreenState extends State<TodayDutyScreen> {
                     final coInvig = duty['coInvigilators'][index];
                     return Padding(
                       padding: EdgeInsets.only(
-                        bottom: index < duty['coInvigilators'].length - 1
-                            ? 8
-                            : 0,
+                        bottom:
+                            index < duty['coInvigilators'].length - 1 ? 8 : 0,
                       ),
                       child: Row(
                         children: [

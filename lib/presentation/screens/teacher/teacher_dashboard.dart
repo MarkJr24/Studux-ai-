@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/navigation_service.dart';
 import 'teacher_design_system.dart';
 import 'duty_exam_management_screen.dart';
 import 'attendance_system_screen.dart';
@@ -43,19 +44,19 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                     // Welcome Block
                     _buildWelcomeBlock(),
                     const SizedBox(height: TeacherSpacing.sectionVertical),
-                    
+
                     // Quick Stats
                     _buildSectionTitle('QUICK STATS'),
                     const SizedBox(height: 12),
                     _buildQuickStats(),
                     const SizedBox(height: TeacherSpacing.sectionVertical),
-                    
+
                     // Quick Access
                     _buildSectionTitle('QUICK ACCESS'),
                     const SizedBox(height: 12),
                     _buildQuickAccessSection(context),
                     const SizedBox(height: TeacherSpacing.sectionVertical),
-                    
+
                     // Manage Modules
                     _buildSectionTitle('MANAGE MODULES'),
                     const SizedBox(height: 12),
@@ -96,7 +97,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => LogoutHandler.handleBackToLogin(context),
               icon: const Icon(Icons.arrow_back, size: 20),
               color: TeacherColors.iconGray,
               padding: EdgeInsets.zero,
@@ -191,30 +192,33 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
   }
 
   Widget _buildQuickStats() {
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            title: 'Upcoming Invigilation',
-            count: _upcomingInvigilation.toString(),
-            icon: Icons.assignment,
-            backgroundColor: TeacherColors.invigilationBg,
-            accentColor: TeacherColors.invigilationColor,
-            borderColor: TeacherColors.invigilationColor,
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _StatCard(
+              title: 'Upcoming Invigilation',
+              count: _upcomingInvigilation.toString(),
+              icon: Icons.assignment,
+              backgroundColor: TeacherColors.invigilationBg,
+              accentColor: TeacherColors.invigilationColor,
+              borderColor: TeacherColors.invigilationColor,
+            ),
           ),
-        ),
-        const SizedBox(width: TeacherSpacing.cardSpacing),
-        Expanded(
-          child: _StatCard(
-            title: 'Classes Today',
-            count: _classesToday.toString(),
-            icon: Icons.class_,
-            backgroundColor: TeacherColors.classesBg,
-            accentColor: TeacherColors.classesColor,
-            borderColor: TeacherColors.classesColor,
+          const SizedBox(width: TeacherSpacing.cardSpacing),
+          Expanded(
+            child: _StatCard(
+              title: 'Classes Today',
+              count: _classesToday.toString(),
+              icon: Icons.class_,
+              backgroundColor: TeacherColors.classesBg,
+              accentColor: TeacherColors.classesColor,
+              borderColor: TeacherColors.classesColor,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -389,6 +393,7 @@ class _StatCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon
           Container(

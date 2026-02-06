@@ -30,13 +30,6 @@ class TeacherBottomNav extends StatelessWidget {
             width: 1,
           ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000), // 8% opacity
-            blurRadius: 12,
-            offset: Offset(0, -2),
-          ),
-        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -125,15 +118,19 @@ class TeacherBottomNav extends StatelessWidget {
               height: 3,
               width: 40,
               decoration: BoxDecoration(
-                color: isActive ? TeacherColors.bottomNavActive : Colors.transparent,
+                color: isActive
+                    ? TeacherColors.bottomNavActive
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 6),
-            
+
             Icon(
               icon,
-              color: isActive ? TeacherColors.bottomNavActive : TeacherColors.bottomNavInactive,
+              color: isActive
+                  ? TeacherColors.bottomNavActive
+                  : TeacherColors.bottomNavInactive,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -142,7 +139,9 @@ class TeacherBottomNav extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: isActive ? FontWeight.w500 : FontWeight.normal,
-                color: isActive ? TeacherColors.bottomNavActive : TeacherColors.bottomNavInactiveLabel,
+                color: isActive
+                    ? TeacherColors.bottomNavActive
+                    : TeacherColors.bottomNavInactiveLabel,
               ),
             ),
           ],

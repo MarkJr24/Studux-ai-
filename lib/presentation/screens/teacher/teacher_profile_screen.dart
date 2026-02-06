@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'teacher_design_system.dart';
 import '../auth/teacher_login_screen.dart';
+import '../../../core/navigation_service.dart';
 
 class TeacherProfileScreen extends StatefulWidget {
   const TeacherProfileScreen({super.key});
@@ -15,11 +16,15 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
   bool _isChangingPassword = false;
 
   // Profile data
-  final TextEditingController _phoneController = TextEditingController(text: '+91 9876543210');
-  final TextEditingController _emailController = TextEditingController(text: 'john.doe@college.edu');
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _phoneController =
+      TextEditingController(text: '+91 9876543210');
+  final TextEditingController _emailController =
+      TextEditingController(text: 'john.doe@college.edu');
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // Notification preferences
   bool _attendanceAlerts = true;
@@ -43,43 +48,46 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: TeacherColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(TeacherSpacing.pageHorizontal),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFacultyIdentitySection(),
-                    const SizedBox(height: 20),
-                    _buildPersonalInformationSection(),
-                    const SizedBox(height: 20),
-                    _buildSecuritySection(),
-                    const SizedBox(height: 20),
-                    _buildNotificationPreferencesSection(),
-                    const SizedBox(height: 20),
-                    _buildAppPreferencesSection(),
-                    const SizedBox(height: 20),
-                    _buildActivityInformationSection(),
-                    const SizedBox(height: 40),
-                    
-                    // Divider before logout
-                    const Divider(color: TeacherColors.divider, height: 1),
-                    const SizedBox(height: 24),
-                    
-                    // Logout Button
-                    _buildLogoutButton(),
-                    const SizedBox(height: 24),
-                  ],
+    return WillPopScope(
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
+      child: Scaffold(
+        backgroundColor: TeacherColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(TeacherSpacing.pageHorizontal),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFacultyIdentitySection(),
+                      const SizedBox(height: 20),
+                      _buildPersonalInformationSection(),
+                      const SizedBox(height: 20),
+                      _buildSecuritySection(),
+                      const SizedBox(height: 20),
+                      _buildNotificationPreferencesSection(),
+                      const SizedBox(height: 20),
+                      _buildAppPreferencesSection(),
+                      const SizedBox(height: 20),
+                      _buildActivityInformationSection(),
+                      const SizedBox(height: 40),
+
+                      // Divider before logout
+                      const Divider(color: TeacherColors.divider, height: 1),
+                      const SizedBox(height: 24),
+
+                      // Logout Button
+                      _buildLogoutButton(),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -105,7 +113,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => LogoutHandler.handleBackToLogin(context),
               icon: const Icon(Icons.arrow_back, size: 20),
               color: TeacherColors.iconGray,
               padding: EdgeInsets.zero,
@@ -145,10 +153,11 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
         children: [
           Text(
             'FACULTY INFORMATION',
-            style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+            style: TeacherTextStyles.sectionTitleColored(
+                TeacherColors.primaryButton),
           ),
           const SizedBox(height: 16),
-          
+
           // Profile Picture with Pink-to-Orange Gradient
           Center(
             child: Container(
@@ -173,7 +182,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Name
           Center(
             child: Text(
@@ -186,7 +195,7 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          
+
           // Faculty ID
           Center(
             child: Text(
@@ -195,15 +204,16 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Department
-          _buildInfoRow(Icons.business, 'Department', 'Computer Science & Engineering'),
+          _buildInfoRow(
+              Icons.business, 'Department', 'Computer Science & Engineering'),
           const SizedBox(height: 12),
-          
+
           // Email
           _buildInfoRow(Icons.email, 'Email', 'john.doe@college.edu'),
           const SizedBox(height: 12),
-          
+
           // Phone
           _buildInfoRow(Icons.phone, 'Phone', '+91 9876543210'),
         ],
@@ -255,7 +265,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             children: [
               Text(
                 'PERSONAL INFORMATION',
-                style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+                style: TeacherTextStyles.sectionTitleColored(
+                    TeacherColors.primaryButton),
               ),
               if (!_isEditingProfile)
                 TextButton(
@@ -276,11 +287,9 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          
           _buildTextField('Phone', _phoneController, _isEditingProfile),
           const SizedBox(height: 12),
           _buildTextField('Email', _emailController, _isEditingProfile),
-          
           if (_isEditingProfile) ...[
             const SizedBox(height: 16),
             Row(
@@ -328,7 +337,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             children: [
               Text(
                 'SECURITY',
-                style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+                style: TeacherTextStyles.sectionTitleColored(
+                    TeacherColors.primaryButton),
               ),
               if (!_isChangingPassword)
                 TextButton(
@@ -348,7 +358,6 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
                 ),
             ],
           ),
-          
           if (_isChangingPassword) ...[
             const SizedBox(height: 16),
             _buildPasswordField('Current Password', _currentPasswordController),
@@ -402,10 +411,10 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
         children: [
           Text(
             'NOTIFICATION PREFERENCES',
-            style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+            style: TeacherTextStyles.sectionTitleColored(
+                TeacherColors.primaryButton),
           ),
           const SizedBox(height: 16),
-          
           _buildToggleRow('Attendance Alerts', _attendanceAlerts, (val) {
             setState(() {
               _attendanceAlerts = val;
@@ -443,18 +452,19 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
         children: [
           Text(
             'APP PREFERENCES',
-            style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+            style: TeacherTextStyles.sectionTitleColored(
+                TeacherColors.primaryButton),
           ),
           const SizedBox(height: 16),
-          
-          _buildDropdownField('Theme', _theme, ['Light', 'Dark', 'System'], (val) {
+          _buildDropdownField('Theme', _theme, ['Light', 'Dark', 'System'],
+              (val) {
             setState(() {
               _theme = val!;
             });
           }),
           const SizedBox(height: 12),
-          _buildDropdownField('Default Landing Page', _defaultLandingPage, 
-            ['Dashboard', 'Classes', 'Evaluation', 'Insights'], (val) {
+          _buildDropdownField('Default Landing Page', _defaultLandingPage,
+              ['Dashboard', 'Classes', 'Evaluation', 'Insights'], (val) {
             setState(() {
               _defaultLandingPage = val!;
             });
@@ -473,10 +483,10 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
         children: [
           Text(
             'ACTIVITY INFORMATION',
-            style: TeacherTextStyles.sectionTitleColored(TeacherColors.primaryButton),
+            style: TeacherTextStyles.sectionTitleColored(
+                TeacherColors.primaryButton),
           ),
           const SizedBox(height: 16),
-          
           _buildActivityRow('Last Attendance Submitted', '2 hours ago'),
           const SizedBox(height: 12),
           _buildActivityRow('Last Marks Submission', '1 day ago'),
@@ -507,7 +517,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, bool enabled) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, bool enabled) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -594,7 +605,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
     );
   }
 
-  Widget _buildDropdownField(String label, String value, List<String> options, Function(String?) onChanged) {
+  Widget _buildDropdownField(String label, String value, List<String> options,
+      Function(String?) onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -614,7 +626,8 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
             value: value,
             isExpanded: true,
             underline: const SizedBox(),
-            icon: const Icon(Icons.arrow_drop_down, color: TeacherColors.primaryButton),
+            icon: const Icon(Icons.arrow_drop_down,
+                color: TeacherColors.primaryButton),
             style: GoogleFonts.inter(
               fontSize: 14,
               color: TeacherColors.primaryText,
@@ -632,13 +645,16 @@ class _TeacherProfileScreenState extends State<TeacherProfileScreen> {
     );
   }
 
-  Widget _buildButton(String label, VoidCallback onPressed, {bool isSecondary = false}) {
+  Widget _buildButton(String label, VoidCallback onPressed,
+      {bool isSecondary = false}) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: isSecondary ? TeacherColors.secondaryButtonBg : TeacherColors.primaryButton,
+          color: isSecondary
+              ? TeacherColors.secondaryButtonBg
+              : TeacherColors.primaryButton,
           borderRadius: BorderRadius.circular(12),
           border: isSecondary ? Border.all(color: TeacherColors.divider) : null,
         ),

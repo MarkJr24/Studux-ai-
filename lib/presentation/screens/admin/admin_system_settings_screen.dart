@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/navigation_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'admin_design_system.dart';
 
@@ -28,11 +29,7 @@ class _AdminSystemSettingsScreenState extends State<AdminSystemSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        // Back goes to Profile
-        Navigator.pop(context);
-        return false;
-      },
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
@@ -81,7 +78,7 @@ class _AdminSystemSettingsScreenState extends State<AdminSystemSettingsScreen> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => LogoutHandler.handleBackToLogin(context),
               icon: const Icon(Icons.arrow_back, size: 20),
               color: AppColors.iconGray,
               padding: EdgeInsets.zero,
@@ -116,7 +113,8 @@ class _AdminSystemSettingsScreenState extends State<AdminSystemSettingsScreen> {
       decoration: BoxDecoration(
         color: AppColors.pendingSeatingBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.pendingSeatingAccent.withOpacity(0.3)),
+        border:
+            Border.all(color: AppColors.pendingSeatingAccent.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

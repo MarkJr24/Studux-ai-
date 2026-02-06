@@ -30,13 +30,6 @@ class AdminBottomNav extends StatelessWidget {
             width: 1,
           ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000), // 8% opacity for elevation 8
-            blurRadius: 16,
-            offset: Offset(0, -4),
-          ),
-        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -133,7 +126,9 @@ class AdminBottomNav extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isActive ? AppColors.bottomNavActive : AppColors.bottomNavInactive,
+              color: isActive
+                  ? AppColors.bottomNavActive
+                  : AppColors.bottomNavInactive,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -142,7 +137,9 @@ class AdminBottomNav extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: isActive ? AppColors.bottomNavActive : AppColors.bottomNavInactiveLabel,
+                color: isActive
+                    ? AppColors.bottomNavActive
+                    : AppColors.bottomNavInactiveLabel,
               ),
             ),
           ],

@@ -12,11 +12,11 @@ class AttendanceAuditScreen extends StatefulWidget {
 class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   String? selectedExam;
   bool attendanceAvailable = true;
   bool auditGenerated = false;
-  
+
   final List<String> exams = [
     'Data Structures - CIA 1',
     'DBMS - Semester',
@@ -88,7 +88,7 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
             ),
           ),
           const SizedBox(width: 16),
-          
+
           // Title and Subtitle
           Expanded(
             child: Column(
@@ -150,120 +150,130 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          
+
           // Select Exam Card
           _AnimatedCard(
             accentColor: AppColors.auditAccent,
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SELECT EXAM',
-                  style: AppTextStyles.sectionTitleColored(AppColors.auditAccent),
-                ),
-                const SizedBox(height: 16),
-                
-                Text(
-                  'Exam',
-                  style: AppTextStyles.labelText,
-                ),
-                const SizedBox(height: 8),
-                
-                // Dropdown
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: AppDecorations.inputField,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedExam,
-                      hint: Text(
-                        'Choose an exam',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: AppColors.labelText,
-                        ),
-                      ),
-                      isExpanded: true,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: AppColors.auditAccent,
-                      ),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: AppColors.captionText,
-                      ),
-                      items: exams.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedExam = newValue;
-                        });
-                      },
-                    ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'SELECT EXAM',
+                    style: AppTextStyles.sectionTitleColored(
+                        AppColors.auditAccent),
                   ),
-                ),
-                
-                if (selectedExam != null) ...[
-                  const SizedBox(height: 20),
-                  
-                  // Info message
+                  const SizedBox(height: 16),
+
+                  Text(
+                    'Exam',
+                    style: AppTextStyles.labelText,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Dropdown
                   Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: attendanceAvailable ? AppColors.successBg : AppColors.errorBg,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          attendanceAvailable ? Icons.check_circle : Icons.error,
-                          color: attendanceAvailable ? AppColors.successDark : AppColors.errorDark,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            attendanceAvailable
-                                ? 'Attendance data available for this exam'
-                                : 'Attendance data not yet recorded',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: attendanceAvailable ? AppColors.successDark : AppColors.errorDark,
-                            ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: AppDecorations.inputField,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedExam,
+                        hint: Text(
+                          'Choose an exam',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.labelText,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Next button
-                  if (attendanceAvailable)
-                    SizedBox(
-                      width: double.infinity,
-                      child: GradientButton(
-                        text: 'Next: Configure Audit',
-                        onPressed: () {
-                          _tabController.animateTo(1);
+                        isExpanded: true,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: AppColors.auditAccent,
+                        ),
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: AppColors.captionText,
+                        ),
+                        items: exams.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedExam = newValue;
+                          });
                         },
-                        decoration: AppDecorations.warningGradientButton,
-                        height: 50,
                       ),
                     ),
+                  ),
+
+                  if (selectedExam != null) ...[
+                    const SizedBox(height: 20),
+
+                    // Info message
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: attendanceAvailable
+                            ? AppColors.successBg
+                            : AppColors.errorBg,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            attendanceAvailable
+                                ? Icons.check_circle
+                                : Icons.error,
+                            color: attendanceAvailable
+                                ? AppColors.successDark
+                                : AppColors.errorDark,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              attendanceAvailable
+                                  ? 'Attendance data available for this exam'
+                                  : 'Attendance data not yet recorded',
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: attendanceAvailable
+                                    ? AppColors.successDark
+                                    : AppColors.errorDark,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Next button
+                    if (attendanceAvailable)
+                      SizedBox(
+                        width: double.infinity,
+                        child: GradientButton(
+                          text: 'Next: Configure Audit',
+                          onPressed: () {
+                            _tabController.animateTo(1);
+                          },
+                          decoration: AppDecorations.warningGradientButton,
+                          height: 50,
+                        ),
+                      ),
+                  ],
                 ],
-              ],
-            ),
+              ),
             ),
           ),
-          
+
           const SizedBox(height: 80),
         ],
       ),
@@ -278,35 +288,35 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          
+
           Text(
             'AUDIT CONFIGURATION',
             style: AppTextStyles.sectionTitleColored(AppColors.auditAccent),
           ),
           const SizedBox(height: 16),
-          
+
           // Configuration options
           _AnimatedCard(
             accentColor: AppColors.auditAccent,
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildConfigOption('Include absent students', true),
-                const Divider(height: 24),
-                _buildConfigOption('Check seating allocation', true),
-                const Divider(height: 24),
-                _buildConfigOption('Verify invigilator signatures', false),
-                const Divider(height: 24),
-                _buildConfigOption('Generate detailed report', true),
-              ],
-            ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildConfigOption('Include absent students', true),
+                  const Divider(height: 24),
+                  _buildConfigOption('Check seating allocation', true),
+                  const Divider(height: 24),
+                  _buildConfigOption('Verify invigilator signatures', false),
+                  const Divider(height: 24),
+                  _buildConfigOption('Generate detailed report', true),
+                ],
+              ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Action buttons
           SizedBox(
             width: double.infinity,
@@ -319,7 +329,7 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
               height: 50,
             ),
           ),
-          
+
           const SizedBox(height: 80),
         ],
       ),
@@ -352,70 +362,71 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          
+
           Text(
             'GENERATE AUDIT',
             style: AppTextStyles.sectionTitleColored(AppColors.auditAccent),
           ),
           const SizedBox(height: 16),
-          
+
           // Generation card
           _AnimatedCard(
             accentColor: AppColors.auditAccent,
             child: Container(
               padding: const EdgeInsets.all(24),
               child: Column(
-              children: [
-                Icon(
-                  auditGenerated ? Icons.check_circle : Icons.assessment,
-                  size: 64,
-                  color: auditGenerated ? AppColors.successColor : AppColors.auditAccent,
-                ),
-                const SizedBox(height: 16),
-                
-                Text(
-                  auditGenerated ? 'Audit Generated Successfully' : 'Ready to Generate Audit',
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryText,
+                children: [
+                  Icon(
+                    auditGenerated ? Icons.check_circle : Icons.assessment,
+                    size: 64,
+                    color: auditGenerated
+                        ? AppColors.successColor
+                        : AppColors.auditAccent,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                
-                Text(
-                  auditGenerated
-                      ? 'Your audit report is ready to view'
-                      : 'Click the button below to generate the audit report',
-                  style: AppTextStyles.bodyText,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                
-                SizedBox(
-                  width: double.infinity,
-                  child: GradientButton(
-                    text: auditGenerated ? 'View Report' : 'Generate Audit',
-                    onPressed: () {
-                      setState(() {
-                        auditGenerated = true;
-                      });
-                      if (auditGenerated) {
-                        _tabController.animateTo(3);
-                      }
-                    },
-                    decoration: auditGenerated 
-                        ? AppDecorations.successGradientButton 
-                        : AppDecorations.warningGradientButton,
-                    height: 50,
+                  const SizedBox(height: 16),
+                  Text(
+                    auditGenerated
+                        ? 'Audit Generated Successfully'
+                        : 'Ready to Generate Audit',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryText,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 8),
+                  Text(
+                    auditGenerated
+                        ? 'Your audit report is ready to view'
+                        : 'Click the button below to generate the audit report',
+                    style: AppTextStyles.bodyText,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GradientButton(
+                      text: auditGenerated ? 'View Report' : 'Generate Audit',
+                      onPressed: () {
+                        setState(() {
+                          auditGenerated = true;
+                        });
+                        if (auditGenerated) {
+                          _tabController.animateTo(3);
+                        }
+                      },
+                      decoration: auditGenerated
+                          ? AppDecorations.successGradientButton
+                          : AppDecorations.warningGradientButton,
+                      height: 50,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          
+
           const SizedBox(height: 80),
         ],
       ),
@@ -430,13 +441,11 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          
           Text(
             'AUDIT REPORT',
             style: AppTextStyles.sectionTitleColored(AppColors.auditAccent),
           ),
           const SizedBox(height: 16),
-          
           if (auditGenerated) ...[
             // Summary card
             _AnimatedCard(
@@ -444,32 +453,34 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
               child: Container(
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Summary',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryText,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Summary',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryText,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  _buildSummaryRow('Total Students', '150'),
-                  const Divider(height: 20),
-                  _buildSummaryRow('Present', '145', color: AppColors.successColor),
-                  const Divider(height: 20),
-                  _buildSummaryRow('Absent', '5', color: AppColors.errorColor),
-                  const Divider(height: 20),
-                  _buildSummaryRow('Attendance Rate', '96.7%', color: AppColors.successColor),
-                ],
-              ),
+                    const SizedBox(height: 16),
+                    _buildSummaryRow('Total Students', '150'),
+                    const Divider(height: 20),
+                    _buildSummaryRow('Present', '145',
+                        color: AppColors.successColor),
+                    const Divider(height: 20),
+                    _buildSummaryRow('Absent', '5',
+                        color: AppColors.errorColor),
+                    const Divider(height: 20),
+                    _buildSummaryRow('Attendance Rate', '96.7%',
+                        color: AppColors.successColor),
+                  ],
+                ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Action buttons
             Row(
               children: [
@@ -524,33 +535,32 @@ class _AttendanceAuditScreenState extends State<AttendanceAuditScreen>
               child: Container(
                 padding: const EdgeInsets.all(32),
                 child: Column(
-                children: [
-                  Icon(
-                    Icons.description_outlined,
-                    size: 64,
-                    color: AppColors.labelText,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No Report Generated',
-                    style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryText,
+                  children: [
+                    Icon(
+                      Icons.description_outlined,
+                      size: 64,
+                      color: AppColors.labelText,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Generate an audit report to view it here',
-                    style: AppTextStyles.bodyText,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No Report Generated',
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Generate an audit report to view it here',
+                      style: AppTextStyles.bodyText,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
-          
           const SizedBox(height: 80),
         ],
       ),
@@ -592,24 +602,8 @@ class _AnimatedCard extends StatefulWidget {
   State<_AnimatedCard> createState() => _AnimatedCardState();
 }
 
-class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _AnimatedCardState extends State<_AnimatedCard> {
   bool _isHovered = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -619,41 +613,23 @@ class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderS
       child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Container(
-              padding: const EdgeInsets.all(2.5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: SweepGradient(
-                  colors: [
-                    widget.accentColor.withOpacity(0.3),
-                    widget.accentColor,
-                    widget.accentColor.withOpacity(0.5),
-                    widget.accentColor.withOpacity(0.8),
-                    widget.accentColor,
-                  ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                  transform: GradientRotation(_controller.value * 2 * 3.14159),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.accentColor.withOpacity(0.2),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  decoration: AppDecorations.whiteCard,
-                  child: widget.child,
-                ),
-              ),
-            );
-          },
+        child: Container(
+          padding: const EdgeInsets.all(2.5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: widget.accentColor.withOpacity(0.1),
+            border: Border.all(
+              color: widget.accentColor.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              decoration: AppDecorations.whiteCard,
+              child: widget.child,
+            ),
+          ),
         ),
       ),
     );

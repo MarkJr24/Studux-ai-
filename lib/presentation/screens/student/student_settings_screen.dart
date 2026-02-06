@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
+import '../../../core/navigation_service.dart';
 
 class StudentSettingsScreen extends StatefulWidget {
   const StudentSettingsScreen({super.key});
@@ -85,47 +86,6 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
     });
   }
 
-  Future<bool> _onWillPop() async {
-    if (!_hasUnsavedChanges) return true;
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Unsaved Changes',
-          style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'You have unsaved changes. Save before leaving?',
-          style: GoogleFonts.inter(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text('Discard', style: GoogleFonts.inter()),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: GoogleFonts.inter()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _saveChanges();
-              Navigator.pop(context, true);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-            child: Text('Save', style: GoogleFonts.inter()),
-          ),
-        ],
-      ),
-    );
-
-    return result ?? false;
-  }
-
   void _saveChanges() {
     // Save to SharedPreferences or backend
     _saveOriginalValues();
@@ -169,7 +129,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: _buildAppBar(),
@@ -205,11 +165,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () async {
-          if (await _onWillPop()) {
-            if (mounted) Navigator.pop(context);
-          }
-        },
+        onPressed: () => LogoutHandler.handleBackToLogin(context),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,12 +297,14 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 items: ['10:00 PM', '11:00 PM', '12:00 AM']
                     .map((time) => DropdownMenuItem(
                           value: time,
-                          child: Text(time, style: GoogleFonts.inter(fontSize: 14)),
+                          child: Text(time,
+                              style: GoogleFonts.inter(fontSize: 14)),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -364,12 +322,14 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 items: ['06:00 AM', '07:00 AM', '08:00 AM']
                     .map((time) => DropdownMenuItem(
                           value: time,
-                          child: Text(time, style: GoogleFonts.inter(fontSize: 14)),
+                          child: Text(time,
+                              style: GoogleFonts.inter(fontSize: 14)),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -423,7 +383,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
           items: ['Home', 'Academics', 'Exams']
               .map((page) => DropdownMenuItem(
@@ -452,7 +413,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
           items: ['English', 'Hindi', 'Tamil', 'Telugu']
               .map((lang) => DropdownMenuItem(
@@ -491,7 +453,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
     );
   }
 
-  Widget _buildSection({required String title, required List<Widget> children}) {
+  Widget _buildSection(
+      {required String title, required List<Widget> children}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -518,7 +481,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
     );
   }
 
-  Widget _buildSwitchTile(String title, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildSwitchTile(
+      String title, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
       title: Text(
         title,

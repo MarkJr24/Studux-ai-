@@ -49,16 +49,6 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Replace with actual API call
-      // final response = await http.post(
-      //   Uri.parse('YOUR_API_URL/forgot-password/send-otp'),
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: jsonEncode({
-      //     'email': _emailController.text.trim(),
-      //     'userType': widget.userType,
-      //   }),
-      // );
-
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
 
@@ -123,7 +113,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                     ),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF1F2937)),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Color(0xFF1F2937)),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -327,4 +318,3 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     );
   }
 }
-

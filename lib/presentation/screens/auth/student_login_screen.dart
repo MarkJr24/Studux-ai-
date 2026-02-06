@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
+import '../../../core/navigation_service.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -22,9 +23,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoading = false;
-  bool _showSuccess = false;
-  
+
   // Animation controllers
   late AnimationController _entryAnimationController;
   late Animation<double> _fadeAnimation;
@@ -37,20 +36,20 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize entry animation
     _entryAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _entryAnimationController,
         curve: Curves.easeOut,
       ),
     );
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.05),
       end: Offset.zero,
@@ -60,7 +59,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
         curve: Curves.easeOut,
       ),
     );
-    
+
     // Start entry animation after a brief delay
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
@@ -82,30 +81,13 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    // Check credentials
+    // Check credentials immediately
     if (_emailController.text == _validEmail &&
         _passwordController.text == _validPassword) {
       if (mounted) {
-        // Show success animation
-        setState(() => _showSuccess = true);
-        
-        // Wait for success animation
-        await Future.delayed(const Duration(milliseconds: 250));
-        
-        if (!mounted) return;
-        setState(() => _showSuccess = false);
-        
         SnackbarHelper.showSuccess(context, 'Login successful!');
-        
-        // Navigate to student main navigation (clears entire navigation stack)
+
+        // Navigate to student main navigation instantly
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -126,64 +108,67 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Login Screen Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/login_screen.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                // If no image found, show a subtle gradient background
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white,
-                        Colors.blue.shade50,
-                      ],
+    return WillPopScope(
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Login Screen Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/login_screen.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  // If no image found, show a subtle gradient background
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFF3E8FF),
+                          const Color(0xFFEFF6FF),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          
-          // Semi-transparent White Overlay for Readability
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withOpacity(0.25),
-            ),
-          ),
-          
-          // Animated Student Icons Background
-          const Positioned.fill(
-            child: _AnimatedStudentBackground(),
-          ),
-          
-          // Main content
-          SafeArea(
-            child: Column(
-              children: [
-                // App Bar
-                _buildAppBar(),
 
-                // Login Card
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
-                      child: _buildLoginCard(),
+            // Semi-transparent White Overlay for Readability
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.25),
+              ),
+            ),
+
+            // Animated Student Icons Background
+            const Positioned.fill(
+              child: _AnimatedStudentBackground(),
+            ),
+
+            // Main content
+            SafeArea(
+              child: Column(
+                children: [
+                  // App Bar
+                  _buildAppBar(),
+
+                  // Login Card
+                  Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: _buildLoginCard(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -194,7 +179,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => LogoutHandler.handleBackToLogin(context),
             icon: const Icon(Icons.arrow_back),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white,
@@ -221,100 +206,101 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.95),
-                  const Color(0xFFD4E9F7).withOpacity(0.92), // Light blue
-                  const Color(0xFFE0F7FA).withOpacity(0.95), // Light cyan
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.8),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF4A90E2).withOpacity(0.2),
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                  spreadRadius: 5,
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Title
-                  Text(
-                    'Welcome Back, Student',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
+                constraints: const BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(0.95),
+                      const Color(0xFFD4E9F7).withOpacity(0.92), // Light blue
+                      const Color(0xFFE0F7FA).withOpacity(0.95), // Light cyan
+                    ],
                   ),
-
-                  const SizedBox(height: 6),
-
-                  Text(
-                    'Sign in to view your courses and grades',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.8),
+                    width: 2,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF4A90E2).withOpacity(0.2),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
+                      spreadRadius: 5,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Title
+                      Text(
+                        'Welcome Back, Student',
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
 
-                  const SizedBox(height: 22),
+                      const SizedBox(height: 6),
 
-                  // Email Field
-                  _buildEmailField(),
+                      Text(
+                        'Sign in to view your courses and grades',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
 
-                  const SizedBox(height: 16),
+                      const SizedBox(height: 22),
 
-                  // Password Field
-                  _buildPasswordField(),
+                      // Email Field
+                      _buildEmailField(),
 
-                  const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                  // Remember Me
-                  _buildRememberMe(),
+                      // Password Field
+                      _buildPasswordField(),
 
-                  const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
-                  // Login Button
-                  _buildLoginButton(),
+                      // Remember Me
+                      _buildRememberMe(),
 
-                  const SizedBox(height: 20),
+                      const SizedBox(height: 24),
 
-                  // Forgot Password
-                  _buildForgotPassword(),
+                      // Login Button
+                      _buildLoginButton(),
 
-                  const SizedBox(height: 18),
+                      const SizedBox(height: 20),
 
-                  // Back to Role Selection
-                  _buildBackToRoleSelection(),
-                ],
+                      // Forgot Password
+                      _buildForgotPassword(),
+
+                      const SizedBox(height: 18),
+
+                      // Back to Role Selection
+                      _buildBackToRoleSelection(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }
@@ -454,9 +440,9 @@ class _StudentLoginScreenState extends State<StudentLoginScreen>
 
   Widget _buildLoginButton() {
     return _NeonButton(
-      onTap: _isLoading ? null : _handleLogin,
-      isLoading: _isLoading,
-      showSuccess: _showSuccess,
+      onTap: _handleLogin,
+      isLoading: false,
+      showSuccess: false,
     );
   }
 
@@ -671,7 +657,7 @@ class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-          Text(
+        Text(
           widget.text,
           style: GoogleFonts.inter(
             fontSize: 20,
@@ -789,7 +775,8 @@ class _NeonButtonState extends State<_NeonButton>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF3B82F6).withOpacity(_isPressed ? 0.5 : 0.3),
+                  color: const Color(0xFF3B82F6)
+                      .withOpacity(_isPressed ? 0.5 : 0.3),
                   blurRadius: _isPressed ? 20 : 15,
                   offset: const Offset(0, 8),
                   spreadRadius: _isPressed ? 2 : 0,
@@ -811,7 +798,8 @@ class _NeonButtonState extends State<_NeonButton>
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : widget.showSuccess
@@ -843,7 +831,8 @@ class _AnimatedStudentBackground extends StatefulWidget {
   const _AnimatedStudentBackground();
 
   @override
-  State<_AnimatedStudentBackground> createState() => _AnimatedStudentBackgroundState();
+  State<_AnimatedStudentBackground> createState() =>
+      _AnimatedStudentBackgroundState();
 }
 
 class _AnimatedStudentBackgroundState extends State<_AnimatedStudentBackground>
@@ -880,15 +869,15 @@ class _AnimatedStudentBackgroundState extends State<_AnimatedStudentBackground>
 
     // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
     final random = math.Random(44); // Different seed
-    
+
     for (int i = 0; i < 15; i++) {
       // Grid position
       final col = i % 3;
       final row = i ~/ 3;
-      
+
       double x = (col * 0.33) + random.nextDouble() * 0.25;
       double y = (row * 0.2) + random.nextDouble() * 0.15;
-      
+
       _icons.add(_StudentFloatingIcon(
         icon: studentIcons[i % studentIcons.length],
         x: x,
@@ -957,24 +946,25 @@ class _StudentIconPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (var iconData in icons) {
       final adjustedProgress = ((progress + iconData.delay) % 1.0);
-      
+
       // Vertical movement (floating upward)
-      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
-      
+      final yPos = size.height *
+          (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+
       // Horizontal wave motion (sine wave)
       final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
       final xPos = size.width * iconData.x + waveOffset;
-      
+
       if (yPos > -iconData.size && yPos < size.height + iconData.size) {
         final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
-        
+
         // Scale pulsing (gentle breathing effect)
         final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
-        
+
         canvas.save();
         canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
         canvas.scale(scale);
-        
+
         final textPainter = TextPainter(
           text: TextSpan(
             text: String.fromCharCode(iconData.icon.codePoint),
@@ -986,13 +976,13 @@ class _StudentIconPainter extends CustomPainter {
           ),
           textDirection: TextDirection.ltr,
         );
-        
+
         textPainter.layout();
         textPainter.paint(
           canvas,
           Offset(-textPainter.width / 2, -textPainter.height / 2),
         );
-        
+
         canvas.restore();
       }
     }

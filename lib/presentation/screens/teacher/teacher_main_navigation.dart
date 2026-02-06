@@ -4,6 +4,7 @@ import 'teacher_classes_screen.dart';
 import 'teacher_evaluation_screen.dart';
 import 'teacher_insights_screen.dart';
 import 'teacher_alerts_screen.dart';
+import '../../../core/navigation_service.dart';
 
 /// Teacher Main Navigation Wrapper
 /// Prevents back navigation to login and keeps bottom nav visible
@@ -19,28 +20,17 @@ class _TeacherMainNavigationState extends State<TeacherMainNavigation> {
 
   // Core pages displayed in bottom navigation
   final List<Widget> _pages = [
-    const TeacherDashboard(),         // Index 0: Home
-    const TeacherClassesScreen(),     // Index 1: Classes
-    const TeacherEvaluationScreen(),  // Index 2: Evaluation
-    const TeacherInsightsScreen(),    // Index 3: Insights
-    const TeacherAlertsScreen(),      // Index 4: Alerts
+    const TeacherDashboard(), // Index 0: Home
+    const TeacherClassesScreen(), // Index 1: Classes
+    const TeacherEvaluationScreen(), // Index 2: Evaluation
+    const TeacherInsightsScreen(), // Index 3: Insights
+    const TeacherAlertsScreen(), // Index 4: Alerts
   ];
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        // If not on home page, navigate to home
-        if (_currentIndex != 0) {
-          setState(() {
-            _currentIndex = 0;
-          });
-          return false; // Prevent route pop
-        }
-
-        // If on home page, show exit confirmation dialog
-        return await _showExitDialog(context) ?? false;
-      },
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
@@ -107,57 +97,6 @@ class _TeacherMainNavigationState extends State<TeacherMainNavigation> {
       ),
     );
   }
-
-  Future<bool?> _showExitDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFFFF),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Exit App',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF212121),
-          ),
-        ),
-        content: const Text(
-          'Do you want to exit the application?',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF757575),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF616161),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Exit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFD32F2F),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 // Animated Navigation Item Widget
@@ -215,8 +154,7 @@ class _AnimatedNavItemState extends State<_AnimatedNavItem>
         color: Colors.transparent,
         child: InkWell(
           onTap: _handleTap,
-          splashColor: const Color(0xFF2196F3).withOpacity(0.2),
-          highlightColor: const Color(0xFF2196F3).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
           child: ScaleTransition(
             scale: _scaleAnimation,
             child: AnimatedContainer(
@@ -262,56 +200,4 @@ class _AnimatedNavItemState extends State<_AnimatedNavItem>
       ),
     );
   }
-
-  Future<bool?> _showExitDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFFFF),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Exit App',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF212121),
-          ),
-        ),
-        content: const Text(
-          'Do you want to exit the application?',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF757575),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF616161),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Exit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFD32F2F),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-

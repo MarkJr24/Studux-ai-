@@ -19,7 +19,8 @@ class StudentHomeScreen extends StatefulWidget {
   State<StudentHomeScreen> createState() => _StudentHomeScreenState();
 }
 
-class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTickerProviderStateMixin {
+class _StudentHomeScreenState extends State<StudentHomeScreen>
+    with SingleTickerProviderStateMixin {
   // Mock data
   final String _studentName = 'Harsha';
   final bool _hasExamToday = true;
@@ -27,13 +28,13 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
   final String _todayExamType = 'CIA';
   final String _todayExamTime = '10:00 AM – 01:00 PM';
   final bool _hallTicketReleased = true;
-  
+
   // Status chip data
-  final String _academicStatus = 'Active'; // Can be: Active, Credit Shortage, Detained
+  final String _academicStatus =
+      'Active'; // Can be: Active, Credit Shortage, Detained
   final bool _examRestriction = false; // true = Yes, false = No
 
   late AnimationController _gradientController;
-  late Animation<double> _gradientAnimation;
   late Animation<double> _fadeAnimation;
 
   @override
@@ -43,8 +44,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
       vsync: this,
       duration: const Duration(seconds: 10),
     )..repeat();
-    _gradientAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_gradientController);
-    
+
     // Fade-in animation for status chips
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -83,9 +83,31 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
     }
 
     final now = DateTime.now();
-    final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final dateStr = 'Today: ${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
+    final days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    final dateStr =
+        'Today: ${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -112,7 +134,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
 
   PreferredSizeWidget _buildAppBar(String greeting, String dateStr) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(_examRestriction ? 160 : 140), // Adjust height based on helper text
+      preferredSize: Size.fromHeight(
+          _examRestriction ? 160 : 140), // Adjust height based on helper text
       child: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -143,7 +166,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                         ),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Status Chips with Fade-in Animation
                       FadeTransition(
                         opacity: _fadeAnimation,
@@ -156,17 +179,18 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                               color: _getAcademicStatusColor(_academicStatus),
                             ),
                             const SizedBox(width: 12),
-                            
+
                             // Exam Restriction Chip
                             _buildStatusChip(
                               label: 'Exam Restriction',
                               value: _examRestriction ? 'Yes' : 'No',
-                              color: _examRestriction ? Colors.red : Colors.green,
+                              color:
+                                  _examRestriction ? Colors.red : Colors.green,
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Helper text for exam restriction
                       if (_examRestriction) ...[
                         const SizedBox(height: 8),
@@ -186,13 +210,14 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                   ),
                 ),
                 const SizedBox(width: 12),
-                
+
                 // Profile Icon
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const StudentProfileScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const StudentProfileScreen()),
                     );
                   },
                   child: Container(
@@ -223,7 +248,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
       ),
     );
   }
-  
+
   Widget _buildStatusChip({
     required String label,
     required String value,
@@ -262,7 +287,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
       ),
     );
   }
-  
+
   Color _getAcademicStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'active':
@@ -286,14 +311,18 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           child: Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF42A5F5), Color(0xFFAB47BC)], // Brighter blue and purple
+                colors: [
+                  Color(0xFF42A5F5),
+                  Color(0xFFAB47BC)
+                ], // Brighter blue and purple
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.35), // Slightly more visible shadow
+                  color: Colors.blue
+                      .withOpacity(0.35), // Slightly more visible shadow
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -331,7 +360,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -360,12 +390,16 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                   children: [
                     Icon(
                       _hallTicketReleased ? Icons.check_circle : Icons.cancel,
-                      color: _hallTicketReleased ? Colors.greenAccent : Colors.orangeAccent,
+                      color: _hallTicketReleased
+                          ? Colors.greenAccent
+                          : Colors.orangeAccent,
                       size: 16,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _hallTicketReleased ? 'Hall Ticket: Released' : 'Hall Ticket: Not Released',
+                      _hallTicketReleased
+                          ? 'Hall Ticket: Released'
+                          : 'Hall Ticket: Not Released',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: Colors.white,
@@ -436,10 +470,14 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _buildSnapshotCard('Attendance', '84%', Icons.check_circle, Colors.green, () {}),
-              _buildSnapshotCard('Next Class', 'DBMS\n2:00 PM', Icons.schedule, Colors.blue, () {}),
-              _buildSnapshotCard('New Material', 'OS (1)', Icons.book, Colors.orange, () {}),
-              _buildSnapshotCard('Fee Status', 'Paid', Icons.account_balance_wallet, Colors.purple, () {}),
+              _buildSnapshotCard(
+                  'Attendance', '84%', Icons.check_circle, Colors.green, () {}),
+              _buildSnapshotCard('Next Class', 'DBMS\n2:00 PM', Icons.schedule,
+                  Colors.blue, () {}),
+              _buildSnapshotCard(
+                  'New Material', 'OS (1)', Icons.book, Colors.orange, () {}),
+              _buildSnapshotCard('Fee Status', 'Paid',
+                  Icons.account_balance_wallet, Colors.purple, () {}),
             ],
           ),
         ),
@@ -447,7 +485,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
     );
   }
 
-  Widget _buildSnapshotCard(String title, String value, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildSnapshotCard(String title, String value, IconData icon,
+      Color color, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Material(
@@ -513,18 +552,23 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           ),
         ),
         const SizedBox(height: 12),
-        _buildShortcutCard('Exam Schedule', Icons.calendar_today, Colors.blue, _openExamsTab),
+        _buildShortcutCard(
+            'Exam Schedule', Icons.calendar_today, Colors.blue, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Hall Ticket', Icons.confirmation_number, Colors.purple, _openExamsTab),
+        _buildShortcutCard('Hall Ticket', Icons.confirmation_number,
+            Colors.purple, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Seating Information', Icons.event_seat, Colors.orange, _openExamsTab),
+        _buildShortcutCard('Seating Information', Icons.event_seat,
+            Colors.orange, _openExamsTab),
         const SizedBox(height: 12),
-        _buildShortcutCard('Marks / Results', Icons.assessment, Colors.green, _openExamsTab),
+        _buildShortcutCard(
+            'Marks / Results', Icons.assessment, Colors.green, _openExamsTab),
       ],
     );
   }
 
-  Widget _buildShortcutCard(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildShortcutCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -594,7 +638,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const StudentAlertsScreen()),
                 );
               },
               child: Text(
@@ -609,23 +654,28 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           ],
         ),
         const SizedBox(height: 12),
-        _buildAlertItem('Exam Today', 'Data Structures CIA at 10:00 AM', '1h ago', true),
+        _buildAlertItem(
+            'Exam Today', 'Data Structures CIA at 10:00 AM', '1h ago', true),
         const SizedBox(height: 8),
-        _buildAlertItem('Hall Ticket Released', 'Download your hall ticket now', '3h ago', true),
+        _buildAlertItem('Hall Ticket Released', 'Download your hall ticket now',
+            '3h ago', true),
         const SizedBox(height: 8),
-        _buildAlertItem('New Study Material', 'DBMS - Unit 3 notes uploaded', '1d ago', false),
+        _buildAlertItem('New Study Material', 'DBMS - Unit 3 notes uploaded',
+            '1d ago', false),
       ],
     );
   }
 
-  Widget _buildAlertItem(String title, String description, String time, bool isUnread) {
+  Widget _buildAlertItem(
+      String title, String description, String time, bool isUnread) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const StudentAlertsScreen()),
+            MaterialPageRoute(
+                builder: (context) => const StudentAlertsScreen()),
           );
         },
         borderRadius: BorderRadius.circular(12),
@@ -633,7 +683,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           decoration: BoxDecoration(
             color: isUnread ? Colors.blue[50] : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isUnread ? Colors.blue[200]! : Colors.grey[200]!),
+            border: Border.all(
+                color: isUnread ? Colors.blue[200]! : Colors.grey[200]!),
           ),
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -645,7 +696,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
                   color: Colors.blue.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.notifications, color: Colors.blue, size: 20),
+                child: const Icon(Icons.notifications,
+                    color: Colors.blue, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -717,14 +769,17 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
           ),
         ),
         const SizedBox(height: 12),
-        _buildEventCard('Tech Fest 2025', '28 Sept 2025', Icons.celebration, Colors.purple),
+        _buildEventCard(
+            'Tech Fest 2025', '28 Sept 2025', Icons.celebration, Colors.purple),
         const SizedBox(height: 8),
-        _buildEventCard('Sports Day', '5 Oct 2025', Icons.sports, Colors.orange),
+        _buildEventCard(
+            'Sports Day', '5 Oct 2025', Icons.sports, Colors.orange),
       ],
     );
   }
 
-  Widget _buildEventCard(String title, String date, IconData icon, Color color) {
+  Widget _buildEventCard(
+      String title, String date, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -789,19 +844,23 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
         Row(
           children: [
             Expanded(
-              child: _buildQuickActionCard('Study Chatbot', Icons.chat, Colors.blue, () {
+              child: _buildQuickActionCard(
+                  'Study Chatbot', Icons.chat, Colors.blue, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const StudyChatbotScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const StudyChatbotScreen()),
                 );
               }),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildQuickActionCard('Academic Calendar', Icons.calendar_month, Colors.green, () {
+              child: _buildQuickActionCard(
+                  'Academic Calendar', Icons.calendar_month, Colors.green, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AcademicCalendarScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AcademicCalendarScreen()),
                 );
               }),
             ),
@@ -811,7 +870,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> with SingleTicker
     );
   }
 
-  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
     return Material(
       color: Colors.transparent,
       child: InkWell(

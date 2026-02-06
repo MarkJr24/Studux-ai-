@@ -170,7 +170,8 @@ class _StudentAlertsScreenState extends State<StudentAlertsScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StudentProfileScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const StudentProfileScreen()),
               );
             },
             child: Container(
@@ -213,19 +214,22 @@ class _StudentAlertsScreenState extends State<StudentAlertsScreen> {
               if (groupedAlerts['Today']!.isNotEmpty) ...[
                 _buildSectionHeader('Today'),
                 const SizedBox(height: 12),
-                ...groupedAlerts['Today']!.map((alert) => _buildAlertCard(alert)),
+                ...groupedAlerts['Today']!
+                    .map((alert) => _buildAlertCard(alert)),
               ],
               if (groupedAlerts['Yesterday']!.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 _buildSectionHeader('Yesterday'),
                 const SizedBox(height: 12),
-                ...groupedAlerts['Yesterday']!.map((alert) => _buildAlertCard(alert)),
+                ...groupedAlerts['Yesterday']!
+                    .map((alert) => _buildAlertCard(alert)),
               ],
               if (groupedAlerts['Earlier']!.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 _buildSectionHeader('Earlier'),
                 const SizedBox(height: 12),
-                ...groupedAlerts['Earlier']!.map((alert) => _buildAlertCard(alert)),
+                ...groupedAlerts['Earlier']!
+                    .map((alert) => _buildAlertCard(alert)),
               ],
               const SizedBox(height: 80), // Bottom nav spacing
             ],
@@ -444,10 +448,12 @@ class _StudentAlertsScreenState extends State<StudentAlertsScreen> {
     final sortedAlerts = List<AlertItem>.from(_alerts);
     sortedAlerts.sort((a, b) {
       // Critical alerts always first
-      if (a.priority == AlertPriority.critical && b.priority != AlertPriority.critical) {
+      if (a.priority == AlertPriority.critical &&
+          b.priority != AlertPriority.critical) {
         return -1;
       }
-      if (b.priority == AlertPriority.critical && a.priority != AlertPriority.critical) {
+      if (b.priority == AlertPriority.critical &&
+          a.priority != AlertPriority.critical) {
         return 1;
       }
       // Then unread
@@ -527,8 +533,9 @@ class _StudentAlertsScreenState extends State<StudentAlertsScreen> {
 
     // Deep-link navigation based on alert type and title
     String destination = '';
-    
-    if (alert.title.contains('Exam Today') || alert.title.contains('Exam Scheduled')) {
+
+    if (alert.title.contains('Exam Today') ||
+        alert.title.contains('Exam Scheduled')) {
       destination = 'Exams → Exam Schedule';
     } else if (alert.title.contains('Hall Ticket')) {
       destination = 'Exams → Hall Ticket';
@@ -556,13 +563,13 @@ class _StudentAlertsScreenState extends State<StudentAlertsScreen> {
       ),
     );
 
-    // TODO: Implement actual navigation
     // Navigator.push(context, MaterialPageRoute(builder: (context) => TargetScreen()));
   }
 
   void _markAllAsRead() {
     setState(() {
-      _alerts = _alerts.map((alert) => alert.copyWith(isUnread: false)).toList();
+      _alerts =
+          _alerts.map((alert) => alert.copyWith(isUnread: false)).toList();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(

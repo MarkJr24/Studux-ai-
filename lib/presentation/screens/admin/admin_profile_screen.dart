@@ -11,7 +11,8 @@ class AdminProfileScreen extends StatefulWidget {
   State<AdminProfileScreen> createState() => _AdminProfileScreenState();
 }
 
-class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTickerProviderStateMixin {
+class _AdminProfileScreenState extends State<AdminProfileScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -22,7 +23,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -37,11 +38,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        // Back goes to Admin Home
-        Navigator.pop(context);
-        return false;
-      },
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
@@ -88,7 +85,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => LogoutHandler.handleBackToLogin(context),
               icon: const Icon(Icons.arrow_back, size: 20),
               color: AppColors.iconGray,
               padding: EdgeInsets.zero,
@@ -184,13 +181,13 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
             ),
           ),
           const SizedBox(height: 24),
-          
+
           Text(
             'ADMIN PROFILE',
             style: AppTextStyles.sectionTitleColored(AppColors.infoDark),
           ),
           const SizedBox(height: 16),
-          
+
           // Read-only fields
           _buildReadOnlyField('Full Name', 'Dr. Rajesh Kumar'),
           const SizedBox(height: 12),
@@ -200,16 +197,16 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
           const SizedBox(height: 12),
           _buildReadOnlyField('Institution', 'Zenith College of Engineering'),
           const SizedBox(height: 16),
-          
+
           Divider(color: AppColors.divider),
           const SizedBox(height: 16),
-          
+
           Text(
             'CONTACT INFORMATION',
             style: AppTextStyles.sectionTitleColored(AppColors.infoDark),
           ),
           const SizedBox(height: 16),
-          
+
           // Editable Email
           _buildEditableField(
             context,
@@ -218,7 +215,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
             Icons.email,
           ),
           const SizedBox(height: 12),
-          
+
           // Editable Phone
           _buildEditableField(
             context,
@@ -318,9 +315,10 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
     );
   }
 
-  void _showEditDialog(BuildContext context, String label, String currentValue) {
+  void _showEditDialog(
+      BuildContext context, String label, String currentValue) {
     final controller = TextEditingController(text: currentValue);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -355,7 +353,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> with SingleTick
           GradientButton(
             text: 'Save',
             onPressed: () {
-              // TODO: Save the updated value
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -468,7 +465,8 @@ class _AnimatedIcon extends StatefulWidget {
   State<_AnimatedIcon> createState() => _AnimatedIconState();
 }
 
-class _AnimatedIconState extends State<_AnimatedIcon> with SingleTickerProviderStateMixin {
+class _AnimatedIconState extends State<_AnimatedIcon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -479,7 +477,7 @@ class _AnimatedIconState extends State<_AnimatedIcon> with SingleTickerProviderS
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
-    
+
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );

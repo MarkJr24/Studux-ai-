@@ -19,13 +19,13 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   // Mock data - Replace with actual data from backend
   final String _adminName = 'Admin';
-  
+
   // Today's exam status
   final int _examsToday = 2;
   final bool _seatingPublished = false;
   final bool _hallTicketReleased = false;
   final bool _resultsReady = true;
-  
+
   // Admin tasks
   final int _marksToApprove = 5;
   final int _seatingPending = 1;
@@ -43,9 +43,31 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     }
 
     final now = DateTime.now();
-    final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final dateStr = 'Today: ${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
+    final days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    final dateStr =
+        'Today: ${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -101,7 +123,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AdminProfileScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const AdminProfileScreen()),
               );
             },
           ),
@@ -124,7 +147,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -168,7 +190,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
-  Widget _buildStatusRow(String label, String status, Color color, IconData icon) {
+  Widget _buildStatusRow(
+      String label, String status, Color color, IconData icon) {
     return Row(
       children: [
         Container(
@@ -209,9 +232,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   Widget _buildAdminTaskCenter() {
-    final hasTasks = _marksToApprove > 0 || _seatingPending > 0 || 
-                     _hallTicketPending > 0 || _eventRequests > 0;
-    
+    final hasTasks = _marksToApprove > 0 ||
+        _seatingPending > 0 ||
+        _hallTicketPending > 0 ||
+        _eventRequests > 0;
+
     if (!hasTasks) {
       return const SizedBox.shrink();
     }
@@ -229,7 +254,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        
         if (_marksToApprove > 0)
           _buildTaskCard(
             'Approve Marks',
@@ -241,14 +265,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ExamInvigilatorScreen(
-                    // TODO: Navigate to Mark Approval section
-                  ),
+                  builder: (context) => const ExamInvigilatorScreen(),
                 ),
               );
             },
           ),
-        
         if (_seatingPending > 0)
           _buildTaskCard(
             'Publish Seating',
@@ -265,7 +286,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               );
             },
           ),
-        
         if (_hallTicketPending > 0)
           _buildTaskCard(
             'Release Hall Ticket',
@@ -277,14 +297,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ExamInvigilatorScreen(
-                    // TODO: Navigate to Hall Ticket section
-                  ),
+                  builder: (context) => const ExamInvigilatorScreen(),
                 ),
               );
             },
           ),
-        
         if (_eventRequests > 0)
           _buildTaskCard(
             'Pending Event Requests',
@@ -355,7 +372,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: color.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
@@ -552,13 +570,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               final index = entry.key;
               final activity = entry.value;
               final isLast = index == activities.length - 1;
-              
+
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: isLast ? null : Border(
-                    bottom: BorderSide(color: Colors.grey[200]!),
-                  ),
+                  border: isLast
+                      ? null
+                      : Border(
+                          bottom: BorderSide(color: Colors.grey[200]!),
+                        ),
                 ),
                 child: Row(
                   children: [
@@ -605,9 +625,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   Widget _buildAlertsPreview() {
     final alerts = [
-      {'title': 'Marks Submission Pending', 'desc': '5 faculty submissions awaiting approval', 'time': '30 min ago'},
-      {'title': 'Seating Not Published', 'desc': 'Semester exam seating pending publication', 'time': '2 hours ago'},
-      {'title': 'Event Request Pending', 'desc': '3 event requests need review', 'time': '4 hours ago'},
+      {
+        'title': 'Marks Submission Pending',
+        'desc': '5 faculty submissions awaiting approval',
+        'time': '30 min ago'
+      },
+      {
+        'title': 'Seating Not Published',
+        'desc': 'Semester exam seating pending publication',
+        'time': '2 hours ago'
+      },
+      {
+        'title': 'Event Request Pending',
+        'desc': '3 event requests need review',
+        'time': '4 hours ago'
+      },
     ];
 
     return Column(
@@ -647,74 +679,75 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         ),
         const SizedBox(height: 12),
         ...alerts.take(2).map((alert) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsManagementScreen(),
-                  ),
-                );
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const NotificationsManagementScreen(),
+                      ),
+                    );
+                  },
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue[100]!),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF3B82F6),
-                        shape: BoxShape.circle,
-                      ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue[100]!),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            alert['title']!,
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF3B82F6),
+                            shape: BoxShape.circle,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            alert['desc']!,
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                alert['title']!,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                alert['desc']!,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                alert['time']!,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            alert['time']!,
-                            style: GoogleFonts.inter(
-                              fontSize: 11,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        )),
+            )),
       ],
     );
   }

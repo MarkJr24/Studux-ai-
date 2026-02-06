@@ -14,7 +14,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<ExamData> exams = [];
-  
+
   @override
   void initState() {
     super.initState();
@@ -168,7 +168,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          
+
           // Create Exam Button
           GestureDetector(
             onTap: _showCreateExamDialog,
@@ -189,7 +189,8 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+                  const Icon(Icons.add_circle_outline,
+                      color: Colors.white, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Create Exam',
@@ -200,7 +201,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Exam Cards
           ...exams.map((exam) => _buildExamCard(exam)),
         ],
@@ -210,101 +211,105 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
 
   Widget _buildExamCard(ExamData exam) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: AnimatedGradientCard(
-        child: Container(
-          padding: const EdgeInsets.all(18),
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title and Badge
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  exam.subject,
-                  style: AppTextStyles.cardTitle,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: AppDecorations.badge(AppColors.infoBg),
-                child: Text(
-                  exam.examType,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.infoDark,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          // Info Rows
-          _buildInfoRow(Icons.calendar_today, '${exam.date.day}/${exam.date.month}/${exam.date.year}'),
-          const SizedBox(height: 6),
-          _buildInfoRow(Icons.access_time, exam.timeSlot),
-          const SizedBox(height: 6),
-          _buildInfoRow(Icons.school, '${exam.department} - ${exam.year}'),
-          const SizedBox(height: 14),
-          
-          // Status Indicators
-          Row(
-            children: [
-              _buildStatusIndicator(
-                icon: Icons.person,
-                label: 'Invigilator',
-                isComplete: exam.hasInvigilator,
-              ),
-              const SizedBox(width: 16),
-              _buildStatusIndicator(
-                icon: Icons.event_seat,
-                label: 'Seating',
-                isComplete: exam.hasSeating,
-              ),
-              const SizedBox(width: 16),
-              _buildStatusIndicator(
-                icon: Icons.badge,
-                label: 'Hall Ticket',
-                isComplete: exam.hasHallTicket,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Action Buttons
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionButton(
-                  label: 'View Details',
-                  isPrimary: false,
-                  onTap: () {},
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionButton(
-                  label: 'Allocate Seating',
-                  isPrimary: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SeatingManagementScreen(),
+        padding: const EdgeInsets.only(bottom: 24),
+        child: AnimatedGradientCard(
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title and Badge
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        exam.subject,
+                        style: AppTextStyles.cardTitle,
                       ),
-                    );
-                  },
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: AppDecorations.badge(AppColors.infoBg),
+                      child: Text(
+                        exam.examType,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.infoDark,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+
+                // Info Rows
+                _buildInfoRow(Icons.calendar_today,
+                    '${exam.date.day}/${exam.date.month}/${exam.date.year}'),
+                const SizedBox(height: 6),
+                _buildInfoRow(Icons.access_time, exam.timeSlot),
+                const SizedBox(height: 6),
+                _buildInfoRow(
+                    Icons.school, '${exam.department} - ${exam.year}'),
+                const SizedBox(height: 14),
+
+                // Status Indicators
+                Row(
+                  children: [
+                    _buildStatusIndicator(
+                      icon: Icons.person,
+                      label: 'Invigilator',
+                      isComplete: exam.hasInvigilator,
+                    ),
+                    const SizedBox(width: 16),
+                    _buildStatusIndicator(
+                      icon: Icons.event_seat,
+                      label: 'Seating',
+                      isComplete: exam.hasSeating,
+                    ),
+                    const SizedBox(width: 16),
+                    _buildStatusIndicator(
+                      icon: Icons.badge,
+                      label: 'Hall Ticket',
+                      isComplete: exam.hasHallTicket,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionButton(
+                        label: 'View Details',
+                        isPrimary: false,
+                        onTap: () {},
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildActionButton(
+                        label: 'Allocate Seating',
+                        isPrimary: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const SeatingManagementScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-      ),
-    ));
+        ));
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
@@ -355,7 +360,8 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isPrimary ? AppColors.primaryButton : AppColors.secondaryButtonBg,
+          color:
+              isPrimary ? AppColors.primaryButton : AppColors.secondaryButtonBg,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
@@ -389,7 +395,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
             style: AppTextStyles.sectionTitleColored(AppColors.examAccent),
           ),
           const SizedBox(height: 16),
-          
+
           // Invigilator suggestions
           ..._buildInvigilatorSuggestions(),
         ],
@@ -427,9 +433,12 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: available ? AppColors.successBg : AppColors.warningBg,
+                        color: available
+                            ? AppColors.successBg
+                            : AppColors.warningBg,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -437,7 +446,9 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: available ? AppColors.successDark : AppColors.warningDark,
+                          color: available
+                              ? AppColors.successDark
+                              : AppColors.warningDark,
                         ),
                       ),
                     ),
@@ -452,11 +463,13 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
                 Row(
                   children: [
                     Expanded(
-                      child: _buildSmallButton('Approve', Icons.check, AppColors.successColor, () {}),
+                      child: _buildSmallButton('Approve', Icons.check,
+                          AppColors.successColor, () {}),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: _buildSmallButton('Override', Icons.edit, AppColors.warningColor, () {}),
+                      child: _buildSmallButton('Override', Icons.edit,
+                          AppColors.warningColor, () {}),
                     ),
                   ],
                 ),
@@ -468,7 +481,8 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
     }).toList();
   }
 
-  Widget _buildSmallButton(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildSmallButton(
+      String label, IconData icon, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -514,7 +528,7 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
             style: AppTextStyles.sectionTitleColored(AppColors.examAccent),
           ),
           const SizedBox(height: 16),
-          
+
           // Hall ticket options
           // Hall ticket options
           ...exams.map((exam) => HallTicketGeneratorCard(exam: exam)),
@@ -522,8 +536,6 @@ class _ExamInvigilatorScreenState extends State<ExamInvigilatorScreen>
       ),
     );
   }
-
-
 
   void _showCreateExamDialog() {
     showDialog(
@@ -594,15 +606,14 @@ class ExamData {
   });
 }
 
-
-
 class HallTicketGeneratorCard extends StatefulWidget {
   final ExamData exam;
 
   const HallTicketGeneratorCard({super.key, required this.exam});
 
   @override
-  State<HallTicketGeneratorCard> createState() => _HallTicketGeneratorCardState();
+  State<HallTicketGeneratorCard> createState() =>
+      _HallTicketGeneratorCardState();
 }
 
 class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
@@ -618,41 +629,45 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: AnimatedGradientCard(
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.exam.subject, style: AppTextStyles.cardTitle),
-                        const SizedBox(height: 4),
-                        Text(widget.exam.examType, style: AppTextStyles.captionBold.copyWith(color: AppColors.primaryButton)),
-                      ],
+        padding: const EdgeInsets.only(bottom: 24),
+        child: AnimatedGradientCard(
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.exam.subject,
+                              style: AppTextStyles.cardTitle),
+                          const SizedBox(height: 4),
+                          Text(widget.exam.examType,
+                              style: AppTextStyles.captionBold
+                                  .copyWith(color: AppColors.primaryButton)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Icons.assignment_ind_outlined, color: AppColors.examAccent, size: 28),
-                ],
-              ),
-              const SizedBox(height: 20),
+                    Icon(Icons.assignment_ind_outlined,
+                        color: AppColors.examAccent, size: 28),
+                  ],
+                ),
+                const SizedBox(height: 20),
 
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: !isGenerated
-                    ? _buildInputSection()
-                    : _buildGeneratedPreview(),
-              ),
-            ],
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: !isGenerated
+                      ? _buildInputSection()
+                      : _buildGeneratedPreview(),
+                ),
+              ],
+            ),
           ),
-        ),
-      ));
+        ));
   }
 
   Widget _buildInputSection() {
@@ -662,11 +677,16 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
         Row(
           children: [
             Expanded(
-              child: _buildDropdown('Year', years, selectedYear, (val) => setState(() => selectedYear = val)),
+              child: _buildDropdown('Year', years, selectedYear,
+                  (val) => setState(() => selectedYear = val)),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildDropdown('Department', departments, selectedDepartment, (val) => setState(() => selectedDepartment = val)),
+              child: _buildDropdown(
+                  'Department',
+                  departments,
+                  selectedDepartment,
+                  (val) => setState(() => selectedDepartment = val)),
             ),
           ],
         ),
@@ -678,7 +698,12 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
             padding: const EdgeInsets.symmetric(vertical: 14),
             decoration: AppDecorations.primaryGradientButton,
             child: isGenerating
-                ? const Center(child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)))
+                ? const Center(
+                    child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2)))
                 : Text(
                     'Generate Hall Tickets',
                     textAlign: TextAlign.center,
@@ -703,23 +728,26 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
           ),
           child: Row(
             children: [
-               Icon(Icons.check_circle, color: AppColors.successDark, size: 18),
-               const SizedBox(width: 8),
-               Expanded(
-                 child: Text(
-                   'Generated ${generatedStudents.length} Hall Tickets for $selectedDepartment - $selectedYear',
-                   style: AppTextStyles.caption.copyWith(color: AppColors.successDark, fontWeight: FontWeight.bold),
-                 ),
-               ),
-               GestureDetector(
-                 onTap: () {
-                   setState(() {
-                     isGenerated = false;
-                     generatedStudents.clear();
-                   });
-                 },
-                 child: Icon(Icons.refresh, size: 18, color: AppColors.successDark),
-               ),
+              Icon(Icons.check_circle, color: AppColors.successDark, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Generated ${generatedStudents.length} Hall Tickets for $selectedDepartment - $selectedYear',
+                  style: AppTextStyles.caption.copyWith(
+                      color: AppColors.successDark,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isGenerated = false;
+                    generatedStudents.clear();
+                  });
+                },
+                child:
+                    Icon(Icons.refresh, size: 18, color: AppColors.successDark),
+              ),
             ],
           ),
         ),
@@ -736,7 +764,7 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
             return _buildHallTicketItem(student);
           },
         ),
-        
+
         // Publish All Button
         const SizedBox(height: 32),
         Container(
@@ -764,7 +792,8 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                 // Publish all hall tickets
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Successfully published ${generatedStudents.length} hall tickets!'),
+                    content: Text(
+                        'Successfully published ${generatedStudents.length} hall tickets!'),
                     backgroundColor: AppColors.successColor,
                     duration: const Duration(seconds: 3),
                   ),
@@ -805,12 +834,15 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
   Widget _buildHallTicketItem(Map<String, dynamic> student) {
     return Container(
       decoration: BoxDecoration(
-         color: Colors.white,
-         border: Border.all(color: AppColors.divider),
-         boxShadow: [
-           BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 8)),
-          ],
-       ),
+        color: Colors.white,
+        border: Border.all(color: AppColors.divider),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 8)),
+        ],
+      ),
       child: Column(
         children: [
           // Header - Zenith College
@@ -839,9 +871,9 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
               ],
             ),
           ),
-          
+
           const Divider(height: 1, thickness: 1),
-          
+
           Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -852,7 +884,8 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF2196F3), width: 3),
+                    border:
+                        Border.all(color: const Color(0xFF2196F3), width: 3),
                     color: Colors.grey[100],
                   ),
                   child: Icon(
@@ -861,12 +894,13 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                     color: const Color(0xFF2196F3),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // STUDENT DETAILS Section
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE3F2FD),
                     borderRadius: BorderRadius.circular(4),
@@ -881,20 +915,23 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Student Info
                 _buildDetailRow('Name', student['name']),
                 _buildDetailRow('Register Number', student['rollNo']),
-                _buildDetailRow('Department', selectedDepartment ?? 'Computer Science'),
-                _buildDetailRow('Year / Semester', '$selectedYear / IV Semester'),
-                
+                _buildDetailRow(
+                    'Department', selectedDepartment ?? 'Computer Science'),
+                _buildDetailRow(
+                    'Year / Semester', '$selectedYear / IV Semester'),
+
                 const SizedBox(height: 24),
-                
+
                 // EXAM DETAILS Section
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE3F2FD),
                     borderRadius: BorderRadius.circular(4),
@@ -909,22 +946,24 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Exam Info
                 _buildDetailRow('Subject', widget.exam.subject),
                 _buildDetailRow('Exam Type', 'CIA 2'),
-                _buildDetailRow('Date', '${widget.exam.date.day} December 2025'),
+                _buildDetailRow(
+                    'Date', '${widget.exam.date.day} December 2025'),
                 _buildDetailRow('Time', widget.exam.timeSlot),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Hall and Seat Number Box
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF2196F3), width: 2),
+                    border:
+                        Border.all(color: const Color(0xFF2196F3), width: 2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -983,9 +1022,9 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // QR Code
                 Container(
                   height: 100,
@@ -997,9 +1036,9 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
                     child: Icon(Icons.qr_code_2, size: 80),
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Text(
                   'Scan for verification',
                   style: GoogleFonts.inter(
@@ -1014,7 +1053,7 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
       ),
     );
   }
-  
+
   // Helper method for detail rows
   Widget _buildDetailRow(String label, String value) {
     return Padding(
@@ -1051,59 +1090,21 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
     );
   }
 
-  Widget _buildHallTicketActions(Map<String, dynamic> student) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: Colors.grey[50],
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildActionButton('View', Icons.visibility, false, () {
-              showDialog(context: context, builder: (_) => Dialog(child: SizedBox(height: 400, child: Center(child: Text("Full View: ${student['name']}")))));
-            }),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildActionButton('Publish', Icons.publish_rounded, true, () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hall ticket published successfully!'), backgroundColor: AppColors.successColor));
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  TextStyle _pdfHeaderStyle() => GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold);
-  TextStyle _pdfBodyStyle() => GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w500);
-  
-  Widget _pdfLabelValue(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(width: 110, child: Text(label, style: GoogleFonts.inter(fontSize: 10, color: Colors.grey[600], fontWeight: FontWeight.w500))),
-          Text(":", style: GoogleFonts.inter(fontSize: 10, color: Colors.grey[600])),
-          const SizedBox(width: 8),
-          Expanded(child: Text(value, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black87))),
-        ],
-      ),
-    );
-  }
-
   Future<void> _generateHallTicket() async {
     if (selectedYear == null || selectedDepartment == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select both Year and Department'), backgroundColor: AppColors.errorColor),
+        const SnackBar(
+            content: Text('Please select both Year and Department'),
+            backgroundColor: AppColors.errorColor),
       );
       return;
     }
 
     setState(() => isGenerating = true);
-    
+
     // Simulate Batch Processing
     await Future.delayed(const Duration(milliseconds: 1500));
-    
+
     final students = List.generate(5, (index) {
       final id = (index + 1).toString().padLeft(2, '0');
       return {
@@ -1120,7 +1121,8 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
     });
   }
 
-  Widget _buildDropdown(String label, List<String> items, String? value, Function(String?) onChanged) {
+  Widget _buildDropdown(String label, List<String> items, String? value,
+      Function(String?) onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1138,40 +1140,17 @@ class _HallTicketGeneratorCardState extends State<HallTicketGeneratorCard> {
               value: value,
               isExpanded: true,
               hint: Text('Select', style: AppTextStyles.caption),
-              icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryText),
-              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: AppTextStyles.bodyText))).toList(),
+              icon: const Icon(Icons.arrow_drop_down,
+                  color: AppColors.secondaryText),
+              items: items
+                  .map((e) => DropdownMenuItem(
+                      value: e, child: Text(e, style: AppTextStyles.bodyText)))
+                  .toList(),
               onChanged: onChanged,
             ),
           ),
         ),
       ],
-    );
-  }
-  
-  Widget _buildActionButton(String label, IconData icon, bool isPrimary, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: isPrimary ? AppColors.primaryButton : AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(6),
-          border: isPrimary ? null : Border.all(color: AppColors.primaryButton),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 16, color: isPrimary ? Colors.white : AppColors.primaryButton),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: isPrimary 
-                  ? AppTextStyles.buttonTextWhite 
-                  : AppTextStyles.buttonText.copyWith(color: AppColors.primaryButton),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

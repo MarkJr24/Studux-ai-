@@ -3,6 +3,7 @@ import 'student_home_screen.dart';
 import 'student_academics_screen.dart';
 import 'student_exams_screen.dart';
 import 'student_alerts_screen.dart';
+import '../../../core/navigation_service.dart';
 
 /// Student Main Navigation Wrapper
 /// Prevents back navigation to login and keeps bottom nav visible
@@ -20,7 +21,8 @@ class StudentMainNavigation extends StatefulWidget {
   }
 
   static void switchToTab(BuildContext context, int index) {
-    final state = context.findAncestorStateOfType<_StudentMainNavigationState>();
+    final state =
+        context.findAncestorStateOfType<_StudentMainNavigationState>();
     state?.setTab(index);
   }
 
@@ -53,18 +55,7 @@ class _StudentMainNavigationState extends State<StudentMainNavigation> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        // If not on home page, navigate to home
-        if (_currentIndex != 0) {
-          setState(() {
-            _currentIndex = 0;
-          });
-          return false; // Prevent route pop
-        }
-
-        // If on home page, show exit confirmation dialog
-        return await _showExitDialog(context) ?? false;
-      },
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
@@ -104,7 +95,8 @@ class _StudentMainNavigationState extends State<StudentMainNavigation> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         selectedItemColor: const Color(0xFF2196F3), // Brighter blue
-        unselectedItemColor: const Color(0xFF757575), // Darker gray for better contrast
+        unselectedItemColor:
+            const Color(0xFF757575), // Darker gray for better contrast
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
@@ -135,56 +127,4 @@ class _StudentMainNavigationState extends State<StudentMainNavigation> {
       ),
     );
   }
-
-  Future<bool?> _showExitDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFFFFFFFF),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Exit App',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF212121),
-          ),
-        ),
-        content: const Text(
-          'Do you want to exit the application?',
-          style: TextStyle(
-            fontSize: 14,
-            color: Color(0xFF757575),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF616161),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Exit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFD32F2F),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-

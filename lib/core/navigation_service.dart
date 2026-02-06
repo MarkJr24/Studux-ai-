@@ -5,7 +5,7 @@ import '../presentation/screens/teacher/teacher_home_screen.dart';
 import '../presentation/screens/admin/admin_home_screen.dart';
 
 /// Navigation Service - Handles secure role-based navigation
-/// 
+///
 /// CRITICAL RULES:
 /// 1. After login → Use pushAndRemoveUntil to clear entire stack
 /// 2. Home screens become permanent root for each role
@@ -24,11 +24,14 @@ class NavigationService {
   /// Clears entire navigation stack
   void navigateToLogin() {
     if (context == null) return;
-    
+
     Navigator.pushAndRemoveUntil(
       context!,
       MaterialPageRoute(
-        builder: (_) => const RoleSelectionScreen(),
+        builder: (_) => RoleSelectionScreen(
+          onThemeToggle: () {},
+          themeMode: ThemeMode.light,
+        ),
       ),
       (route) => false, // Remove ALL previous routes
     );
@@ -38,7 +41,7 @@ class NavigationService {
   /// SECURITY: Clears login screens from stack permanently
   void navigateToStudentHome() {
     if (context == null) return;
-    
+
     Navigator.pushAndRemoveUntil(
       context!,
       MaterialPageRoute(builder: (_) => const StudentHomeScreen()),
@@ -50,7 +53,7 @@ class NavigationService {
   /// SECURITY: Clears login screens from stack permanently
   void navigateToTeacherHome() {
     if (context == null) return;
-    
+
     Navigator.pushAndRemoveUntil(
       context!,
       MaterialPageRoute(builder: (_) => const TeacherHomeScreen()),
@@ -62,7 +65,7 @@ class NavigationService {
   /// SECURITY: Clears login screens from stack permanently
   void navigateToAdminHome() {
     if (context == null) return;
-    
+
     Navigator.pushAndRemoveUntil(
       context!,
       MaterialPageRoute(builder: (_) => const AdminHomeScreen()),
@@ -74,7 +77,7 @@ class NavigationService {
   /// Uses regular push - back button will return to previous screen
   void navigateTo(Widget screen) {
     if (context == null) return;
-    
+
     Navigator.push(
       context!,
       MaterialPageRoute(builder: (_) => screen),
@@ -85,7 +88,7 @@ class NavigationService {
   /// Used for bottom nav tab switching
   void navigateAndReplace(Widget screen) {
     if (context == null) return;
-    
+
     Navigator.pushReplacement(
       context!,
       MaterialPageRoute(builder: (_) => screen),
@@ -108,12 +111,12 @@ class NavigationService {
 }
 
 /// Login Success Handler
-/// 
+///
 /// Example usage in login screens:
 /// ```dart
 /// void _handleLoginSuccess(String role) {
 ///   final nav = NavigationService();
-///   
+///
 ///   switch (role) {
 ///     case 'student':
 ///       nav.navigateToStudentHome();
@@ -130,7 +133,7 @@ class NavigationService {
 class LoginSuccessHandler {
   static void handleStudentLogin(BuildContext context) {
     // Clear any cached data, initialize session, etc.
-    
+
     // Navigate to Student Home and clear entire stack
     Navigator.pushAndRemoveUntil(
       context,
@@ -141,7 +144,7 @@ class LoginSuccessHandler {
 
   static void handleTeacherLogin(BuildContext context) {
     // Clear any cached data, initialize session, etc.
-    
+
     // Navigate to Teacher Home and clear entire stack
     Navigator.pushAndRemoveUntil(
       context,
@@ -152,7 +155,7 @@ class LoginSuccessHandler {
 
   static void handleAdminLogin(BuildContext context) {
     // Clear any cached data, initialize session, etc.
-    
+
     // Navigate to Admin Home and clear entire stack
     Navigator.pushAndRemoveUntil(
       context,
@@ -163,7 +166,7 @@ class LoginSuccessHandler {
 }
 
 /// Logout Handler
-/// 
+///
 /// Example usage in profile screens:
 /// ```dart
 /// void _handleLogout() {
@@ -173,14 +176,24 @@ class LoginSuccessHandler {
 class LogoutHandler {
   static void logout(BuildContext context) {
     // Clear session data, tokens, cached data, etc.
-    
+
     // Navigate back to login and clear entire stack
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (_) => const RoleSelectionScreen(),
+        builder: (_) => RoleSelectionScreen(
+          onThemeToggle: () {},
+          themeMode: ThemeMode.light,
+        ),
       ),
       (route) => false, // Remove ALL routes
     );
+  }
+
+  /// Centralized handler for back navigation that should return to login
+  /// Clears the entire navigation stack
+  static Future<bool> handleBackToLogin(BuildContext context) async {
+    logout(context);
+    return false; // Crucial: prevents the default back action
   }
 }

@@ -68,17 +68,6 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Replace with actual API call
-      // final response = await http.post(
-      //   Uri.parse('YOUR_API_URL/forgot-password/verify-otp'),
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: jsonEncode({
-      //     'email': widget.email,
-      //     'otp': _otp,
-      //     'userType': widget.userType,
-      //   }),
-      // );
-
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
 
@@ -141,16 +130,6 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
     setState(() => _isResending = true);
 
     try {
-      // TODO: Replace with actual API call
-      // final response = await http.post(
-      //   Uri.parse('YOUR_API_URL/forgot-password/send-otp'),
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: jsonEncode({
-      //     'email': widget.email,
-      //     'userType': widget.userType,
-      //   }),
-      // );
-
       // Simulate API delay
       await Future.delayed(const Duration(seconds: 2));
 
@@ -200,7 +179,8 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
                     ),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF1F2937)),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Color(0xFF1F2937)),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -353,7 +333,8 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: Colors.amber[700], size: 20),
+                        Icon(Icons.info_outline,
+                            color: Colors.amber[700], size: 20),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -430,4 +411,3 @@ class _ForgotPasswordOTPScreenState extends State<ForgotPasswordOTPScreen> {
     );
   }
 }
-

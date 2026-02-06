@@ -9,12 +9,17 @@ import 'teacher_login_screen.dart';
 import 'student_login_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  const RoleSelectionScreen({super.key});
+  final VoidCallback onThemeToggle;
+  final ThemeMode themeMode;
+
+  const RoleSelectionScreen({
+    super.key,
+    required this.onThemeToggle,
+    required this.themeMode,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const isDark = false; // Forced Light Mode
-
     return Scaffold(
       // FAB removed
       body: Stack(
@@ -26,7 +31,7 @@ class RoleSelectionScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          
+
           // Gradient Overlay for readability (Light Mode Gradient)
           Positioned.fill(
             child: Container(
@@ -42,16 +47,17 @@ class RoleSelectionScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Animated Background with Particles
           const _AnimatedBackground(isDark: false),
-          
+
           // Main Content
           Positioned.fill(
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -75,14 +81,14 @@ class RoleSelectionScreen extends StatelessWidget {
 
                       // Tagline
                       Text(
-                         'Simplifying Campus Life',
-                         style: GoogleFonts.playfairDisplay(
-                           fontSize: 18,
-                           fontWeight: FontWeight.w600,
-                           fontStyle: FontStyle.italic,
-                           color: Colors.black87,
-                           letterSpacing: 0.5,
-                         ),
+                        'Simplifying Campus Life',
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.black87,
+                          letterSpacing: 0.5,
+                        ),
                         textAlign: TextAlign.center,
                       ),
 
@@ -181,10 +187,11 @@ class RoleSelectionScreen extends StatelessWidget {
             Icons.school,
             size: 60,
             color: Color(0xFF6B2FBF),
-          ).animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.3))
-            .then()
-            .shake(duration: 500.ms, hz: 2, curve: Curves.easeInOut);
+          )
+              .animate(onPlay: (controller) => controller.repeat())
+              .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.3))
+              .then()
+              .shake(duration: 500.ms, hz: 2, curve: Curves.easeInOut);
         },
         repeat: true,
         animate: true,
@@ -230,7 +237,8 @@ class RoleSelectionScreen extends StatelessWidget {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const AdminLoginScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const AdminLoginScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         reverseTransitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -248,7 +256,8 @@ class RoleSelectionScreen extends StatelessWidget {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const TeacherLoginScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const TeacherLoginScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         reverseTransitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -266,7 +275,8 @@ class RoleSelectionScreen extends StatelessWidget {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const StudentLoginScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const StudentLoginScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         reverseTransitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -439,8 +449,9 @@ class ParticlePainter extends CustomPainter {
 
     for (var particle in particles) {
       final adjustedProgress = ((progress + particle.delay) % 1.0);
-      final yPos = size.height * (particle.y - adjustedProgress * particle.speed);
-      
+      final yPos =
+          size.height * (particle.y - adjustedProgress * particle.speed);
+
       if (yPos > -particle.size && yPos < size.height) {
         canvas.drawCircle(
           Offset(size.width * particle.x, yPos),
@@ -457,9 +468,9 @@ class ParticlePainter extends CustomPainter {
 
 // Icon Animation Types
 enum IconAnimationType {
-  pulse,   // Admin - shield pulse
-  slide,   // Teacher - slide animation
-  bounce,  // Student - bounce animation
+  pulse, // Admin - shield pulse
+  slide, // Teacher - slide animation
+  bounce, // Student - bounce animation
 }
 
 // Animated Role Card with Enhanced Antigravity Effects
@@ -516,7 +527,7 @@ class _AnimatedRoleCardState extends State<_AnimatedRoleCard>
   @override
   Widget build(BuildContext context) {
     final isActive = _isHovered || _isPressed;
-    
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -555,13 +566,15 @@ class _AnimatedRoleCardState extends State<_AnimatedRoleCard>
                 colors: widget.gradientColors,
               ),
               border: Border.all(
-                color: widget.gradientColors[0].withOpacity(isActive ? 0.8 : 0.4),
+                color:
+                    widget.gradientColors[0].withOpacity(isActive ? 0.8 : 0.4),
                 width: isActive ? 2 : 1,
               ),
               boxShadow: [
                 // Primary shadow - deeper on hover
                 BoxShadow(
-                  color: widget.gradientColors[0].withOpacity(isActive ? 0.5 : 0.4),
+                  color: widget.gradientColors[0]
+                      .withOpacity(isActive ? 0.5 : 0.4),
                   blurRadius: isActive ? 30 : 25,
                   offset: Offset(0, isActive ? 15 : 12),
                   spreadRadius: _isPressed ? 8 : (isActive ? 2 : 0),
@@ -575,7 +588,8 @@ class _AnimatedRoleCardState extends State<_AnimatedRoleCard>
                 // Neon glow effect - enhanced on press
                 if (isActive)
                   BoxShadow(
-                    color: widget.gradientColors[0].withOpacity(_isPressed ? 0.8 : 0.6),
+                    color: widget.gradientColors[0]
+                        .withOpacity(_isPressed ? 0.8 : 0.6),
                     blurRadius: _isPressed ? 50 : 40,
                     spreadRadius: _isPressed ? 8 : 5,
                   ),
@@ -672,7 +686,7 @@ class _AnimatedIconCircleState extends State<_AnimatedIconCircle>
   @override
   void initState() {
     super.initState();
-    
+
     // Different animation durations for each type
     final duration = switch (widget.animationType) {
       IconAnimationType.pulse => const Duration(milliseconds: 2000),
@@ -730,7 +744,7 @@ class _AnimatedIconCircleState extends State<_AnimatedIconCircle>
       animation: _animation,
       builder: (context, child) {
         Widget iconWidget;
-        
+
         // Use standard refined icons based on animation type / role
         if (widget.animationType == IconAnimationType.pulse) {
           iconWidget = const Icon(
@@ -738,22 +752,19 @@ class _AnimatedIconCircleState extends State<_AnimatedIconCircle>
             size: 32,
             color: Colors.white,
           );
-        } 
-        else if (widget.animationType == IconAnimationType.slide) {
+        } else if (widget.animationType == IconAnimationType.slide) {
           iconWidget = const Icon(
             Icons.cast_for_education_rounded,
             size: 32,
             color: Colors.white,
           );
-        }
-        else if (widget.animationType == IconAnimationType.bounce) {
+        } else if (widget.animationType == IconAnimationType.bounce) {
           iconWidget = const Icon(
             Icons.school_rounded,
             size: 32,
             color: Colors.white,
           );
-        }
-        else {
+        } else {
           iconWidget = Icon(
             widget.icon,
             size: 32,
@@ -808,21 +819,24 @@ class _AnimatedIconCircleState extends State<_AnimatedIconCircle>
                     // Subtle ambient glow for Admin icon (pulse type) - purple
                     if (widget.animationType == IconAnimationType.pulse)
                       BoxShadow(
-                        color: widget.backgroundColor.withOpacity(0.3 * _animation.value),
+                        color: widget.backgroundColor
+                            .withOpacity(0.3 * _animation.value),
                         blurRadius: 12,
                         spreadRadius: 1,
                       ),
                     // Subtle ambient glow for Teacher icon (slide type) - orange-yellow
                     if (widget.animationType == IconAnimationType.slide)
                       BoxShadow(
-                        color: const Color(0xFFFF9068).withOpacity(0.4 * _animation.value),
+                        color: const Color(0xFFFF9068)
+                            .withOpacity(0.4 * _animation.value),
                         blurRadius: 12,
                         spreadRadius: 1,
                       ),
                     // Subtle ambient glow for Student icon (bounce type) - cyan-blue
                     if (widget.animationType == IconAnimationType.bounce)
                       BoxShadow(
-                        color: const Color(0xFF50C9C3).withOpacity(0.4 * _animation.value),
+                        color: const Color(0xFF50C9C3)
+                            .withOpacity(0.4 * _animation.value),
                         blurRadius: 12,
                         spreadRadius: 1,
                       ),
@@ -844,7 +858,8 @@ class _GlassmorphismIconCircle extends StatefulWidget {
   });
 
   @override
-  State<_GlassmorphismIconCircle> createState() => _GlassmorphismIconCircleState();
+  State<_GlassmorphismIconCircle> createState() =>
+      _GlassmorphismIconCircleState();
 }
 
 class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
@@ -855,7 +870,7 @@ class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
   @override
   void initState() {
     super.initState();
-    
+
     // Slow pulsing animation (7 seconds)
     _pulseController = AnimationController(
       vsync: this,
@@ -901,17 +916,21 @@ class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
                       // Top shine (reflective) - soft white
                       Colors.white.withOpacity(0.6 * _pulseAnimation.value),
                       // Inner glow - very light blue
-                      const Color(0xFFD4E4F7).withOpacity(0.35 * _pulseAnimation.value),
+                      const Color(0xFFD4E4F7)
+                          .withOpacity(0.35 * _pulseAnimation.value),
                       // Soft tint - light purple-blue
-                      const Color(0xFFE8D5F2).withOpacity(0.25 * _pulseAnimation.value),
+                      const Color(0xFFE8D5F2)
+                          .withOpacity(0.25 * _pulseAnimation.value),
                       // Outer edge - subtle purple
-                      const Color(0xFF9B8FBF).withOpacity(0.2 * _pulseAnimation.value),
+                      const Color(0xFF9B8FBF)
+                          .withOpacity(0.2 * _pulseAnimation.value),
                     ],
                     stops: const [0.0, 0.3, 0.6, 1.0],
                   ),
                   // Soft blue-purple rim
                   border: Border.all(
-                    color: const Color(0xFF8B7FBF).withOpacity(0.5 * _pulseAnimation.value),
+                    color: const Color(0xFF8B7FBF)
+                        .withOpacity(0.5 * _pulseAnimation.value),
                     width: 2.5,
                   ),
                 ),
@@ -920,7 +939,8 @@ class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3 * _pulseAnimation.value),
+                      color:
+                          Colors.white.withOpacity(0.3 * _pulseAnimation.value),
                       width: 1,
                     ),
                   ),
@@ -936,217 +956,4 @@ class _GlassmorphismIconCircleState extends State<_GlassmorphismIconCircle>
       child: widget.child,
     );
   }
-}
-
-// Custom Shield-Person Icon Painter
-class _ShieldPersonIconPainter extends CustomPainter {
-  final Color color;
-
-  _ShieldPersonIconPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 2.0;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final scale = size.width / 32; // Scale to icon size
-
-    // Draw shield outline
-    final shieldPath = Path();
-    shieldPath.moveTo(center.dx, center.dy - 14 * scale);
-    shieldPath.lineTo(center.dx + 10 * scale, center.dy - 10 * scale);
-    shieldPath.lineTo(center.dx + 10 * scale, center.dy + 4 * scale);
-    shieldPath.quadraticBezierTo(
-      center.dx + 10 * scale,
-      center.dy + 10 * scale,
-      center.dx,
-      center.dy + 14 * scale,
-    );
-    shieldPath.quadraticBezierTo(
-      center.dx - 10 * scale,
-      center.dy + 10 * scale,
-      center.dx - 10 * scale,
-      center.dy + 4 * scale,
-    );
-    shieldPath.lineTo(center.dx - 10 * scale, center.dy - 10 * scale);
-    shieldPath.close();
-
-    // Draw shield outline (stroke)
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = 2.0 * scale;
-    canvas.drawPath(shieldPath, paint);
-
-    // Draw person silhouette inside shield
-    paint.style = PaintingStyle.fill;
-
-    // Head (circle)
-    canvas.drawCircle(
-      Offset(center.dx, center.dy - 4 * scale),
-      2.5 * scale,
-      paint,
-    );
-
-    // Body (rounded rectangle/trapezoid)
-    final bodyPath = Path();
-    bodyPath.moveTo(center.dx - 4 * scale, center.dy + 1 * scale);
-    bodyPath.lineTo(center.dx + 4 * scale, center.dy + 1 * scale);
-    bodyPath.lineTo(center.dx + 5 * scale, center.dy + 8 * scale);
-    bodyPath.lineTo(center.dx - 5 * scale, center.dy + 8 * scale);
-    bodyPath.close();
-    canvas.drawPath(bodyPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(_ShieldPersonIconPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
-// Custom Teacher Icon Painter (Teacher with book and graduation cap)
-class _TeacherIconPainter extends CustomPainter {
-  final Color color;
-
-  _TeacherIconPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final scale = size.width / 32;
-
-    // Graduation cap
-    final capPath = Path();
-    // Cap top (flat board)
-    capPath.moveTo(center.dx - 10 * scale, center.dy - 10 * scale);
-    capPath.lineTo(center.dx + 10 * scale, center.dy - 10 * scale);
-    // Cap center point
-    capPath.moveTo(center.dx, center.dy - 10 * scale);
-    capPath.lineTo(center.dx, center.dy - 7 * scale);
-    // Tassel
-    capPath.moveTo(center.dx + 8 * scale, center.dy - 10 * scale);
-    capPath.lineTo(center.dx + 10 * scale, center.dy - 12 * scale);
-    canvas.drawPath(capPath, paint);
-
-    // Head (circle)
-    canvas.drawCircle(
-      Offset(center.dx, center.dy - 3 * scale),
-      4 * scale,
-      paint,
-    );
-
-    // Body/Torso
-    final bodyPath = Path();
-    bodyPath.moveTo(center.dx - 5 * scale, center.dy + 2 * scale);
-    bodyPath.lineTo(center.dx - 5 * scale, center.dy + 10 * scale);
-    bodyPath.moveTo(center.dx + 5 * scale, center.dy + 2 * scale);
-    bodyPath.lineTo(center.dx + 5 * scale, center.dy + 10 * scale);
-    // Shoulders
-    bodyPath.moveTo(center.dx - 5 * scale, center.dy + 2 * scale);
-    bodyPath.lineTo(center.dx + 5 * scale, center.dy + 2 * scale);
-    canvas.drawPath(bodyPath, paint);
-
-    // Book (open book in hands)
-    final bookPath = Path();
-    // Left page
-    bookPath.moveTo(center.dx - 6 * scale, center.dy + 6 * scale);
-    bookPath.lineTo(center.dx - 6 * scale, center.dy + 12 * scale);
-    bookPath.lineTo(center.dx, center.dy + 12 * scale);
-    // Right page
-    bookPath.moveTo(center.dx, center.dy + 6 * scale);
-    bookPath.lineTo(center.dx + 6 * scale, center.dy + 6 * scale);
-    bookPath.lineTo(center.dx + 6 * scale, center.dy + 12 * scale);
-    bookPath.lineTo(center.dx, center.dy + 12 * scale);
-    // Spine
-    bookPath.moveTo(center.dx, center.dy + 6 * scale);
-    bookPath.lineTo(center.dx, center.dy + 12 * scale);
-    canvas.drawPath(bookPath, paint);
-
-    // Desk/podium (simple line)
-    canvas.drawLine(
-      Offset(center.dx - 8 * scale, center.dy + 13 * scale),
-      Offset(center.dx + 8 * scale, center.dy + 13 * scale),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_TeacherIconPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
-// Custom Student Icon Painter (Student with graduation cap outline)
-class _StudentIconPainter extends CustomPainter {
-  final Color color;
-
-  _StudentIconPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final scale = size.width / 32;
-
-    // Graduation cap (mortarboard)
-    final capPath = Path();
-    // Cap board (diamond/square rotated)
-    capPath.moveTo(center.dx, center.dy - 12 * scale);
-    capPath.lineTo(center.dx + 9 * scale, center.dy - 9 * scale);
-    capPath.lineTo(center.dx, center.dy - 6 * scale);
-    capPath.lineTo(center.dx - 9 * scale, center.dy - 9 * scale);
-    capPath.close();
-    canvas.drawPath(capPath, paint);
-
-    // Tassel
-    canvas.drawLine(
-      Offset(center.dx + 7 * scale, center.dy - 10 * scale),
-      Offset(center.dx + 9 * scale, center.dy - 13 * scale),
-      paint,
-    );
-    canvas.drawCircle(
-      Offset(center.dx + 9 * scale, center.dy - 13 * scale),
-      1 * scale,
-      paint,
-    );
-
-    // Head (circle)
-    canvas.drawCircle(
-      Offset(center.dx, center.dy - 2 * scale),
-      4.5 * scale,
-      paint,
-    );
-
-    // Shoulders/Body (trapezoid shape)
-    final bodyPath = Path();
-    bodyPath.moveTo(center.dx - 4 * scale, center.dy + 3 * scale);
-    bodyPath.lineTo(center.dx - 7 * scale, center.dy + 12 * scale);
-    bodyPath.lineTo(center.dx + 7 * scale, center.dy + 12 * scale);
-    bodyPath.lineTo(center.dx + 4 * scale, center.dy + 3 * scale);
-    bodyPath.close();
-    canvas.drawPath(bodyPath, paint);
-
-    // Neck/collar detail
-    canvas.drawLine(
-      Offset(center.dx - 2 * scale, center.dy + 3 * scale),
-      Offset(center.dx + 2 * scale, center.dy + 3 * scale),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_StudentIconPainter oldDelegate) =>
-      oldDelegate.color != color;
 }

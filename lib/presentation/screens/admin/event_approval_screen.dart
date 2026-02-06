@@ -56,8 +56,12 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
         time: '10:00 AM - 4:00 PM',
         venue: 'Main Auditorium',
         expectedAttendees: 500,
-        description: 'Annual cultural festival with performances, competitions, and exhibitions.',
-        conflicts: ['Exam clash on 15th March', 'Main Auditorium capacity: 450'],
+        description:
+            'Annual cultural festival with performances, competitions, and exhibitions.',
+        conflicts: [
+          'Exam clash on 15th March',
+          'Main Auditorium capacity: 450'
+        ],
       ),
       EventRequest(
         id: '2',
@@ -67,7 +71,8 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
         time: '9:00 AM - 5:00 PM',
         venue: 'Seminar Hall',
         expectedAttendees: 200,
-        description: 'Technical symposium featuring guest lectures and project presentations.',
+        description:
+            'Technical symposium featuring guest lectures and project presentations.',
         conflicts: [],
       ),
     ];
@@ -127,7 +132,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             ),
           ),
           const SizedBox(width: 16),
-          
+
           // Title and Subtitle
           Expanded(
             child: Column(
@@ -140,7 +145,9 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  selectedEvent != null ? 'Event Details' : 'Review and approve event requests',
+                  selectedEvent != null
+                      ? 'Event Details'
+                      : 'Review and approve event requests',
                   style: AppTextStyles.subtitle,
                 ),
               ],
@@ -162,9 +169,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             style: AppTextStyles.sectionTitleColored(AppColors.eventAccent),
           ),
           const SizedBox(height: 16),
-          
           ...pendingEvents.map((event) => _buildEventCard(event)),
-          
           const SizedBox(height: 80),
         ],
       ),
@@ -173,7 +178,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
 
   Widget _buildEventCard(EventRequest event) {
     final hasConflicts = event.conflicts.isNotEmpty;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -202,7 +207,8 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                     ),
                     const SizedBox(width: 12),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.pendingBg,
                         borderRadius: BorderRadius.circular(16),
@@ -219,17 +225,17 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Info Rows
                 _buildInfoRow(Icons.person, event.organizer),
                 const SizedBox(height: 6),
-                _buildInfoRow(Icons.calendar_today, 
+                _buildInfoRow(Icons.calendar_today,
                     '${event.date.day}/${event.date.month}/${event.date.year}'),
                 const SizedBox(height: 6),
                 _buildInfoRow(Icons.access_time, event.time),
                 const SizedBox(height: 6),
                 _buildInfoRow(Icons.location_on, event.venue),
-                
+
                 // Conflicts Warning
                 if (hasConflicts) ...[
                   const SizedBox(height: 12),
@@ -261,9 +267,9 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                     ),
                   ),
                 ],
-                
+
                 const SizedBox(height: 12),
-                
+
                 // View Details Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -309,10 +315,10 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
 
   Widget _buildEventDetails() {
     if (selectedEvent == null) return const SizedBox();
-    
+
     final event = selectedEvent!;
     final hasConflicts = event.conflicts.isNotEmpty;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -324,60 +330,61 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.title,
-                  style: GoogleFonts.inter(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryText,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryText,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                
-                _buildDetailRow('Organizer', event.organizer),
-                const Divider(height: 20),
-                _buildDetailRow('Date', '${event.date.day}/${event.date.month}/${event.date.year}'),
-                const Divider(height: 20),
-                _buildDetailRow('Time', event.time),
-                const Divider(height: 20),
-                _buildDetailRow('Venue', event.venue),
-                const Divider(height: 20),
-                _buildDetailRow('Expected Attendees', '${event.expectedAttendees}'),
-              ],
-            ),
+                  const SizedBox(height: 16),
+                  _buildDetailRow('Organizer', event.organizer),
+                  const Divider(height: 20),
+                  _buildDetailRow('Date',
+                      '${event.date.day}/${event.date.month}/${event.date.year}'),
+                  const Divider(height: 20),
+                  _buildDetailRow('Time', event.time),
+                  const Divider(height: 20),
+                  _buildDetailRow('Venue', event.venue),
+                  const Divider(height: 20),
+                  _buildDetailRow(
+                      'Expected Attendees', '${event.expectedAttendees}'),
+                ],
+              ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Description Card
           _AnimatedCard(
             accentColor: AppColors.eventAccent,
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Description',
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryText,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Description',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryText,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  event.description,
-                  style: AppTextStyles.bodyText,
-                ),
-              ],
-            ),
+                  const SizedBox(height: 8),
+                  Text(
+                    event.description,
+                    style: AppTextStyles.bodyText,
+                  ),
+                ],
+              ),
             ),
           ),
-          
+
           // Conflicts Card
           if (hasConflicts) ...[
             const SizedBox(height: 16),
@@ -414,39 +421,39 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
                   ),
                   const SizedBox(height: 12),
                   ...event.conflicts.map((conflict) => Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          margin: const EdgeInsets.only(top: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.warningDark,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            conflict,
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: AppColors.warningDark,
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.only(top: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.warningDark,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                conflict,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: AppColors.warningDark,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )),
+                      )),
                 ],
               ),
             ),
           ],
-          
+
           const SizedBox(height: 24),
-          
+
           // Action Buttons
           Row(
             children: [
@@ -473,7 +480,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 80),
         ],
       ),
@@ -625,24 +632,8 @@ class _AnimatedCard extends StatefulWidget {
   State<_AnimatedCard> createState() => _AnimatedCardState();
 }
 
-class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _AnimatedCardState extends State<_AnimatedCard> {
   bool _isHovered = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -652,41 +643,23 @@ class _AnimatedCardState extends State<_AnimatedCard> with SingleTickerProviderS
       child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Container(
-              padding: const EdgeInsets.all(2.5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: SweepGradient(
-                  colors: [
-                    widget.accentColor.withOpacity(0.3),
-                    widget.accentColor,
-                    widget.accentColor.withOpacity(0.5),
-                    widget.accentColor.withOpacity(0.8),
-                    widget.accentColor,
-                  ],
-                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                  transform: GradientRotation(_controller.value * 2 * 3.14159),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: widget.accentColor.withOpacity(0.2),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  decoration: AppDecorations.whiteCard,
-                  child: widget.child,
-                ),
-              ),
-            );
-          },
+        child: Container(
+          padding: const EdgeInsets.all(2.5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: widget.accentColor.withOpacity(0.1),
+            border: Border.all(
+              color: widget.accentColor.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              decoration: AppDecorations.whiteCard,
+              child: widget.child,
+            ),
+          ),
         ),
       ),
     );

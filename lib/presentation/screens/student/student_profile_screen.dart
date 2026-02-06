@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme.dart';
 import '../auth/student_login_screen.dart';
 import 'student_settings_screen.dart';
+import '../../../core/navigation_service.dart';
 
 class StudentProfileScreen extends StatefulWidget {
   const StudentProfileScreen({super.key});
@@ -17,7 +18,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
 
   // Controllers
   final _phoneController = TextEditingController(text: '+91 98765 43210');
-  final _emailController = TextEditingController(text: 'harsha.student@college.edu');
+  final _emailController =
+      TextEditingController(text: 'harsha.student@college.edu');
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -28,7 +30,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   bool _obscureCurrentPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
-  
+
   // Preferences
   String _selectedTheme = 'Light';
   bool _notificationsEnabled = true;
@@ -54,27 +56,29 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: _buildAppBar(),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildStudentIdentity(),
-          const SizedBox(height: 20),
-          _buildPersonalInformation(),
-          const SizedBox(height: 20),
-          _buildSecuritySection(),
-          const SizedBox(height: 20),
-          _buildAppPreferences(),
-          const SizedBox(height: 20),
-          _buildActivityInfo(),
-          const SizedBox(height: 20),
-          _buildSettingsButton(),
-          const SizedBox(height: 12),
-          _buildLogoutButton(),
-          const SizedBox(height: 80), // Bottom spacing
-        ],
+    return WillPopScope(
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: _buildAppBar(),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _buildStudentIdentity(),
+            const SizedBox(height: 20),
+            _buildPersonalInformation(),
+            const SizedBox(height: 20),
+            _buildSecuritySection(),
+            const SizedBox(height: 20),
+            _buildAppPreferences(),
+            const SizedBox(height: 20),
+            _buildActivityInfo(),
+            const SizedBox(height: 20),
+            _buildSettingsButton(),
+            const SizedBox(height: 12),
+            _buildLogoutButton(),
+          ],
+        ),
       ),
     );
   }
@@ -85,7 +89,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => LogoutHandler.handleBackToLogin(context),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +159,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Profile Avatar with Blue-to-Cyan Gradient
           Center(
             child: Container(
@@ -180,7 +184,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Student Name
           Center(
             child: Text(
@@ -193,7 +197,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          
+
           // Register Number
           Center(
             child: Text(
@@ -205,7 +209,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           _buildReadOnlyField('Department', _department),
           _buildReadOnlyField('Year / Semester', _yearSem),
           _buildReadOnlyField('Section', _section),
@@ -215,7 +219,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     );
   }
 
-  Widget _buildReadOnlyField(String label, String value, {bool isLast = false}) {
+  Widget _buildReadOnlyField(String label, String value,
+      {bool isLast = false}) {
     return Column(
       children: [
         Row(
@@ -305,7 +310,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter phone number';
                       }
-                      if (!RegExp(r'^\+?[0-9]{10,13}$').hasMatch(value.replaceAll(' ', ''))) {
+                      if (!RegExp(r'^\+?[0-9]{10,13}$')
+                          .hasMatch(value.replaceAll(' ', ''))) {
                         return 'Please enter valid phone number';
                       }
                       return null;
@@ -326,7 +332,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
                         return 'Please enter valid email';
                       }
                       return null;
@@ -348,7 +355,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                           ),
                           child: Text(
                             'Save Changes',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -364,7 +372,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                           ),
                           child: Text(
                             'Cancel',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -460,7 +469,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureCurrentPassword ? Icons.visibility_off : Icons.visibility,
+                          _obscureCurrentPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -488,7 +499,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                          _obscureNewPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -519,7 +532,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -557,7 +572,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                           ),
                           child: Text(
                             'Update Password',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -580,7 +596,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                           ),
                           child: Text(
                             'Cancel',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -691,7 +708,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             items: ['English', 'Hindi', 'Tamil', 'Telugu']
                 .map((lang) => DropdownMenuItem(
@@ -769,14 +787,18 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           ),
           const SizedBox(height: 16),
           _buildActivityItem(Icons.login, 'Last Login', 'Today at 9:00 AM'),
-          _buildActivityItem(Icons.download, 'Last Hall Ticket Downloaded', 'Dec 8, 2025'),
-          _buildActivityItem(Icons.visibility, 'Last Exam Viewed', 'Data Structures CIA', isLast: true),
+          _buildActivityItem(
+              Icons.download, 'Last Hall Ticket Downloaded', 'Dec 8, 2025'),
+          _buildActivityItem(
+              Icons.visibility, 'Last Exam Viewed', 'Data Structures CIA',
+              isLast: true),
         ],
       ),
     );
   }
 
-  Widget _buildActivityItem(IconData icon, String label, String value, {bool isLast = false}) {
+  Widget _buildActivityItem(IconData icon, String label, String value,
+      {bool isLast = false}) {
     return Column(
       children: [
         Row(
@@ -819,7 +841,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const StudentSettingsScreen()),
+            MaterialPageRoute(
+                builder: (context) => const StudentSettingsScreen()),
           );
         },
         icon: const Icon(Icons.settings),

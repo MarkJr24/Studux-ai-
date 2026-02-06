@@ -9,7 +9,6 @@ import 'admin_profile_screen.dart';
 import 'student_management_screen.dart';
 import 'admin_design_system.dart';
 
-
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
 
@@ -17,7 +16,8 @@ class AdminDashboard extends StatefulWidget {
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProviderStateMixin {
+class _AdminDashboardState extends State<AdminDashboard>
+    with SingleTickerProviderStateMixin {
   // Mock data - Replace with actual data from backend
   final int _upcomingExams = 5;
   final int _pendingSeating = 2;
@@ -25,7 +25,6 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
   final int _pendingEvents = 3;
 
   late AnimationController _gradientController;
-  late Animation<double> _gradientAnimation;
 
   @override
   void initState() {
@@ -34,7 +33,6 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat(reverse: true);
-    _gradientAnimation = Tween<double>(begin: -1.0, end: 1.0).animate(_gradientController);
   }
 
   @override
@@ -462,7 +460,6 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
     );
   }
 
-
   Widget _buildDashboardGrid(BuildContext context) {
     final tiles = [
       _DashboardTile(
@@ -483,7 +480,8 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         title: 'Exam & Invigilator',
         icon: Icons.assignment_outlined, // More minimal outlined icon
         backgroundColor: AppColors.upcomingExamsBg, // Light Green
-        accentColor: const Color(0xFF2E7D32), // Darker green for better contrast
+        accentColor:
+            const Color(0xFF2E7D32), // Darker green for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -497,7 +495,8 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         title: 'Attendance & Audit',
         icon: Icons.fact_check_outlined, // More minimal outlined icon
         backgroundColor: AppColors.pendingAuditsBg, // Light Orange
-        accentColor: const Color(0xFFE65100), // Darker orange for better contrast
+        accentColor:
+            const Color(0xFFE65100), // Darker orange for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -511,7 +510,8 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         title: 'Event Approval',
         icon: Icons.approval_outlined, // More minimal outlined icon
         backgroundColor: AppColors.pendingEventsBg, // Light Pink
-        accentColor: const Color(0xFF6A1B9A), // Darker purple for better contrast
+        accentColor:
+            const Color(0xFF6A1B9A), // Darker purple for better contrast
         onTap: () {
           Navigator.push(
             context,
@@ -589,7 +589,8 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         ...List.generate(
           activities.length,
           (index) => Padding(
-            padding: EdgeInsets.only(bottom: index < activities.length - 1 ? 8 : 0),
+            padding:
+                EdgeInsets.only(bottom: index < activities.length - 1 ? 8 : 0),
             child: _RecentActivityTile(
               activity: activities[index],
             ),
@@ -614,7 +615,6 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
       },
     );
   }
-
 }
 
 // Staggered Fade In Widget
@@ -628,7 +628,8 @@ class _StaggeredFadeIn extends StatefulWidget {
   State<_StaggeredFadeIn> createState() => _StaggeredFadeInState();
 }
 
-class _StaggeredFadeInState extends State<_StaggeredFadeIn> with SingleTickerProviderStateMixin {
+class _StaggeredFadeInState extends State<_StaggeredFadeIn>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
@@ -645,7 +646,8 @@ class _StaggeredFadeInState extends State<_StaggeredFadeIn> with SingleTickerPro
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _slide = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+    _slide =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
@@ -709,25 +711,13 @@ class _StatusCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Icon with premium glow
+            // Icon container
             Container(
               width: 52,
               height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    accentColor.withOpacity(0.2),
-                    backgroundColor,
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: accentColor.withOpacity(0.4),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ],
+                color: accentColor.withOpacity(0.1),
               ),
               child: Icon(
                 icon,
@@ -737,18 +727,10 @@ class _StatusCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Count with gradient text effect
-            ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                colors: [
-                  accentColor,
-                  accentColor.withOpacity(0.7),
-                ],
-              ).createShader(bounds),
-              child: Text(
-                count,
-                style: AppTextStyles.cardNumber.copyWith(color: Colors.white),
-              ),
+            // Count text
+            Text(
+              count,
+              style: AppTextStyles.cardNumber.copyWith(color: accentColor),
             ),
             const SizedBox(height: 4),
 
@@ -785,7 +767,8 @@ class _ActionRequiredTile extends StatefulWidget {
   State<_ActionRequiredTile> createState() => _ActionRequiredTileState();
 }
 
-class _ActionRequiredTileState extends State<_ActionRequiredTile> with SingleTickerProviderStateMixin {
+class _ActionRequiredTileState extends State<_ActionRequiredTile>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -796,7 +779,7 @@ class _ActionRequiredTileState extends State<_ActionRequiredTile> with SingleTic
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -893,7 +876,8 @@ class _QuickActionButton extends StatefulWidget {
   State<_QuickActionButton> createState() => _QuickActionButtonState();
 }
 
-class _QuickActionButtonState extends State<_QuickActionButton> with SingleTickerProviderStateMixin {
+class _QuickActionButtonState extends State<_QuickActionButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _scaleAnim;
   bool _isHovered = false;
@@ -901,7 +885,7 @@ class _QuickActionButtonState extends State<_QuickActionButton> with SingleTicke
   @override
   void initState() {
     super.initState();
-    
+
     // Simple tap animation
     _animController = AnimationController(
       vsync: this,
@@ -918,39 +902,15 @@ class _QuickActionButtonState extends State<_QuickActionButton> with SingleTicke
     super.dispose();
   }
 
-  // Get light gradient colors
-  List<Color> _getLightGradientColors() {
-    final hsl = HSLColor.fromColor(widget.baseColor);
-    return [
-      hsl.withLightness(0.96).withSaturation(0.3).toColor(), // Very light top
-      hsl.withLightness(0.94).withSaturation(0.35).toColor(), // Light middle
-      hsl.withLightness(0.92).withSaturation(0.4).toColor(), // Slightly deeper bottom
-    ];
-  }
-
   // Get accent color for icon
   Color _getAccentColor() {
     final hsl = HSLColor.fromColor(widget.baseColor);
-    return hsl
-        .withLightness(0.45)
-        .withSaturation(0.7)
-        .toColor();
-  }
-
-  // Get icon background gradient with increased opacity
-  List<Color> _getIconGradientColors() {
-    final hsl = HSLColor.fromColor(widget.baseColor);
-    return [
-      hsl.withLightness(0.55).withSaturation(0.85).toColor(), // Darker and more saturated
-      hsl.withLightness(0.50).withSaturation(0.90).toColor(), // Even darker for better contrast
-    ];
+    return hsl.withLightness(0.45).withSaturation(0.7).toColor();
   }
 
   @override
   Widget build(BuildContext context) {
-    final gradientColors = _getLightGradientColors();
     final accentColor = _getAccentColor();
-    final iconGradient = _getIconGradientColors();
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -968,32 +928,10 @@ class _QuickActionButtonState extends State<_QuickActionButton> with SingleTicke
             duration: const Duration(milliseconds: 200),
             height: 120,
             decoration: BoxDecoration(
-              // Subtle gradient background
-              gradient: LinearGradient(
-                colors: gradientColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: widget.baseColor.withOpacity(0.08),
               borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-              // Enhanced shadow on hover
-              boxShadow: [
-                BoxShadow(
-                  color: _isHovered 
-                      ? widget.baseColor.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.06),
-                  blurRadius: _isHovered ? 16 : 8,
-                  offset: Offset(0, _isHovered ? 6 : 2),
-                  spreadRadius: _isHovered ? 1 : 0,
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-              // Subtle border with gradient color
               border: Border.all(
-                color: _isHovered 
+                color: _isHovered
                     ? widget.baseColor.withOpacity(0.3)
                     : widget.baseColor.withOpacity(0.15),
                 width: 1.5,
@@ -1004,24 +942,12 @@ class _QuickActionButtonState extends State<_QuickActionButton> with SingleTicke
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Icon container with gradient background (matching Manage Modules)
                   Container(
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          accentColor.withOpacity(0.15),
-                          accentColor.withOpacity(0.08),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: accentColor.withOpacity(0.12),
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: accentColor.withOpacity(0.2),
-                        width: 1.5,
-                      ),
                     ),
                     child: Icon(
                       widget.icon,
@@ -1030,8 +956,6 @@ class _QuickActionButtonState extends State<_QuickActionButton> with SingleTicke
                     ),
                   ),
                   const SizedBox(height: 10),
-                  
-                  // Label with accent color
                   Text(
                     widget.label,
                     textAlign: TextAlign.center,
@@ -1075,7 +999,8 @@ class _DashboardTile extends StatefulWidget {
   State<_DashboardTile> createState() => _DashboardTileState();
 }
 
-class _DashboardTileState extends State<_DashboardTile> with SingleTickerProviderStateMixin {
+class _DashboardTileState extends State<_DashboardTile>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   late AnimationController _tapController;
   late Animation<double> _scaleAnim;
@@ -1083,7 +1008,7 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
   @override
   void initState() {
     super.initState();
-    
+
     // Simple tap animation only
     _tapController = AnimationController(
       vsync: this,
@@ -1105,20 +1030,8 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
     widget.onTap();
   }
 
-  // Get light gradient colors for tile background
-  List<Color> _getTileGradientColors() {
-    final hsl = HSLColor.fromColor(widget.backgroundColor);
-    return [
-      widget.backgroundColor,
-      hsl.withLightness((hsl.lightness * 0.97).clamp(0.0, 1.0)).toColor(),
-      hsl.withLightness((hsl.lightness * 0.94).clamp(0.0, 1.0)).toColor(),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
-    final gradientColors = _getTileGradientColors();
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -1130,34 +1043,12 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
           scale: _scaleAnim,
           child: Container(
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-              // Minimal gradient background
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: gradientColors,
-              ),
-              // Enhanced shadow on hover
-              boxShadow: [
-                BoxShadow(
-                  color: _isHovered 
-                      ? widget.accentColor.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.06),
-                  blurRadius: _isHovered ? 16 : 8,
-                  offset: Offset(0, _isHovered ? 6 : 2),
-                  spreadRadius: _isHovered ? 1 : 0,
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-              // Subtle border
               border: Border.all(
-                color: _isHovered 
-                    ? widget.accentColor.withOpacity(0.2)
-                    : widget.accentColor.withOpacity(0.1),
+                color: _isHovered
+                    ? widget.accentColor.withOpacity(0.3)
+                    : AppColors.divider,
                 width: 1,
               ),
             ),
@@ -1166,8 +1057,6 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
               child: InkWell(
                 onTap: _handleTap,
                 borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-                splashColor: widget.accentColor.withOpacity(0.1),
-                highlightColor: widget.accentColor.withOpacity(0.05),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -1178,19 +1067,8 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              widget.accentColor.withOpacity(0.15),
-                              widget.accentColor.withOpacity(0.08),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          color: widget.accentColor.withOpacity(0.1),
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: widget.accentColor.withOpacity(0.2),
-                            width: 1.5,
-                          ),
                         ),
                         child: Icon(
                           widget.icon,
@@ -1199,7 +1077,7 @@ class _DashboardTileState extends State<_DashboardTile> with SingleTickerProvide
                         ),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Title
                       Text(
                         widget.title,
@@ -1277,7 +1155,6 @@ class _RecentActivityTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-
                 Expanded(
                   child: Text(
                     activity.title,
@@ -1288,7 +1165,6 @@ class _RecentActivityTile extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Text(
                   activity.timestamp,
                   style: AppTextStyles.caption,
@@ -1360,7 +1236,8 @@ class _NotificationPreview extends StatelessWidget {
                 // Unread count badge
                 if (unreadCount > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.actionRequiredDot,
                       borderRadius: BorderRadius.circular(12),

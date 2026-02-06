@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
+import '../../../core/navigation_service.dart';
 import '../../../config/theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -22,15 +23,11 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoading = false;
-  bool _showSuccess = false;
 
   late AnimationController _entranceController;
   late AnimationController _successController;
   late Animation<double> _cardFadeAnimation;
   late Animation<Offset> _cardSlideAnimation;
-  late Animation<double> _headerFadeAnimation;
-  late Animation<double> _fieldsFadeAnimation;
   late Animation<double> _buttonFadeAnimation;
 
   static const String _validEmail = 'teacher@studentms.com';
@@ -57,20 +54,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       CurvedAnimation(
         parent: _entranceController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _headerFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.2, 0.7, curve: Curves.easeOut),
-      ),
-    );
-
-    _fieldsFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
       ),
     );
 
@@ -103,71 +86,77 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-
-    setState(() => _isLoading = false);
-
     if (_emailController.text == _validEmail &&
         _passwordController.text == _validPassword) {
-      setState(() => _showSuccess = true);
-      await Future.delayed(const Duration(milliseconds: 250));
-      if (!mounted) return;
+      if (mounted) {
+        SnackbarHelper.showSuccess(context, 'Login successful!');
 
-      setState(() => _showSuccess = false);
-      SnackbarHelper.showSuccess(context, 'Login successful!');
-
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const TeacherMainNavigation(),
-        ),
-        (route) => false,
-      );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const TeacherMainNavigation(),
+          ),
+          (route) => false,
+        );
+      }
     } else {
-      SnackbarHelper.showError(
-        context,
-        'Invalid credentials. Please try again.',
-      );
+      if (mounted) {
+        SnackbarHelper.showError(
+          context,
+          'Invalid credentials. Please try again.',
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/teacher_login_bg.png',
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  Container(color: const Color(0xFFF7F8FA)),
+    return WillPopScope(
+      onWillPop: () => LogoutHandler.handleBackToLogin(context),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/login_screen.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFFFE8D9),
+                          const Color(0xFFFFF3E0),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          
-          // Animated Teacher Icons Background
-          const Positioned.fill(
-            child: _AnimatedTeacherBackground(),
-          ),
-          
-          SafeArea(
-            child: Column(
-              children: [
-                _buildAppBar(),
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
-                      child: _buildLoginCard(),
+            Positioned.fill(
+              child: Container(color: Colors.white.withOpacity(0.25)),
+            ),
+            const Positioned.fill(child: _AnimatedTeacherBackground()),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildAppBar(),
+                  Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: _buildLoginCard(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -178,7 +167,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => LogoutHandler.handleBackToLogin(context),
             icon: const Icon(Icons.arrow_back),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white,
@@ -233,7 +222,8 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -329,7 +319,8 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFFF7B54), width: 2), // Orange focus
+          borderSide: const BorderSide(
+              color: Color(0xFFFF7B54), width: 2), // Orange focus
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -389,7 +380,8 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFFF7B54), width: 2), // Orange focus
+          borderSide: const BorderSide(
+              color: Color(0xFFFF7B54), width: 2), // Orange focus
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -432,9 +424,9 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen>
 
   Widget _buildLoginButton() {
     return _NeonButton(
-      onTap: _isLoading ? null : _handleLogin,
-      isLoading: _isLoading,
-      showSuccess: _showSuccess,
+      onTap: _handleLogin,
+      isLoading: false,
+      showSuccess: false,
     );
   }
 
@@ -512,8 +504,8 @@ class _FloatingCardState extends State<_FloatingCard>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animation,
-      builder: (_, child) =>
-          Transform.translate(offset: Offset(0, -_animation.value), child: child),
+      builder: (_, child) => Transform.translate(
+          offset: Offset(0, -_animation.value), child: child),
       child: widget.child,
     );
   }
@@ -566,7 +558,7 @@ class _AnimatedHeaderTextState extends State<_AnimatedHeaderText>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-          Text(
+        Text(
           widget.text,
           style: GoogleFonts.inter(
             fontSize: 20,
@@ -684,7 +676,8 @@ class _NeonButtonState extends State<_NeonButton>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF7B54).withOpacity(_isPressed ? 0.5 : 0.3),
+                  color: const Color(0xFFFF7B54)
+                      .withOpacity(_isPressed ? 0.5 : 0.3),
                   blurRadius: _isPressed ? 20 : 15,
                   offset: const Offset(0, 8),
                   spreadRadius: _isPressed ? 2 : 0,
@@ -706,7 +699,8 @@ class _NeonButtonState extends State<_NeonButton>
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : widget.showSuccess
@@ -738,7 +732,8 @@ class _AnimatedTeacherBackground extends StatefulWidget {
   const _AnimatedTeacherBackground();
 
   @override
-  State<_AnimatedTeacherBackground> createState() => _AnimatedTeacherBackgroundState();
+  State<_AnimatedTeacherBackground> createState() =>
+      _AnimatedTeacherBackgroundState();
 }
 
 class _AnimatedTeacherBackgroundState extends State<_AnimatedTeacherBackground>
@@ -775,15 +770,15 @@ class _AnimatedTeacherBackgroundState extends State<_AnimatedTeacherBackground>
 
     // Use a grid-based distribution (3 columns x 5 rows) to ensure even coverage
     final random = math.Random(43); // Different seed
-    
+
     for (int i = 0; i < 15; i++) {
       // Grid position
       final col = i % 3;
       final row = i ~/ 3;
-      
+
       double x = (col * 0.33) + random.nextDouble() * 0.25;
       double y = (row * 0.2) + random.nextDouble() * 0.15;
-      
+
       _icons.add(_TeacherFloatingIcon(
         icon: teacherIcons[i % teacherIcons.length],
         x: x,
@@ -852,24 +847,25 @@ class _TeacherIconPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (var iconData in icons) {
       final adjustedProgress = ((progress + iconData.delay) % 1.0);
-      
+
       // Vertical movement (floating upward)
-      final yPos = size.height * (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
-      
+      final yPos = size.height *
+          (iconData.y - adjustedProgress * iconData.speed * size.height / 100);
+
       // Horizontal wave motion (sine wave)
       final waveOffset = math.sin(adjustedProgress * math.pi * 4) * 15;
       final xPos = size.width * iconData.x + waveOffset;
-      
+
       if (yPos > -iconData.size && yPos < size.height + iconData.size) {
         final opacity = (0.5 + (1 - adjustedProgress) * 0.1).clamp(0.5, 0.6);
-        
+
         // Scale pulsing (gentle breathing effect)
         final scale = 1.0 + math.sin(adjustedProgress * math.pi * 2) * 0.1;
-        
+
         canvas.save();
         canvas.translate(xPos + iconData.size / 2, yPos + iconData.size / 2);
         canvas.scale(scale);
-        
+
         final textPainter = TextPainter(
           text: TextSpan(
             text: String.fromCharCode(iconData.icon.codePoint),
@@ -881,13 +877,13 @@ class _TeacherIconPainter extends CustomPainter {
           ),
           textDirection: TextDirection.ltr,
         );
-        
+
         textPainter.layout();
         textPainter.paint(
           canvas,
           Offset(-textPainter.width / 2, -textPainter.height / 2),
         );
-        
+
         canvas.restore();
       }
     }
